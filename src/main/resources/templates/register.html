@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="card-header" th:text="${email}"></div>
+        <div class="card-body">
+            <section class="card-title">
+                <label for="nickname"></label>
+                <input class="form-control" id="nickname" placeholder="닉네임" th:value="${nickname}" type="text">
+                <label for="profileImageUrl"></label>
+                <input class="form-control" id="profileImageUrl" placeholder="프로필 이미지 경로" th:value="${profileImageUrl}" type="text">
+            </section>
+        </div>
+    </div>
+
+    <br>
+
+    <button class="btn btn-primary" id="register-btn" type="button">회원가입</button>
+</div>
+<script>
+    const registerButton = document.getElementById('register-btn');
+    if (registerButton) {
+        registerButton.addEventListener('click', event => {
+            fetch(`/api/articles`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    title: document.getElementById('title').value,
+                    content: document.getElementById('content').value
+                }),
+            }).then(() => {
+                alert('등록 완료되었습니다');
+                location.replace("/articles");
+            })
+        })
+    }
+</script>
+</body>
+</html>
