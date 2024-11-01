@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: ESTsoft-2nd-Project
+
+  devtools:
+    restart:
+      enabled: true
+      additional-exclude: static/**,public/**
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(/e0OzJ80HMNu1cWsH/7tXLBg2T6SWg7DYEmydpUgjM1EPMUsN1puIfDEc12tKzMvJc+z8xzMvRYf9M74g89Y2kzKxkfhqVzjazo4L1ssJBy07sVu/TnM/j0LugycuZOmhxLhBUpuTqMr5ABroyck1EY0QTWFq47KmgPOx7KGMdY=)
+    username: ENC(dVEIidt75cLip8kK3Hc3HF/SHK6rc7HNU01g9I3uiGs+MMRz44/9HctAzUH6fWiT)
+    password: ENC(tncuaHTTJYrYGuLJq3/gqhNBtuAjGwzBzCu2SSODg9zQBfHwhfvoN+3WVK+NPHPlnP+tdXgMRrN9iyqog9zaow==)
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: <카카오 REST API 키>
+            client-secret: ""
+            authorization-grant-type: authorization_code
+            redirect-uri: "/member/oauth2/code"
+            scope: "profile_nickname,account_email"
+            client-name: kakao
+            client-authentication-method: post
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+jasypt:
+  encryptor:
+    bean: jasyptEncryptorAES
