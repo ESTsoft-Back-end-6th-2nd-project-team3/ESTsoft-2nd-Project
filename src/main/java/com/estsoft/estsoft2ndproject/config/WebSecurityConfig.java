@@ -1,15 +1,15 @@
 package com.estsoft.estsoft2ndproject.config;
 
-import java.io.PrintWriter;
+import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.estsoft.estsoft2ndproject.custonException.AdditionalInformationRequireException;
 import com.estsoft.estsoft2ndproject.service.UserService;
@@ -22,7 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain sercurityFilterChain(HttpSecurity http, UserService userService) throws Exception {
-		return http.authorizeHttpRequests(custom -> custom
+		return http
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.authorizeHttpRequests(custom -> custom
 				.requestMatchers("/**").permitAll()
 				.requestMatchers("/admin/**").hasAuthority("관리자").anyRequest().authenticated()
 			)
@@ -44,27 +46,20 @@ public class WebSecurityConfig {
 			)
 			.csrf(csrf -> csrf.disable())
 			.build();
-
 	}
 
 	@Bean
-	public AuthenticationSuccessHandler successHandler() {
-		return ((request, response, authentication) -> {
-			DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User)authentication.getPrincipal();
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
 
-			String id = defaultOAuth2User.getAttributes().get("id").toString();
-			String body = """
-				{"id":"%s"}
-				""".formatted(id);
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "https://kauth.kakao.com", "https://accounts.kakao.com"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+		configuration.setAllowedHeaders(Arrays.asList("*"));
+		configuration.setAllowCredentials(true);
+		configuration.setExposedHeaders(Arrays.asList("Location"));
 
-			log.error("body: {}", body);
-
-			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-			response.setCharacterEncoding("UTF-8");
-
-			PrintWriter writer = response.getWriter();
-			writer.println(body);
-			writer.flush();
-		});
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 }

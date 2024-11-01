@@ -1,10 +1,8 @@
 package com.estsoft.estsoft2ndproject.service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -20,9 +18,7 @@ import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -30,19 +26,16 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService extends DefaultOAuth2UserService {
 	private final UserRepository userRepository;
 	private final HttpServletRequest request;
-	private final HttpServletResponse response;
-	private final HttpSession session;
 
-	public UserService(UserRepository userRepository, HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+	public UserService(UserRepository userRepository, HttpServletRequest request) {
 		this.userRepository = userRepository;
 		this.request = request;
-		this.session = session;
-		this.response = response;
 	}
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
+		HttpSession session = request.getSession();
 
 		List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("관리자");
 
@@ -69,14 +62,11 @@ public class UserService extends DefaultOAuth2UserService {
 				session.setAttribute("profileImageUrl", profileImageUrl);
 
 				throw new AdditionalInformationRequireException("추가 정보가 필요합니다.");
-
-				/*try {
-					response.sendRedirect("/member/register");
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-				return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), usernameAttributeName);*/
 			}
+			nickname = session.getAttribute("nickname").toString();
+			profileImageUrl = session.getAttribute("profileImageUrl").toString();
+			String selfIntro = session.getAttribute("selfIntro").toString();
+			String snsLink = session.getAttribute("snsLink").toString();
 
 			userEntity = User.builder()
 				.email(email)
@@ -85,12 +75,11 @@ public class UserService extends DefaultOAuth2UserService {
 				.level(authorities.get(0).getAuthority())
 				.userAgent(userAgent)
 				.profileImageUrl(profileImageUrl)
+				.selfIntro(selfIntro)
+				.snsLink(snsLink)
 				.build();
 
-			session.removeAttribute("isComplete");
-			session.removeAttribute("email");
-			session.removeAttribute("nickname");
-			session.removeAttribute("profileImageUrl");
+			session.invalidate();
 			userRepository.save(userEntity);
 		}
 

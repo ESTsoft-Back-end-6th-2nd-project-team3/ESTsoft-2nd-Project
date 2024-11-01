@@ -1,26 +1,25 @@
 package com.estsoft.estsoft2ndproject.controller.api;
 
-import java.util.Map;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.estsoft.estsoft2ndproject.domain.dto.user.RegisterRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
 public class UserController {
-	HttpSession session;
 
 	@GetMapping("/member/login")
 	public String login() {
@@ -48,15 +47,29 @@ public class UserController {
 	}
 
 	@GetMapping("/member/register")
-	public String register(Model model) {
+	public String register(Model model, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+
+		String email = (String)session.getAttribute("email");
+		String nickname = (String)session.getAttribute("nickname");
+		String profileImageUrl = (String)session.getAttribute("profileImageUrl");
+
+		model.addAttribute("email", email);
+		model.addAttribute("nickname", nickname);
+		model.addAttribute("profileImageUrl", profileImageUrl);
+
 		return "register";
 	}
 
 	@PostMapping("/member/register")
-	public String register(@RequestBody Map<String, Object> body) {
+	public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest, HttpServletRequest request) {
+		HttpSession session = request.getSession();
 		session.setAttribute("isComplete", "true");
-		session.setAttribute(body.get("nickname").toString(), body.get("profileImageUrl").toString());
+		session.setAttribute("nickname", registerRequest.getNickname());
+		session.setAttribute("profileImageUrl", registerRequest.getProfileImageUrl());
+		session.setAttribute("selfIntro", registerRequest.getSelfIntro());
+		session.setAttribute("snsLink", registerRequest.getSnsLink());
 
-		return "redirect:/oauth2/authorization/kakao";
+		return ResponseEntity.ok("success");
 	}
 }
