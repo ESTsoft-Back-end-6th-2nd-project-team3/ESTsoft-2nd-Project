@@ -1,6 +1,7 @@
 package com.estsoft.estsoft2ndproject.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -55,4 +56,16 @@ public class Post {
 
 	@Column(name = "like_count", nullable = false)
 	private Integer likeCount;
+
+	@Builder
+	public Post(String content, String title, User user, String postType, Long targetId, Boolean isActive, Integer viewCount, Integer likeCount) {
+		this.content = content;
+		this.title = title;
+		this.user = user;
+		this.postType = postType;
+		this.targetId = targetId;
+		this.isActive = isActive != null ? isActive : true;
+		this.viewCount = viewCount != null ? viewCount : 0;
+		this.likeCount = likeCount != null ? likeCount : 0;
+	}
 }
