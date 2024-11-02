@@ -9,30 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.estsoft.estsoft2ndproject.domain.dto.user.RegisterRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
-@Slf4j
 public class UserController {
-
 	@GetMapping("/member/login")
 	public String login() {
 		return "login";
-	}
-
-	@GetMapping("/member/logout")
-	public String logout(@AuthenticationPrincipal OAuth2User oAuth2User) {
-		String url = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/logout")
-			.queryParam("client_id", oAuth2User.getName())
-			.queryParam("logout_redirect_uri", "http://localhost:8080")
-			.toUriString();
-		return "redirect:" + url;
 	}
 
 	@GetMapping("/")

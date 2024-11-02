@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -12,6 +14,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.estsoft.estsoft2ndproject.custonException.AdditionalInformationRequireException;
 import com.estsoft.estsoft2ndproject.domain.User;
@@ -36,6 +39,9 @@ public class UserService extends DefaultOAuth2UserService {
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		HttpSession session = request.getSession();
+
+		String accessToken = userRequest.getAccessToken().getTokenValue();
+		session.setAttribute("accessToken", accessToken);
 
 		List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("관리자");
 
@@ -79,10 +85,28 @@ public class UserService extends DefaultOAuth2UserService {
 				.snsLink(snsLink)
 				.build();
 
-			session.invalidate();
+			session.removeAttribute("isComplete");
+			session.removeAttribute("email");
+			session.removeAttribute("nickname");
+			session.removeAttribute("profileImageUrl");
+			session.removeAttribute("selfIntro");
+			session.removeAttribute("snsLink");
 			userRepository.save(userEntity);
 		}
 
 		return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), usernameAttributeName);
+	}
+
+	public void logoutFromKakao(String accessToken) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer " + accessToken);
+
+		HttpEntity<String> request = new HttpEntity<>(headers);
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			restTemplate.postForEntity("https://kapi.kakao.com/v1/user/logout", request, String.class);
+		} catch (Exception e) {
+			log.error("카카오 로그아웃 실패");
+		}
 	}
 }
