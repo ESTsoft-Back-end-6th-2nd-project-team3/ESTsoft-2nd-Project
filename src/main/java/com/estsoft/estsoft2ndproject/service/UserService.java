@@ -1,5 +1,6 @@
 package com.estsoft.estsoft2ndproject.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,12 +56,12 @@ public class UserService extends DefaultOAuth2UserService {
 		Map<String, Object> kakaoAccount = (Map<String, Object>)oAuth2User.getAttributes().get("kakao_account");
 		Map<String, Object> profile = (Map<String, Object>)kakaoAccount.get("profile");
 
+		String email = kakaoAccount.get("email").toString();
+		String nickname = profile.get("nickname").toString();
+		String profileImageUrl = profile.get("profile_image_url").toString();
+
 		User userEntity = userRepository.findByPii(oAuth2User.getName());
 		if (userEntity == null) {
-			String email = kakaoAccount.get("email").toString();
-			String nickname = profile.get("nickname").toString();
-			String profileImageUrl = profile.get("profile_image_url").toString();
-
 			if (!Objects.equals(session.getAttribute("isComplete"), "true")) {
 				log.error("추가 정보가 필요합니다.");
 				session.setAttribute("email", email);
@@ -91,8 +92,13 @@ public class UserService extends DefaultOAuth2UserService {
 			session.removeAttribute("profileImageUrl");
 			session.removeAttribute("selfIntro");
 			session.removeAttribute("snsLink");
-			userRepository.save(userEntity);
 		}
+
+		userEntity.updateBuilder()
+			.lastLogin(new Timestamp(System.currentTimeMillis()))
+			.build();
+
+		userRepository.save(userEntity);
 
 		return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), usernameAttributeName);
 	}

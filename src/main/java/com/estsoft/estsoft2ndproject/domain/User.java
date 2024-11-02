@@ -92,4 +92,21 @@ public class User {
 		this.selfIntro = selfIntro;
 		this.snsLink = snsLink;
 	}
+
+	@Builder(builderMethodName = "updateBuilder")
+	public void updateUser(String nickname, Boolean isActive, String level, Timestamp lastLogin, Integer loginCount, String userAgent, String profileImageUrl, Integer activityScore,
+		String badgeImageData, String awardedTitle, String selfIntro, String snsLink) {
+		this.nickname = nickname != null ? nickname : this.nickname;
+		this.isActive = isActive != null ? isActive : this.isActive;
+		this.level = level != null ? level : this.level;
+		this.lastLogin = lastLogin != null ? lastLogin : this.lastLogin;
+		this.loginCount = loginCount != null ? loginCount : this.loginCount;
+		this.userAgent = userAgent != null ? userAgent : this.userAgent;
+		this.profileImageUrl = profileImageUrl != null ? profileImageUrl : this.profileImageUrl;
+		this.activityScore = activityScore != null ? activityScore : this.activityScore;
+		this.badgeImageData = badgeImageData != null ? badgeImageData : this.badgeImageData;
+		this.awardedTitle = awardedTitle != null ? awardedTitle : this.awardedTitle;
+		this.selfIntro = selfIntro != null ? selfIntro : this.selfIntro;
+		this.snsLink = snsLink != null ? snsLink : this.snsLink;
+	}
 }
