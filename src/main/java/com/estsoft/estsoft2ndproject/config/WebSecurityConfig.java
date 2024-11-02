@@ -42,14 +42,11 @@ public class WebSecurityConfig {
 			)
 			.logout(logout -> logout
 				.logoutUrl("/member/logout")
-				.addLogoutHandler(new LogoutHandler() {
-					@Override
-					public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-						String accessToken = (String)request.getSession().getAttribute("accessToken");
-						if (accessToken != null) {
-							userService.logoutFromKakao(accessToken);
-							request.getSession().removeAttribute("accessToken");
-						}
+				.addLogoutHandler((request, response, authentication) -> {
+					String accessToken = (String)request.getSession().getAttribute("accessToken");
+					if (accessToken != null) {
+						userService.logoutFromKakao(accessToken);
+						request.getSession().removeAttribute("accessToken");
 					}
 				})
 				.logoutSuccessUrl("/")
