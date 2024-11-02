@@ -83,7 +83,7 @@ public class User {
 		this.isActive = isActive != null ? isActive : true;
 		this.level = level;
 		this.lastLogin = lastLogin != null ? lastLogin : new Timestamp(System.currentTimeMillis());
-		this.loginCount = loginCount != null ? loginCount : 0;
+		this.loginCount = loginCount != null ? loginCount : 1;
 		this.userAgent = userAgent;
 		this.profileImageUrl = profileImageUrl;
 		this.activityScore = activityScore != null ? activityScore : 0;

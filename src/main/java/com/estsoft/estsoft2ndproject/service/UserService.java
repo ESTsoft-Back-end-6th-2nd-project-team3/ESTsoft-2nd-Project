@@ -96,6 +96,7 @@ public class UserService extends DefaultOAuth2UserService {
 
 		userEntity.updateBuilder()
 			.lastLogin(new Timestamp(System.currentTimeMillis()))
+			.loginCount(userEntity.getLoginCount() + 1)
 			.build();
 
 		userRepository.save(userEntity);
