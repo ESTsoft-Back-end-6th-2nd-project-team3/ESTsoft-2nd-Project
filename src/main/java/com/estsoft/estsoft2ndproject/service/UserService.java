@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.estsoft.estsoft2ndproject.custonException.AdditionalInformationRequireException;
@@ -37,6 +38,7 @@ public class UserService extends DefaultOAuth2UserService {
 	}
 
 	@Override
+	@Transactional
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		HttpSession session = request.getSession();
@@ -61,9 +63,8 @@ public class UserService extends DefaultOAuth2UserService {
 		String profileImageUrl = profile.get("profile_image_url").toString();
 
 		User userEntity = userRepository.findByPii(oAuth2User.getName());
-		if (userEntity == null) {
+		if (userEntity == null || !userEntity.getIsActive()) {
 			if (!Objects.equals(session.getAttribute("isComplete"), "true")) {
-				log.error("추가 정보가 필요합니다.");
 				session.setAttribute("email", email);
 				session.setAttribute("nickname", nickname);
 				session.setAttribute("profileImageUrl", profileImageUrl);
@@ -75,16 +76,30 @@ public class UserService extends DefaultOAuth2UserService {
 			String selfIntro = session.getAttribute("selfIntro").toString();
 			String snsLink = session.getAttribute("snsLink").toString();
 
-			userEntity = User.builder()
-				.email(email)
-				.nickname(nickname)
-				.pii(oAuth2User.getName())
-				.level(authorities.get(0).getAuthority())
-				.userAgent(userAgent)
-				.profileImageUrl(profileImageUrl)
-				.selfIntro(selfIntro)
-				.snsLink(snsLink)
-				.build();
+			if (userEntity == null) {
+				userEntity = User.builder()
+					.email(email)
+					.nickname(nickname)
+					.pii(oAuth2User.getName())
+					.level(authorities.get(0).getAuthority())
+					.profileImageUrl(profileImageUrl)
+					.selfIntro(selfIntro)
+					.snsLink(snsLink)
+					.build();
+			} else {
+				userEntity.updateBuilder()
+					.nickname(nickname)
+					.isActive(true)
+					.level(authorities.get(0).getAuthority())
+					.loginCount(0)
+					.profileImageUrl(profileImageUrl)
+					.activityScore(0)
+					.badgeImageData(null)
+					.awardedTitle(null)
+					.selfIntro(selfIntro)
+					.snsLink(snsLink)
+					.build();
+			}
 
 			session.removeAttribute("isComplete");
 			session.removeAttribute("email");
@@ -97,6 +112,7 @@ public class UserService extends DefaultOAuth2UserService {
 		userEntity.updateBuilder()
 			.lastLogin(new Timestamp(System.currentTimeMillis()))
 			.loginCount(userEntity.getLoginCount() + 1)
+			.userAgent(userAgent)
 			.build();
 
 		userRepository.save(userEntity);
@@ -113,7 +129,18 @@ public class UserService extends DefaultOAuth2UserService {
 			RestTemplate restTemplate = new RestTemplate();
 			restTemplate.postForEntity("https://kapi.kakao.com/v1/user/logout", request, String.class);
 		} catch (Exception e) {
-			log.error("카카오 로그아웃 실패");
+			log.error("Kakao logout error: {}", e.getMessage());
 		}
+	}
+
+	@Transactional
+	public void deleteUser(OAuth2User oAuth2User) {
+		User userEntity = userRepository.findByPii(oAuth2User.getName());
+
+		userEntity.updateBuilder()
+			.isActive(false)
+			.build();
+
+		userRepository.save(userEntity);
 	}
 }
