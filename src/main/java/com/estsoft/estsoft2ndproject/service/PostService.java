@@ -30,7 +30,11 @@ public class PostService {
 		return postRepository.save(postRequestDTO.toEntity(user));
 	}
 
+	@Transactional
 	public Post getPostById(Long postId) {
-		return postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+		post.setViewCount(post.getViewCount() + 1);
+		postRepository.save(post);
+		return post;
 	}
 }
