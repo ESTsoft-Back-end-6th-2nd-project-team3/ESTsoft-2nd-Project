@@ -2,6 +2,7 @@ package com.estsoft.estsoft2ndproject.controller.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,5 +28,11 @@ public class PostApiController {
 		@PathVariable Long userId) {
 		Post post = postService.createPost(postRequestDTO, userId);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new PostResponseDTO(post));
+	}
+
+	@GetMapping("/{postId}")
+	public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long postId) {
+		Post post = postService.getPostById(postId);
+		return ResponseEntity.ok(new PostResponseDTO(post));
 	}
 }
