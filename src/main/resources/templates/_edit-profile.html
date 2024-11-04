@@ -11,6 +11,9 @@
             border: 3px solid #4a7856;
             padding: 50px;
             border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .profile-edit-container h2 {
@@ -23,7 +26,7 @@
         .profile-info-group {
             display: flex;
             flex-direction: row;
-            justify-content: space-between; /* 양쪽 끝에 자식 요소를 배치하고 중간에 동일한 간격 */
+            justify-content: space-between;
             align-items: flex-start;
             margin-top: 50px;
         }
@@ -34,6 +37,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            border: 3px solid #4a7856;
         }
 
         .profile-image-circle {
@@ -64,6 +68,7 @@
 
         .profile-form-group {
             gap: 45px;
+            border: 3px solid #4a7856;
         }
 
         .profile-form-group label {
@@ -90,9 +95,9 @@
             align-items: center;
         }
 
-        .profile-info input[type="text"],
-        .profile-info input[type="email"],
-        .profile-info textarea {
+        .profile-info-group input[type="text"],
+        .profile-info-group input[type="email"],
+        .profile-info-group textarea {
             padding: 8px;
             border: 1px solid #4a7856;
             border-radius: 5px;
@@ -102,20 +107,21 @@
         }
 
         .check-duplicate-btn {
+            width: 90px;
+            height: 30px;
             background-color: #4a7856;
             color: #fff;
             border: none;
             border-radius: 5px;
-            padding: 8px 12px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
         }
 
-        .profile-info input[readonly] {
+        .profile-info-group input[readonly] {
             background-color: #e0e0e0;
         }
 
-        .profile-info button[type="submit"] {
+        .profile-info-group button[type="submit"] {
             background-color: #4a7856;
             color: #fff;
             border: none;
@@ -126,13 +132,8 @@
             width: 100px;
             align-self: flex-start;
         }
-
-        .profile-info textarea {
-            resize: none;
-            width: 400px;
-            height: 110px;
-        }
     </style>
+    <link href="/static/css/reset.css" rel="stylesheet">
 </head>
 
 <body>

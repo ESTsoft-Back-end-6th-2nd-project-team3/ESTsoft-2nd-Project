@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <link href="/static/css/reset.css" rel="stylesheet">
+    <link href="/static/css/edit-profile.css" rel="stylesheet">
+</head>
+<body>
+<div class="profile-container">
+    <h2>내 정보</h2>
+    <div class="profile-content">
+        <div class="profile-image">
+            <div class="image-circle"></div>
+            <button class="image-btn">이미지 변경</button>
+        </div>
+        <div class="profile-form">
+            <label><span>닉네임</span> <input placeholder="오르미" type="text">
+                <button class="check-btn">중복 확인</button>
+            </label>
+            <label><span>이메일</span> <input placeholder="oremi6@kakao.com" readonly type="email"></label>
+            <label><span>등급</span> <input placeholder="씨앗" readonly type="text"></label>
+            <label><span>한줄 소개</span> <textarea placeholder="안녕하세요 오르미 6기입니다"></textarea></label>
+            <label><span>링크</span> <input placeholder="http://example.com" type="text"></label>
+        </div>
+    </div>
+    <div class="btn-group">
+        <button class="save-btn">저장</button>
+        <button class="cancel-btn">취소</button>
+    </div>
+</div>
+</body>
+</html>
