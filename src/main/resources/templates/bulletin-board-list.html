@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Bulletin Board List</title>
+    <link href="/static/css/reset.css" rel="stylesheet">
+    <link href="/static/css/bulletin-board-list.css" rel="stylesheet">
+</head>
+<body>
+<div class="board-container">
+    <table class="board-table">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>추천수</th>
+            <th></th>
+            <th>작성자</th>
+            <th>조회수</th>
+            <th>날짜</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post, iterStat : ${postList}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${post.title}">제목</td>
+            <td>추천수</td>
+            <td th:text="${post.likeCount}"></td>
+            <td th:text="${post.nickname}">닉네임</td>
+            <td th:text="${post.viewCount}">조회수</td>
+            <td th:text="${post.createdAt}">날짜</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="board-footer">
+        <select class="sort-select">
+            <option>최신순</option>
+            <option>조회순</option>
+            <option>추천순</option>
+        </select>
+        <div class="pagination-container">
+            <button class="prev-btn">< 처음</button>
+            <div class="pagination">
+                <a href="?page=1">1</a>
+                <a href="?page=2">2</a>
+                <a href="?page=3">3</a>
+                <a href="?page=4">4</a>
+                <a href="?page=5">5</a>
+                <a href="?page=6">6</a>
+                <a href="?page=7">7</a>
+                <a href="?page=8">8</a>
+                <a href="?page=9">9</a>
+            </div>
+            <button class="next-btn">다음 ></button>
+        </div>
+        <button class="write-btn">글쓰기</button>
+    </div>
+
+    <div class="search-box">
+        <select>
+            <option> 제목 검색</option>
+            <option> 작성자 검색</option>
+        </select>
+        <input placeholder=" 검색어를 입력하세요" type="text">
+        <button>검색</button>
+    </div>
+</div>
+</body>
+</html>
