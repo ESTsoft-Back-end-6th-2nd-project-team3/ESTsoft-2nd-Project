@@ -5,8 +5,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.estsoft.estsoft2ndproject.domain.Post;
+import com.estsoft.estsoft2ndproject.domain.PostType;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.service.PostService;
 
@@ -20,16 +22,28 @@ public class PostController {
 	}
 
 	@GetMapping("/create")
-	public String createPost(Model model) {
-		model.addAttribute("post", new PostResponseDTO());
+	public String createPost(@RequestParam(required = false) Long postId, Model model) {
+		model.addAttribute("postTypes", PostType.values());
+		model.addAttribute("categories", postService.getCategoryList());
+		model.addAttribute("regions", postService.getRegionList());
+		model.addAttribute("userId", 1);
+		if (postId == null) {
+			model.addAttribute("post", new PostResponseDTO());
+		} else {
+			Post post = postService.getPostById(postId);
+			model.addAttribute("post", new PostResponseDTO(post));
+			model.addAttribute("selectedPostType", post.getPostType()); // 선택된 postType 값 추가
+			model.addAttribute("selectedCategory", post.getTargetId()); // 선택된 category/region ID 추가
+		}
 		return "post/create-post";
 	}
 
 	@GetMapping("/{postId}")
 	public String getPost(@PathVariable Long postId, Model model) {
 		Post post = postService.getPostById(postId);
-
 		model.addAttribute("post", post);
+		model.addAttribute("PostType", PostType.valueOf(post.getPostType()).getKoreanName());
+		model.addAttribute("Category", postService.getCategoryByPostType(post.getPostType(), post.getTargetId()));
 		return "post/view-post";
 	}
 }

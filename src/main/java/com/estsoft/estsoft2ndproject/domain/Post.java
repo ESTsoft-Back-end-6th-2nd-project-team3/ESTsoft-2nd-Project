@@ -68,4 +68,11 @@ public class Post {
 		this.viewCount = viewCount != null ? viewCount : 0;
 		this.likeCount = likeCount != null ? likeCount : 0;
 	}
+
+	public void UpdatePost(String title, String content, String postType, Long targetId) {
+		this.title = title;
+		this.content = content;
+		this.postType = postType;
+		this.targetId = targetId;
+	}
 }
