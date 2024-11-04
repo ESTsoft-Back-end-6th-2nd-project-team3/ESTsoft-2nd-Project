@@ -1,6 +1,7 @@
 package com.estsoft.estsoft2ndproject.controller.api;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.estsoft.estsoft2ndproject.domain.Post;
@@ -48,4 +50,14 @@ public class PostApiController {
 		Post post = postService.updatePost(postId, postRequestDTO);
 		return ResponseEntity.ok(new PostResponseDTO(post));
 	}
+
+	@PostMapping("/category/{targetId}")
+	public ResponseEntity<List<PostResponseDTO>> getPostsByCategory(@RequestParam String postType,
+		@PathVariable Long targetId) {
+		List<PostResponseDTO> PostResponseDTOList = postService.getPostsByCategory(postType, targetId).stream()
+			.map(PostResponseDTO::new)
+			.toList();
+		return ResponseEntity.ok(PostResponseDTOList);
+	}
+
 }

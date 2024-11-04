@@ -1,5 +1,7 @@
 package com.estsoft.estsoft2ndproject.controller.main;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,5 +47,22 @@ public class PostController {
 		model.addAttribute("PostType", PostType.valueOf(post.getPostType()).getKoreanName());
 		model.addAttribute("Category", postService.getCategoryByPostType(post.getPostType(), post.getTargetId()));
 		return "post/view-post";
+	}
+
+	@GetMapping("/category/{targetId}")
+	public String getCategory(@RequestParam String postType, @PathVariable Long targetId, Model model) {
+		List<Post> postList = postService.getPostsByCategory(postType, targetId);
+		String category = postService.getCategoryByPostType(postType, targetId);
+		model.addAttribute("posts", postList);
+		model.addAttribute("postType", PostType.valueOf(postType).getKoreanName());
+		model.addAttribute("category", category);
+		return "post/view-post-by-category";
+	}
+
+	@GetMapping("/posts")
+	public String getPosts(Model model) {
+		List<Post> postList = postService.getAllPosts();
+		model.addAttribute("posts", postList);
+		return "post/view-post-all";
 	}
 }

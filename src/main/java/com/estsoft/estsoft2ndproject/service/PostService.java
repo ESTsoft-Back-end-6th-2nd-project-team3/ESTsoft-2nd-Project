@@ -82,4 +82,20 @@ public class PostService {
 			throw new IllegalArgumentException("Invalid post type provided: " + postType, e);
 		}
 	}
+
+	public List<Post> getPostsByCategory(String postType, Long targetId) {
+		try {
+			PostType postTypeEnum = PostType.valueOf(postType);
+			return switch (postTypeEnum) {
+				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION -> postRepository.findByPostTypeAndTargetId(postType, targetId);
+				default -> postRepository.findByPostType(postType);
+			};
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Invalid post type provided: " + postType, e);
+		}
+	}
+
+	public List<Post> getAllPosts() {
+		return postRepository.findAll();
+	}
 }
