@@ -1,0 +1,68 @@
+body {
+    font-family: 'Nanum Gothic', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.profile-container {
+    width: 800px;
+    height: 355px;
+    border: 3px solid #3d5c30;
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    /*position: relative;*/
+}
+
+.profile-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #3d5c30;
+}
+
+.profile-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.profile-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #3d5c30;
+    margin-top: 50px;
+    margin-left: 15px;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    color: #3d5c30;
+    font-size: 18px;
+    margin-top: 60px;
+}
+
+.edit-btn {
+    width: 60px;
+    height: 30px;
+    border: 3px solid #3d5c30;
+    background-color: white;
+    color: #3d5c30;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-top: 50px;
+    margin-left: 670px;
+}
