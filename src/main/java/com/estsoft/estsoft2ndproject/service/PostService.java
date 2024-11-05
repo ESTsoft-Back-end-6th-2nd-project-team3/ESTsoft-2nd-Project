@@ -87,8 +87,8 @@ public class PostService {
 		try {
 			PostType postTypeEnum = PostType.valueOf(postType);
 			return switch (postTypeEnum) {
-				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION -> postRepository.findByPostTypeAndTargetId(postType, targetId);
-				default -> postRepository.findByPostType(postType);
+				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION -> postRepository.findByPostTypeAndTargetIdAndIsActiveTrue(postType, targetId);
+				default -> postRepository.findByPostTypeAndIsActiveTrue(postType);
 			};
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("Invalid post type provided: " + postType, e);
@@ -96,10 +96,12 @@ public class PostService {
 	}
 
 	public List<Post> getAllPosts() {
-		return postRepository.findAll();
+		return postRepository.findAllByIsActiveTrue();
 	}
 
 	public void deletePost(Long postId) {
-		postRepository.deleteById(postId);
+		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+		post.setIsActive(false);
+		postRepository.save(post);
 	}
 }
