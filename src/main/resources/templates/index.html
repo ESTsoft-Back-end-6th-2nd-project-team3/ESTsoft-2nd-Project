@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>타임리프 레이아웃</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .logo {
+            width: 200px;
+            height: 80px;
+            border: 3px solid #0B6623;
+            border-radius: 10px;
+            margin-left: 360px;
+            margin-top: 100px;
+            position: absolute;
+        }
+        .search-bar {
+            width: 300px;
+            height: 50px;
+            border: 3px solid #0B6623;
+            border-radius: 10px;
+            margin-left: 1260px;
+            margin-top: 130px;
+            position: absolute;
+        }
+        .menu-bar {
+            width: 1200px;
+            height: 40px;
+            border: 3px solid #0B6623;
+            border-radius: 10px;
+            margin-left: 360px;
+            margin-top: 200px;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+        .menu-item {
+            font-size: 16px;
+            color: black;
+            position: relative;
+            text-align: center;
+            padding: 10px 15px; /* 패딩 추가로 클릭/호버 영역 확장 */
+            cursor: pointer; /* 포인터 커서 추가 */
+        }
+        .divider {
+            width: 1px;
+            height: 15px;
+            background-color: #0B6623;
+            margin: 0 10px;
+        }
+        /* 서브 메뉴 스타일 */
+        .submenu {
+            border: 3px solid #0B6623;
+            border-radius: 10px;
+            background-color: white;
+            position: absolute;
+            top: 100%; /* 메뉴바 바로 아래에 위치 */
+            left: 50%; /* 수평으로 중앙 정렬 시작점 */
+            transform: translateX(-50%); /* 수평 중앙 정렬 */
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none; /* 기본적으로 숨김 */
+            text-align: center; /* 내용물 중앙 정렬 */
+            margin-top: 0px; /* 서브메뉴와 메뉴 아이템 간 간격 */
+        }
+        .menu-item:hover .submenu {
+            display: block; /* 마우스를 올리면 보이기 */
+        }
+        .submenu-item {
+            display: block;
+            margin: 5px 0;
+            white-space: nowrap; /* 줄바꿈 방지 */
+        }
+    </style>
+</head>
+<body>
+<div class="logo"></div>
+<input type="text" class="search-bar" placeholder="검색">
+<div class="menu-bar">
+    <div class="menu-item">
+        카테고리
+        <div class="submenu">
+            <span class="submenu-item">강원도</span>
+            <span class="submenu-item">경기도</span>
+            <span class="submenu-item">경상남도</span>
+            <span class="submenu-item">경상북도</span>
+            <span class="submenu-item">광주광역시</span>
+            <span class="submenu-item">대구광역시</span>
+            <span class="submenu-item">대전광역시</span>
+            <span class="submenu-item">부산광역시</span>
+            <span class="submenu-item">서울특별시</span>
+        </div>
+    </div>
+    <div class="divider"></div>
+    <div class="menu-item">
+        챌린지
+        <div class="submenu">
+            <span class="submenu-item">챌린지 아이템 1</span>
+            <span class="submenu-item">챌린지 아이템 2</span>
+        </div>
+    </div>
+    <div class="divider"></div>
+    <div class="menu-item">
+        지역 친목 게시판
+        <div class="submenu">
+            <span class="submenu-item">아이템 1</span>
+            <span class="submenu-item">아이템 2</span>
+        </div>
+    </div>
+    <div class="divider"></div>
+    <div class="menu-item">
+        마이페이지
+        <div class="submenu">
+            <span class="submenu-item">프로필 설정</span>
+            <span class="submenu-item">내 활동 보기</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -30,7 +30,9 @@ public class MyPageService {
 	// 내 정보 조회
 	public UserDTO getMyInfoDTO(Long userId) {
 		User user = userRepository.findById(userId).orElse(null);
-		if (user == null) return null;
+		if (user == null) {
+			return null; // 유저가 존재하지 않을 경우 null 반환
+		}
 
 		// User 엔티티를 UserDTO로 변환
 		UserDTO userDTO = new UserDTO();
@@ -46,11 +48,12 @@ public class MyPageService {
 	// 내 정보 수정
 	public UserDTO updateMyInfoDTO(Long userId, UserDTO updatedUser) {
 		return userRepository.findById(userId).map(user -> {
+			// 유저 정보 업데이트
 			user.setNickname(updatedUser.getNickname());
 			user.setProfileImageUrl(updatedUser.getProfileImageUrl());
 			user.setSelfIntro(updatedUser.getSelfIntro());
 			user.setSnsLink(updatedUser.getSnsLink());
-			userRepository.save(user);
+			userRepository.save(user); // 업데이트된 유저 정보 저장
 
 			// 수정된 User 엔티티를 UserDTO로 변환
 			UserDTO userDTO = new UserDTO();
@@ -61,7 +64,7 @@ public class MyPageService {
 			userDTO.setSnsLink(user.getSnsLink());
 
 			return userDTO;
-		}).orElse(null);
+		}).orElse(null); // 유저가 존재하지 않을 경우 null 반환
 	}
 
 	// 내가 작성한 게시글 조회

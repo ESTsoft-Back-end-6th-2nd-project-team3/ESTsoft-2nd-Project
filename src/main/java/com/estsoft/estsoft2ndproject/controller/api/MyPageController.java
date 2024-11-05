@@ -34,8 +34,7 @@ public class MyPageController {
 		return myPageService.getMyInfoDTO(userId);
 	}
 
-	// 세션에서 user_id 가져와 내 정보 수정
-	@PutMapping("/userinfo/update")
+	@PutMapping("/userinfo")
 	public UserDTO updateMyInfo(@RequestBody UserDTO updatedUser) {
 		HttpSession session = request.getSession();
 		Long userId = (Long) session.getAttribute("user_id");
@@ -44,8 +43,24 @@ public class MyPageController {
 			throw new RuntimeException("User is not logged in");
 		}
 
-		return myPageService.updateMyInfoDTO(userId, updatedUser);
+		// 디버깅 로그 추가
+		System.out.println("Updated User from Request: " + updatedUser);
+
+		if (updatedUser == null) {
+			throw new RuntimeException("Updated user data is null");
+		}
+
+		UserDTO response = myPageService.updateMyInfoDTO(userId, updatedUser);
+		if (response == null) {
+			throw new RuntimeException("Updated user data is null");
+		}
+
+		System.out.println("Response: " + response); // 디버깅을 위한 로그
+		return response;
 	}
+
+
+
 
 	// 세션에서 user_id 가져와 내가 작성한 게시글 조회
 	@PostMapping("/posts")
