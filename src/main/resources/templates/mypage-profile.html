@@ -15,13 +15,14 @@
             <div class="image-circle"></div>
         </div>
         <div class="profile-info">
-            <p>닉네임</p>
-            <p>등급 (활동점수)</p>
-            <p>한줄 소개</p>
-            <p>링크</p>
+            <p>닉네임: <span th:text="${nickname}">nickname</span></p>
+            <p>등급 (활동점수): <span th:text="${level}">level</span></p>
+            <p>한줄 소개: <span th:text="${selfIntro}">selfIntro</span></p>
+            <p>링크: <span th:text="${snsLink}">snsLink</span></p>
         </div>
     </div>
-    <button class="edit-btn">수정</button>
+    <button class="edit-btn" onclick="enableEdit()">수정</button>
 </div>
+<script src="/static/js/mypage-profile.js"></script>
 </body>
 </html>
