@@ -9,9 +9,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ENC(/e0OzJ80HMNu1cWsH/7tXLBg2T6SWg7DYEmydpUgjM1EPMUsN1puIfDEc12tKzMvJc+z8xzMvRYf9M74g89Y2kzKxkfhqVzjazo4L1ssJBy07sVu/TnM/j0LugycuZOmhxLhBUpuTqMr5ABroyck1EY0QTWFq47KmgPOx7KGMdY=)
+    url: ENC(I8KTE+46vF3/JtlflE2sB/+LDZOFdCEeKOyaufeX1MAfVwFzy7R59vKvs8ncK9uctZjPc0TtLz+A1jXFOCzbgvuA57E8lgzzMjCXj8zebKj6mpgxjw3RTGCoxkVo2+9sJHjHFZOCC9vsTGYNqffmlyAAG5yGdTQ8ZCelnPOG2yg=)
     username: ENC(dVEIidt75cLip8kK3Hc3HF/SHK6rc7HNU01g9I3uiGs+MMRz44/9HctAzUH6fWiT)
-    password: ENC(tncuaHTTJYrYGuLJq3/gqhNBtuAjGwzBzCu2SSODg9zQBfHwhfvoN+3WVK+NPHPlnP+tdXgMRrN9iyqog9zaow==)
+    password: ENC(DfavEb9o/ZWoe3KNcPIeX2oNGWs4NhlCAZ1uc5dfZ4CN4jryVSirWS1GsB/o8WLeQQEEN+YpFLclHm/7/bMgtQ==)
 
   jpa:
     show-sql: true
@@ -24,19 +24,28 @@ spring:
       client:
         registration:
           kakao:
-            client-id: <카카오 REST API 키>
-            client-secret: ""
+            client-id: ENC(ZaEJHi3mX5PJ2kMG0lH6mXpb8gq8iRbdbG2e3uxIVlnN6ihIgPqMWIC9pX8LkYbOM0PhH1kfj/trMruxnJ5idLuik/nogRLVihlc0QxYh3k=)
+            client-secret: ENC(G9uPzX+uDDRfqWwRwv7rUHhTTP1zmjEAp+R5WrOP86l3LJQk9mk/cwNgZuk6YOAIqq/CDpcO4gzfgyf+tKSo78Ptaqfsl2OrH7X6NuovciM=)
             authorization-grant-type: authorization_code
-            redirect-uri: "/member/oauth2/code"
-            scope: "profile_nickname,account_email"
+            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
             client-name: kakao
-            client-authentication-method: post
+            client-authentication-method: client_secret_post
+            scope:
+              - profile_nickname
+              - account_email
+              - profile_image
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+  mvc:
+    dispatch-options-request: true
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.estsoft.estsoft2ndproject: DEBUG
 
 jasypt:
   encryptor:
