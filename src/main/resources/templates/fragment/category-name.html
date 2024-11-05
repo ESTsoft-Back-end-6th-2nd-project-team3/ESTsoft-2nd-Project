@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/static/css/reset.css" rel="stylesheet">
+    <link href="/static/css/base.css" rel="stylesheet">
+</head>
+<body>
+<article id="category-name">
+    <h3 th:text="${categoryName}">게시판명</h3>
+    <section id="notice">
+        <h4>공지</h4>
+        <div class="bar"></div>
+        <a class="category-name-title" th:href="@{'/post/' + ${notice.id}}" th:text="${notice.title}">공지 제목~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</a>
+        <div class="bar"></div>
+        <a class="category-name-user" th:href="@{'/member/' + ${noticeUser.id}}" th:text="${noticeUser.nickName}">작성자</a>
+        <div class="bar"></div>
+        <span th:text="${notice.viewCount}">조회수</span>
+        <div class="bar"></div>
+        <span th:text="${notice.createdAt}">작성일</span>
+    </section>
+    <section id="challenge">
+        <h4>챌린지</h4>
+        <div class="bar"></div>
+        <a class="category-name-title" th:href="@{'/post/' + ${challenge.id}}" th:text="${challenge.title}">챌린지 제목~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</a>
+        <div class="bar"></div>
+        <a class="category-name-user" th:href="@{'/member/' + ${challengeUser.id}}" th:text="${challengeUser.nickName}">작성자</a>
+        <div class="bar"></div>
+        <span th:text="${challenge.viewCount}">조회수</span>
+        <div class="bar"></div>
+        <span th:text="${challenge.createdAt}">작성일</span>
+    </section>
+</article>
+</body>
+</html>
