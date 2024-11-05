@@ -29,9 +29,9 @@ public class UserController {
 		return "login";
 	}
 
-	@GetMapping("/")
+	@GetMapping("/member")
 	public String index() {
-		return "index";
+		return "test-index";
 	}
 
 	@GetMapping("/userData")
