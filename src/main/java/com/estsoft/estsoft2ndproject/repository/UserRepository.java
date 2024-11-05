@@ -7,4 +7,5 @@ import com.estsoft.estsoft2ndproject.domain.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+	User findByPii(String pii);
 }

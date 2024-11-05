@@ -1,4 +1,5 @@
-CREATE TABLE USER
+DROP TABLE IF EXISTS user;
+CREATE TABLE user
 (
     user_id           BIGINT PRIMARY KEY AUTO_INCREMENT,
     email             VARCHAR(255),
@@ -19,7 +20,8 @@ CREATE TABLE USER
     sns_link          TEXT
 );
 
-CREATE TABLE ACTIVITY_SCORE
+DROP TABLE IF EXISTS activity_score;
+CREATE TABLE activity_score
 (
     score_id           BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id            BIGINT,
@@ -28,7 +30,8 @@ CREATE TABLE ACTIVITY_SCORE
     fluctuation_reason VARCHAR(255)
 );
 
-CREATE TABLE POST
+DROP TABLE IF EXISTS post;
+CREATE TABLE post
 (
     post_id    BIGINT PRIMARY KEY AUTO_INCREMENT,
     title      VARCHAR(255),
@@ -43,7 +46,8 @@ CREATE TABLE POST
     like_count INT
 );
 
-CREATE TABLE COMMENT
+DROP TABLE IF EXISTS comment;
+CREATE TABLE comment
 (
     comment_id        BIGINT PRIMARY KEY AUTO_INCREMENT,
     content           TEXT,
@@ -56,19 +60,22 @@ CREATE TABLE COMMENT
     like_count        INT
 );
 
-CREATE TABLE CATEGORY
+DROP TABLE IF EXISTS category;
+CREATE TABLE category
 (
     category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name        VARCHAR(255)
 );
 
-CREATE TABLE REGION
+DROP TABLE IF EXISTS region;
+CREATE TABLE region
 (
     region_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name      VARCHAR(255)
 );
 
-CREATE TABLE OBJECTIVE
+DROP TABLE IF EXISTS objective;
+CREATE TABLE objective
 (
     objective_id         BIGINT PRIMARY KEY AUTO_INCREMENT,
     content              TEXT,
@@ -79,7 +86,8 @@ CREATE TABLE OBJECTIVE
     is_completed         TINYINT
 );
 
-CREATE TABLE LIKES
+DROP TABLE IF EXISTS likes;
+CREATE TABLE likes
 (
     like_id    BIGINT PRIMARY KEY AUTO_INCREMENT,
     like_type  VARCHAR(255),
@@ -95,3 +103,6 @@ ALTER TABLE COMMENT ADD FOREIGN KEY (user_id) REFERENCES USER (user_id);
 ALTER TABLE COMMENT ADD FOREIGN KEY (parent_comment_id) REFERENCES COMMENT (comment_id);
 ALTER TABLE OBJECTIVE ADD FOREIGN KEY (user_id) REFERENCES USER (user_id);
 ALTER TABLE LIKE ADD FOREIGN KEY (user_id) REFERENCES USER (user_id);*/
+
+INSERT INTO user(email, nickname, pii, created_at, updated_at, is_active, level, last_login, login_count, user_agent, activity_score)
+VALUES ('test@test.com', 'testnickname', '1234561234567', NOW(), NOW(), 1, '관리자', NOW(), 0, 'user agent test', 0);
