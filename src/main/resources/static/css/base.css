@@ -229,21 +229,104 @@ body * {
 }
 
 #my-objective {
+    width: 800px;
+    border: 1px solid var(--primary-color);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    line-height: 100%;
+    font-size: 12px;
+    justify-content: space-between;
+    gap: 20px;
 
-    .progress {
-        position: relative;
-        width: 200px;
-        height: 25px;
-        border-radius: 10px;
-        background-color: transparent;
-        border: 1px solid var(--primary-color);
+    .container-top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 20px;
 
-        .progress-bar {
-            background-color: var(--primary-color);
+        h4 {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+        }
 
-            span {
-                font-size: 12px;
+        .section-this-month-objective {
+            width: 100%;
+            border: 1px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+
+            hr {
+                margin: 0;
+                height: 1px;
+                background-color: var(--primary-color);
+                border: none;
+            }
+
+            div {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px;
+
+                span {
+                    display: block;
+                    font-size: 12px;
+                }
             }
         }
+
+        .section-achievement-rate {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            .progress {
+                position: relative;
+                width: 200px;
+                height: 25px;
+                border-radius: 10px;
+                background-color: transparent;
+                border: 1px solid var(--primary-color);
+
+                .progress-bar {
+                    background-color: var(--primary-color);
+
+                    span {
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+    }
+
+    .container-bottom {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+
+        section {
+
+        }
+
+        button {
+            width: 55px;
+            height: 30px;
+            border-radius: 10px;
+            border: 1px solid var(--primary-color);
+            font-size: 16px;
+        }
+    }
+
+
+    .chart-container {
+        width: 400px;
+        height: auto;
+        margin: 0;
     }
 }
