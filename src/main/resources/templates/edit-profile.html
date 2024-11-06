@@ -15,19 +15,38 @@
             <button class="image-btn">이미지 변경</button>
         </div>
         <div class="profile-form">
-            <label><span>닉네임</span> <input placeholder="오르미" type="text">
-                <button class="check-btn">중복 확인</button>
+            <label>
+                <span>닉네임</span>
+                <input id="nickname" th:placeholder="${user.nickname}" th:value="${user.nickname}" type="text">
+                <button class="check-btn" onclick="checkNickname()">중복 확인</button>
             </label>
-            <label><span>이메일</span> <input placeholder="oremi6@kakao.com" readonly type="email"></label>
-            <label><span>등급</span> <input placeholder="씨앗" readonly type="text"></label>
-            <label><span>한줄 소개</span> <textarea placeholder="안녕하세요 오르미 6기입니다"></textarea></label>
-            <label><span>링크</span> <input placeholder="http://example.com" type="text"></label>
+            <label>
+                <span>이메일</span>
+                <input id="email" readonly th:placeholder="oremi6@kakao.com" th:value="${user.email}" type="email">
+            </label>
+            <label>
+                <span>등급</span>
+                <input id="level" readonly th:placeholder="씨앗" th:value="${user.level}" type="text">
+            </label>
+            <label>
+                <span>한줄 소개</span>
+                <textarea id="selfIntro" th:placeholder="안녕하세요 오르미 6기입니다"
+                          th:text="${user.selfIntro}"></textarea>
+            </label>
+            <label>
+                <span>링크</span>
+                <input id="snsLink" th:placeholder="${user.snsLink}" th:value="${user.snsLink}" type="text">
+            </label>
         </div>
     </div>
     <div class="btn-group">
-        <button class="save-btn">저장</button>
-        <button class="cancel-btn">취소</button>
+        <button class="save-btn" onclick="saveProfile()">저장</button>
+        <button class="cancel-btn" onclick="cancelEdit()">취소</button>
     </div>
 </div>
+<script>
+    const userId = [[${user.userId}]];
+</script>
+<script src="/static/js/edit-profile.js"></script>
 </body>
 </html>

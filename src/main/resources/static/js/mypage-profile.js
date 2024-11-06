@@ -1,5 +1,3 @@
-session.setAttribute("userId", user.getUserId());
-
 function enableEdit() {
     // 수정 가능한 입력 필드 생성
     document.querySelector('.profile-info').innerHTML = `
