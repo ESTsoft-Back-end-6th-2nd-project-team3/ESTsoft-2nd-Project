@@ -64,8 +64,9 @@ public class CommentApiController {
 	}
 
 	@DeleteMapping("/comment/{commentId}")
-	public String deleteComment() {
-		return "comment";
+	public ResponseEntity<Void> deleteComment(@PathVariable(name = "commentId") Long commentId) {
+		commentService.deleteComment(commentId);
+		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/comment/{commentId}/like")

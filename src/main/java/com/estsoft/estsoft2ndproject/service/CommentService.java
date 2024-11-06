@@ -55,4 +55,11 @@ public class CommentService {
 		comment.setContent(commentRequestDTO.getContent());
 		return commentRepository.save(comment);
 	}
+
+	@Transactional
+	public void deleteComment(Long commentId) {
+		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+		comment.setIsActive(false);
+		commentRepository.save(comment);
+	}
 }
