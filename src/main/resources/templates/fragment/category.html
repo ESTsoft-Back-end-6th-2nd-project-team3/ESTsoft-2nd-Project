@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리</title>
+    <link href="/css/reset.css" rel="stylesheet">
+    <link href="/css/base.css" rel="stylesheet">
+</head>
+<body>
+<article id="category" class="container">
+    <div class="category-title">카테고리</div>
+    <div class="divider"></div>
+    <div class="item-container">
+        <div th:each="item : ${regions}">
+            <a th:href="@{/post/category/{id}(id=${targetId})}"
+               th:text="${item.name}">카테고리 내역</a>
+        </div>
+    </div>
+</article>
+</body>
+</html>
