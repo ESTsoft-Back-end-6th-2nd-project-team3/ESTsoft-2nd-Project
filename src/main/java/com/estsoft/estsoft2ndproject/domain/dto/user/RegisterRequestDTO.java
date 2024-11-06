@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequest {
+public class RegisterRequestDTO {
 	private String nickname;
 	private String profileImageUrl;
 	private String selfIntro;

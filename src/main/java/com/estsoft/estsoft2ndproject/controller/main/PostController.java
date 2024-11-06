@@ -41,7 +41,7 @@ public class PostController {
 	}
 
 	@GetMapping("/{postId}")
-	public String getPost(@PathVariable Long postId, Model model) {
+	public String getPost(@PathVariable(name = "postId") Long postId, Model model) {
 		Post post = postService.getPostById(postId);
 		model.addAttribute("post", post);
 		model.addAttribute("PostType", PostType.valueOf(post.getPostType()).getKoreanName());
@@ -50,7 +50,7 @@ public class PostController {
 	}
 
 	@GetMapping("/category/{targetId}")
-	public String getCategory(@RequestParam String postType, @PathVariable Long targetId, Model model) {
+	public String getCategory(@RequestParam String postType, @PathVariable(name = "targetId") Long targetId, Model model) {
 		List<Post> postList = postService.getPostsByCategory(postType, targetId);
 		String category = postService.getCategoryByPostType(postType, targetId);
 		model.addAttribute("posts", postList);

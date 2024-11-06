@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="max-w-md mx-auto mt-10 bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-2xl font-bold mb-6">추가 정보 입력</h2>
+    <form class="space-y-4" id="registerForm">
+        <div>
+            <label class="block text-gray-700" for="content">소셜 링크</label>
+            <input class="w-full px-4 py-2 border rounded-lg" id="content" name="content" type="text">
+        </div>
+
+        <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600" onclick="submitForm()" type="button">
+            댓글 작성
+        </button>
+    </form>
+</div>
+
+<script>
+    function submitForm() {
+        $.ajax({
+            type: 'POST',
+            url: '/api/post/8/comment',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                content: $("#content").val(),
+            }),
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+</body>
+</html>
