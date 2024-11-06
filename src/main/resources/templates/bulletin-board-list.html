@@ -24,47 +24,44 @@
         <tr th:each="post, iterStat : ${postList}">
             <td th:text="${iterStat.index + 1}">1</td>
             <td th:text="${post.title}">제목</td>
-            <td>추천수</td>
-            <td th:text="${post.likeCount}"></td>
+            <td th:text="${post.likeCount}">추천수</td>
             <td th:text="${post.nickname}">닉네임</td>
             <td th:text="${post.viewCount}">조회수</td>
-            <td th:text="${post.createdAt}">날짜</td>
+            <td th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd')}">날짜</td>
         </tr>
         </tbody>
     </table>
 
     <div class="board-footer">
-        <select class="sort-select">
-            <option>최신순</option>
-            <option>조회순</option>
-            <option>추천순</option>
+        <select class="sort-select" onchange="sortPosts(this.value)">
+            <option value="latest">최신순</option>
+            <option value="views">조회순</option>
+            <option value="likes">추천순</option>
         </select>
         <div class="pagination-container">
-            <button class="prev-btn">< 처음</button>
+            <button class="prev-btn" onclick="changePage('prev')" th:if="${currentPage > 1}">< 처음</button>
             <div class="pagination">
-                <a href="?page=1">1</a>
-                <a href="?page=2">2</a>
-                <a href="?page=3">3</a>
-                <a href="?page=4">4</a>
-                <a href="?page=5">5</a>
-                <a href="?page=6">6</a>
-                <a href="?page=7">7</a>
-                <a href="?page=8">8</a>
-                <a href="?page=9">9</a>
+                <a th:classappend="${pageNum == currentPage ? 'active' : ''}"
+                   th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                   th:href="@{'?page=' + ${pageNum}}"
+                   th:text="${pageNum}">1</a>
             </div>
-            <button class="next-btn">다음 ></button>
+            <button class="next-btn" onclick="changePage('next')" th:if="${currentPage < totalPages}">다음 ></button>
         </div>
-        <button class="write-btn">글쓰기</button>
+
+        <button class="write-btn" onclick="goToWritePage()">글쓰기</button>
     </div>
 
     <div class="search-box">
-        <select>
-            <option> 제목 검색</option>
-            <option> 작성자 검색</option>
+        <select id="searchType">
+            <option value="title">제목 검색</option>
+            <option value="author">작성자 검색</option>
         </select>
-        <input placeholder=" 검색어를 입력하세요" type="text">
-        <button>검색</button>
+        <input id="searchQuery" placeholder=" 검색어를 입력하세요" type="text">
+        <button onclick="searchPosts()">검색</button>
     </div>
 </div>
+
+<script src="/static/js/bulletin-board.js"></script>
 </body>
 </html>
