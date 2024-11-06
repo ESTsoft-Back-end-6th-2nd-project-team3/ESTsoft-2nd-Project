@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.estsoft.estsoft2ndproject.domain.Comment;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentResponseDTO;
 import com.estsoft.estsoft2ndproject.service.CommentService;
@@ -57,8 +58,9 @@ public class CommentApiController {
 	}
 
 	@PutMapping("/comment/{commentId}")
-	public String updateComment() {
-		return "comment";
+	public ResponseEntity<CommentResponseDTO> updateComment(@PathVariable(name = "commentId") Long commentId, CommentRequestDTO commentRequestDTO) {
+		Comment comment = commentService.updateComment(commentId, commentRequestDTO);
+		return ResponseEntity.ok(new CommentResponseDTO(comment));
 	}
 
 	@DeleteMapping("/comment/{commentId}")

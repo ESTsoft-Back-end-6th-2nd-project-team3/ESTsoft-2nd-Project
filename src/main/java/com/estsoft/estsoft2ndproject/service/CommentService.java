@@ -48,4 +48,11 @@ public class CommentService {
 
 		return commentRepository.save(commentRequestDTO.toEntity(post, user, parentComment));
 	}
+
+	@Transactional
+	public Comment updateComment(Long commentId, CommentRequestDTO commentRequestDTO) {
+		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+		comment.setContent(commentRequestDTO.getContent());
+		return commentRepository.save(comment);
+	}
 }
