@@ -19,6 +19,6 @@ public class Category {
 	@Column(name = "category_id")
 	private Long id;
 
-	@Column(name = "name", columnDefinition = "VARCHAR(255)", nullable = false)
+	@Column(name = "name", columnDefinition = "VARCHAR(255)", nullable = false, unique = true)
 	private String name;
 }
