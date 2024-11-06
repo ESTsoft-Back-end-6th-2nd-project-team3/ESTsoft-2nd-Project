@@ -11,8 +11,12 @@
     <h2 class="text-2xl font-bold mb-6">추가 정보 입력</h2>
     <form class="space-y-4" id="registerForm">
         <div>
-            <label class="block text-gray-700" for="content">소셜 링크</label>
+            <label class="block text-gray-700" for="content">댓글 내용</label>
             <input class="w-full px-4 py-2 border rounded-lg" id="content" name="content" type="text">
+        </div>
+        <div>
+            <label class="block text-gray-700" for="parent-comment">부모 댓글</label>
+            <input class="w-full px-4 py-2 border rounded-lg" id="parent-comment" name="parent-comment" type="text">
         </div>
 
         <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600" onclick="submitForm()" type="button">
@@ -23,9 +27,17 @@
 
 <script>
     function submitForm() {
+        let url = '/api/post/8/comment';
+
+        let parentComment = $("#parent-comment").val();
+
+        if (parentComment) {
+            url += '/' + parentComment;
+        }
+
         $.ajax({
             type: 'POST',
-            url: '/api/post/8/comment',
+            url: url,
             contentType: 'application/json',
             data: JSON.stringify({
                 content: $("#content").val(),
