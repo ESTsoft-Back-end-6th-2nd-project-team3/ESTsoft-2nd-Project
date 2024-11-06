@@ -1,5 +1,4 @@
 function sortPosts(sortType) {
-    // 정렬 방식에 따라 URL을 변경하여 페이지 다시 로드
     const url = new URL(window.location.href);
     url.searchParams.set('sort', sortType);
     window.location.href = url.toString();
@@ -23,8 +22,8 @@ function changePage(direction) {
 
 
 function searchPosts() {
-    const searchType = document.getElementById('searchType').value;
-    const searchQuery = document.getElementById('searchQuery').value;
+    const searchType = document.querySelector('.admin-controls select').value;
+    const searchQuery = document.querySelector('.admin-controls input[type="text"]').value;
 
     if (searchQuery.trim() === "") {
         alert("검색어를 입력하세요.");
@@ -41,3 +40,23 @@ function goToWritePage() {
     // 글쓰기 페이지로 이동
     window.location.href = '/write';
 }
+
+function searchPosts() {
+    const searchType = document.querySelector('select[name="searchType"]').value;
+    const postType = document.querySelector('select[name="post_type"]').value;
+    const targetId = document.querySelector('select[name="target_id"]').value;
+    const isActive = document.querySelector('select[name="isActive"]').value;
+    const searchQuery = document.querySelector('input[name="searchQuery"]').value;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set("searchType", searchType);
+    url.searchParams.set("postType", postType);
+    url.searchParams.set("targetId", targetId);
+    url.searchParams.set("isActive", isActive);
+    url.searchParams.set("searchQuery", searchQuery);
+
+    window.location.href = url.toString();
+}
+
+
+

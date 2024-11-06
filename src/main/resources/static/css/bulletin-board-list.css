@@ -158,9 +158,10 @@ body {
     width: 256px;
     height: 100%;
     border: none;
-    font-size: 13px;
+    font-size: 16px;
     border-left: 3px solid #3d5c30;
     border-right: 3px solid #3d5c30;
+    text-align: center;
 }
 
 .board-container button {
@@ -184,5 +185,45 @@ body {
     cursor: pointer;
     font-size: 14px;
 }
+
+.admin-controls {
+    width: 763px;
+    height: 30px;
+    border: 3px solid #3d5c30;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    overflow: hidden;
+}
+
+.admin-controls select,
+.admin-controls input[type="text"],
+.admin-controls button {
+    height: 100%;
+    padding: 5px;
+    border: none;
+    border-right: 3px solid #3d5c30;
+    outline: none;
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+}
+
+/*.admin-controls select {*/
+/*    padding-right: 10px;*/
+/*}*/
+
+.admin-controls input[type="text"]:last-child,
+.admin-controls select:last-child,
+.admin-controls button:last-child {
+    border-right: none;
+}
+
+.search-input {
+    width: 256px;
+}
+
 
 
