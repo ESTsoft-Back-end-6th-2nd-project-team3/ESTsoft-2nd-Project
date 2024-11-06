@@ -11,6 +11,12 @@ import com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
+	List<Post> findAllByIsActiveTrue();
+
+	List<Post> findByPostTypeAndTargetIdAndIsActiveTrue(String postType, Long targetId);
+
+	List<Post> findByPostTypeAndIsActiveTrue(String postType);
+
 	@Query(
 		"SELECT new com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse(p.postId, c.name, p.title, COUNT(cmt), u.nickname, p.viewCount, p.likeCount, p.createdAt, p.isActive) "
 			+
