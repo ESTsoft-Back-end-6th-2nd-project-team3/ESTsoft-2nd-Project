@@ -20,8 +20,7 @@ function changePage(direction) {
     window.location.href = url.toString();
 }
 
-
-function searchPosts() {
+function searchUserPosts() {
     const searchType = document.querySelector('.admin-controls select').value;
     const searchQuery = document.querySelector('.admin-controls input[type="text"]').value;
 
@@ -41,7 +40,7 @@ function goToWritePage() {
     window.location.href = '/write';
 }
 
-function searchPosts() {
+function searchAdminPosts() {
     const searchType = document.querySelector('select[name="searchType"]').value;
     const postType = document.querySelector('select[name="post_type"]').value;
     const targetId = document.querySelector('select[name="target_id"]').value;
