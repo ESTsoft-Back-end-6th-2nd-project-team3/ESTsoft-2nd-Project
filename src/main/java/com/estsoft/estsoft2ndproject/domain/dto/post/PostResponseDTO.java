@@ -7,8 +7,10 @@ import com.estsoft.estsoft2ndproject.domain.User;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class PostResponseDTO {
 	private Long postId;
@@ -22,6 +24,7 @@ public class PostResponseDTO {
 	private Boolean isActive;
 	private Integer viewCount;
 	private Integer likeCount;
+	private Boolean isLiked;
 
 	public PostResponseDTO(Post post) {
 		User user = post.getUser();
