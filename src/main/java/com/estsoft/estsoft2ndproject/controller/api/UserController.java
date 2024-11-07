@@ -26,12 +26,12 @@ public class UserController {
 
 	@GetMapping("/member/login")
 	public String login() {
-		return "login";
+		return "testHtml/login";
 	}
 
 	@GetMapping("/member")
 	public String index() {
-		return "test-index";
+		return "testHtml/test-index";
 	}
 
 	@GetMapping("/userData")
@@ -52,7 +52,7 @@ public class UserController {
 		model.addAttribute("nickname", nickname);
 		model.addAttribute("profileImageUrl", profileImageUrl);
 
-		return "register";
+		return "testHtml/register";
 	}
 
 	@PostMapping("/member/register")

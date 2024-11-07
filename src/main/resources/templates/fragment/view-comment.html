@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/css/reset.css" rel="stylesheet">
+    <link href="/css/base.css" rel="stylesheet">
+</head>
+<body>
+<article id="view-comment">
+    <h3>댓글: [(${commentCount})]개</h3>
+    <section class="container">
+        <h4 class="blind">댓글 리스트</h4>
+        <div class="comment" th:attr="data-comment-id=${comment.commentId}" th:each="comment : ${comments}" th:if="${comment.parentCommentId == null}">
+            <div class="parent-comment comments-container">
+                <img th:alt="${comment.profileImageUrl}" th:src="${comment.profileImageUrl}">
+                <div>
+                    <div class="top-container">
+                        <div>
+                            <span class="nickname" th:text="${comment.nickname}">닉네임</span>
+                            <button class="like-count">추천: [(${comment.likeCount})]</button>
+                        </div>
+                        <span class="updated-at" th:text="${#dates.format(comment.updatedAt, 'yyyy/MM/dd HH:mm:ss')}">수정 시간</span>
+                    </div>
+                    <span class="content" th:text="${comment.content}">댓글 내용</span>
+                    <div class="bottom-container">
+                        <button class="reply-button" onclick="replyToComment(${comment.commentId})" type="button">답글</button>
+                        <button class="edit-button" onclick="editComment(${comment.commentId})" th:if="${comment.userId == userId}" type="button">수정</button>
+                        <button class="delete-button" onclick="deleteComment(${comment.commentId})" th:if="${comment.userId == userId}" type="button">삭제</button>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="child-comment" th:each="reply : ${comments}" th:if="${reply.parentCommentId == comment.commentId}">
+                <div class="comments-container">
+                    <img th:alt="${reply.profileImageUrl}" th:src="${reply.profileImageUrl}">
+                    <div>
+                        <div class="top-container">
+                            <div>
+                                <span class="nickname" th:text="${reply.nickname}">닉네임</span>
+                                <button class="like-count">추천: [(${reply.likeCount})]</button>
+                            </div>
+                            <span class="updated-at" th:text="${#dates.format(reply.updatedAt, 'yyyy/MM/dd HH:mm:ss')}">수정 시간</span>
+                        </div>
+                        <span class="content" th:text="${reply.content}">댓글 내용</span>
+                        <div class="bottom-container">
+                            <button class="edit-button" onclick="editComment(${reply.commentId})" th:if="${reply.userId == userId}" type="button">수정</button>
+                            <button class="delete-button" onclick="deleteComment(${reply.commentId})" th:if="${reply.userId == userId}" type="button">삭제</button>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </section>
+</article>
+<div class="comment-write-frame" id="comment-write-container">
+    <div class="comment-write">
+        <label>
+            <textarea class="comment-text-box" placeholder="댓글을 남겨보세요"></textarea>
+        </label>
+        <div class="button-group">
+            <button class="cancel-button" type="button">취소</button>
+            <button class="submit-button" type="button">댓글 달기</button>
+        </div>
+    </div>
+</div>
+<script>
+    let replyTargetId = null;
+
+    // 답글 버튼 클릭 시
+    function replyToComment(commentId) {
+        replyTargetId = commentId;
+        const commentWriteContainer = document.getElementById("comment-write-container");
+        const targetComment = document.querySelector(`[data-comment-id="${commentId}"]`);
+        targetComment.appendChild(commentWriteContainer); // 답글 입력 필드 이동
+    }
+
+    // 댓글 달기
+    function submitComment() {
+        const content = document.querySelector(".comment-text-box").value;
+        const payload = {
+            content: content,
+            parentCommentId: replyTargetId
+        };
+
+        // 서버에 댓글 데이터 전송 (AJAX 또는 Fetch API 사용)
+        fetch("/comments", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        }).then(response => {
+            if (response.ok) {
+                location.reload(); // 새로고침하여 댓글 목록 갱신
+            }
+        });
+    }
+
+    // 댓글 수정
+    function editComment(commentId) {
+        const content = prompt("댓글을 수정하세요:");
+        if (content) {
+            // 서버에 수정된 댓글 데이터 전송
+            fetch(`/comments/${commentId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({content})
+            }).then(response => {
+                if (response.ok) {
+                    location.reload(); // 새로고침하여 댓글 목록 갱신
+                }
+            });
+        }
+    }
+
+    // 댓글 삭제
+    function deleteComment(commentId) {
+        if (confirm("댓글을 삭제하시겠습니까?")) {
+            fetch(`/comments/${commentId}`, {
+                method: "DELETE"
+            }).then(response => {
+                if (response.ok) {
+                    location.reload(); // 새로고침하여 댓글 목록 갱신
+                }
+            });
+        }
+    }
+
+    // 답글 취소
+    function cancelReply() {
+        replyTargetId = null;
+        document.getElementById("view-comment").appendChild(document.getElementById("comment-write-container"));
+    }
+</script>
+</body>
+</html>
