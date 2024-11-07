@@ -1,0 +1,24 @@
+### 회원 목록 조회 (GET /admin/users)
+GET http://localhost:8080/admin/users
+Content-Type: application/json
+
+### 회원 등급 수정 (PUT /admin/user/{user_id})
+PUT http://localhost:8080/admin/user/1
+Content-Type: application/json
+
+{
+  "newLevel": "성목"
+}
+
+### 게시글 목록 조회 (POST /admin/posts)
+POST http://localhost:8080/admin/posts
+Content-Type: application/json
+
+### 카테고리 수정 (PUT /admin/category)
+PUT http://localhost:8080/admin/category?postId=1
+Content-Type: application/json
+
+{
+  "newCategory": "공부"
+}
+

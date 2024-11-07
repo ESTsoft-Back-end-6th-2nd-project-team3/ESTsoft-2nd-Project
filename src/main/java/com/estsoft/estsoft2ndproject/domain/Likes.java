@@ -1,17 +1,21 @@
 package com.estsoft.estsoft2ndproject.domain;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import java.sql.Timestamp;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Timestamp;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "LIKES")
+@EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 public class Likes {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +35,10 @@ public class Likes {
 	@Column(name = "created_at", nullable = false, updatable = false)
 	@CreatedDate
 	private Timestamp createdAt;
+
+	public Likes(String likeType, Long targetId, User user) {
+		this.likeType = likeType;
+		this.targetId = targetId;
+		this.user = user;
+	}
 }
