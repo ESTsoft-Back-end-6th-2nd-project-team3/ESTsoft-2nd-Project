@@ -143,4 +143,16 @@ public class UserService extends DefaultOAuth2UserService {
 
 		userRepository.save(userEntity);
 	}
+
+	public Long getUserId(OAuth2User oAuth2User) {
+		return userRepository.findByPii(oAuth2User.getName()).getUserId();
+	}
+
+	public User getUser(OAuth2User oAuth2User) {
+		return userRepository.findByPii(oAuth2User.getName());
+	}
+
+	public User getUserById(Long userId) {
+		return userRepository.findById(userId).orElse(null);
+	}
 }
