@@ -7,4 +7,5 @@ import com.estsoft.estsoft2ndproject.domain.Likes;
 
 @Repository
 public interface LikesRepository extends JpaRepository<Likes, Long> {
+	Likes findByTargetIdAndUser_UserId(Long targetId, Long userId);
 }
