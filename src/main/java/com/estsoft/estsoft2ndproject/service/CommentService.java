@@ -62,4 +62,9 @@ public class CommentService {
 		comment.setIsActive(false);
 		commentRepository.save(comment);
 	}
+
+	public Integer getCommentCountByPostId(Long postId) {
+		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+		return commentRepository.countByPost(post);
+	}
 }

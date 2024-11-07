@@ -330,3 +330,115 @@ body * {
         margin: 0;
     }
 }
+
+#view-comment {
+    width: 800px;
+    border: 1px solid var(--primary-color);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    line-height: 100%;
+    font-size: 12px;
+
+    h3 {
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 100%;
+    }
+
+    .container {
+        margin-top: 50px;
+
+        hr {
+            margin: 0;
+            height: 1px;
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+        .comment {
+            display: flex;
+            flex-direction: column;
+
+            .comments-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 20px 0;
+
+                img {
+                    width: 64px;
+                    height: 64px;
+                }
+
+                & > div {
+                    margin-left: 20px;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+
+                    .top-container {
+                        height: 32px;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        align-content: center;
+
+                        div {
+                            display: flex;
+                            align-items: center;
+
+                            .nickname {
+                                font-size: 14px;
+                                line-height: 100%;
+                            }
+
+                            .like-count {
+                                height: 28px;
+                                line-height: 100%;
+                                display: flex;
+                                align-items: center;
+                                margin-left: 15px;
+                                padding: 0 5px;
+                                border: 1px solid var(--primary-color);
+                                border-radius: 10px;
+                            }
+                        }
+
+                        .updated-at {
+                            font-size: 12px;
+                            line-height: 100%;
+                            align-content: center;
+                        }
+                    }
+
+                    .content {
+                        font-size: 16px;
+                        line-height: 200%;
+                        font-weight: bold;
+                        margin-top: 10px;
+                    }
+
+                    .bottom-container {
+                        height: 18px;
+                        margin-top: 20px;
+                        display: flex;
+                        flex-direction: row;
+                        gap: 10px;
+                        font-size: 14px;
+                        line-height: 100%;
+                    }
+                }
+            }
+
+            .parent-comment {
+            }
+
+            .child-comment .comments-container {
+                margin-left: 60px;
+            }
+        }
+    }
+
+}
