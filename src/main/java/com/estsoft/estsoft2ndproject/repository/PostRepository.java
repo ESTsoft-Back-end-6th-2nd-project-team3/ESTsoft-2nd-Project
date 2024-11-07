@@ -14,4 +14,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findAllByIsActiveTrue();
 	List<Post> findByPostTypeAndTargetIdAndIsActiveTrue(String postType, Long targetId);
 	List<Post> findByPostTypeAndIsActiveTrue(String postType);
+	List<Post> findByUser_UserId(Long userId);
 }
