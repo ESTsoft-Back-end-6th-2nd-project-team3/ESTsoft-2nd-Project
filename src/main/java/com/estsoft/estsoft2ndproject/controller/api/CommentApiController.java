@@ -83,7 +83,7 @@ public class CommentApiController {
 
 	@GetMapping("/comment")
 	public String commentTest() {
-		return "comment-test";
+		return "testHtml/comment-test";
 	}
 
 	@GetMapping("/{postId}/comments")
