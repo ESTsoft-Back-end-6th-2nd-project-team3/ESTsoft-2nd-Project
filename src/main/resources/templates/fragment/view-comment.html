@@ -20,7 +20,7 @@
                             <span class="nickname" th:text="${comment.nickname}">닉네임</span>
                             <button class="like-count">추천: [(${comment.likeCount})]</button>
                         </div>
-                        <span class="updated-at" th:text="${comment.updatedAt}">수정 시간</span>
+                        <span class="updated-at" th:text="${#dates.format(comment.updatedAt, 'yyyy/MM/dd HH:mm:ss')}">수정 시간</span>
                     </div>
                     <span class="content" th:text="${comment.content}">댓글 내용</span>
                     <div class="bottom-container">
@@ -38,9 +38,9 @@
                         <div class="top-container">
                             <div>
                                 <span class="nickname" th:text="${reply.nickname}">닉네임</span>
-                                <button class="like-count">추천: [(${comment.likeCount})]</button>
+                                <button class="like-count">추천: [(${reply.likeCount})]</button>
                             </div>
-                            <span class="updated-at" th:text="${reply.updatedAt}">수정 시간</span>
+                            <span class="updated-at" th:text="${#dates.format(reply.updatedAt, 'yyyy/MM/dd HH:mm:ss')}">수정 시간</span>
                         </div>
                         <span class="content" th:text="${reply.content}">댓글 내용</span>
                         <div class="bottom-container">
