@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 상세 조회</title>
+    <link href="/css/reset.css" rel="stylesheet">
+    <link href="/css/base.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+</head>
+<body>
+<article id="view-post" class="container">
+    <input type="hidden" id="post-id" th:value="${post.postId}">
+    <input type="hidden" id="user-id" th:value="${userId}">
+    <h1 class="post-title" th:text="${post.title}">게시글 제목</h1>
+    <div class="post-info">
+        <div class="left-info">
+            <span class="author">작성자</span>
+            <span class="separator">|</span>
+            <span class="comment-count">댓글수</span>
+            <span class="view-count" th:text="|조회수: ${post.viewCount}|">조회수</span>
+        </div>
+        <div class="right-info">
+            <span class="edit-time" th:text="|수정 시각: ${#dates.format(post.updatedAt, 'yyyy-MM-dd HH:mm')}|">수정 시각</span>
+        </div>
+    </div>
+
+    <div class="post-content" th:text="${post.content}">
+        게시글 내용이 여기에 표시됩니다.
+    </div>
+
+    <div class="action-buttons">
+        <button type="button" class="button modify-button" id="modify-button">수정</button>
+        <button type="button" class="button delete-button" id="delete-button">삭제</button>
+    </div>
+
+    <button type="button" id="like-button" onclick="toggleLike()">
+        <span th:text="${isLiked ? '좋아요 취소' : '좋아요'}" id="like-text">좋아요</span>
+        <span th:text="${post.likeCount}" id="like-count">0</span>
+    </button>
+</article>
+<script>
+
+    const modifyButton = document.getElementById("modify-button");
+    console.log(modifyButton);
+    console.log("postId = " + document.getElementById("post-id").value)
+
+    if (modifyButton) {
+        modifyButton.addEventListener('click', event => {
+            const postId = document.getElementById("post-id").value;
+            console.log(postId);
+            console.log(`/post/create?postId=${postId}`);
+
+            if (postId) {
+                location.href = `/post/create?postId=${postId}`;
+            }
+        });
+    }
+
+    const deleteButton = document.getElementById("delete-button");
+
+    if (deleteButton) {
+        deleteButton.addEventListener('click', event => {
+            let id = document.getElementById('post-id').value;
+            fetch(`/api/post/${id}`, {
+                method: 'DELETE'
+            }).then(() => {
+                alert('삭제가 완료되었습니다');
+                location.replace('/post/posts');
+            })
+                .catch(error => console.error('Error:', error));
+        });
+    }
+
+    function toggleLike() {
+        const targetId = document.getElementById("post-id").value;
+        const userId = document.getElementById("user-id").value;
+        const likeButton = document.getElementById("like-button");
+        const likeText = document.getElementById("like-text");
+        const likeCountElement = document.getElementById("like-count");
+
+        const isLiked = likeButton.textContent.includes("취소");
+        const url = isLiked ? "/api/post/unlike" : "/api/post/like";
+
+        likeButton.disabled = true;
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({targetId, userId}),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    likeText.textContent = isLiked ? "좋아요" : "좋아요 취소";
+                    likeCountElement.textContent = data.likeCount.toString();
+                }
+            })
+            .catch(error => console.error("Error:", error))
+            .finally(() => {
+                likeButton.disabled = false;
+            });
+    }
+</script>
+</body>
+</html>
