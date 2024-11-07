@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>타임리프 레이아웃</title>
+  <link rel="stylesheet" th:href="@{/css/base.css}">
+</head>
+<body>
+<div class="logo" th:src="@{/images/logo.png}"></div>
+<input type="text" class="search-bar" placeholder="검색">
+
+<div class="menu-bar">
+  <div th:each="menu, iterStat : ${subMenus}" style="display: inline-flex; align-items: center;">
+    <div class="menu-item">
+      <span th:text="${menu.title}"></span>
+      <!-- 서브메뉴 -->
+      <div class="submenu">
+        <span class="submenu-item" th:each="item : ${menu.items}" th:text="${item}"></span>
+      </div>
+    </div>
+    <!-- 마지막 메뉴 뒤에는 divider가 나타나지 않게 설정 -->
+    <div class="divider" th:if="${!iterStat.last}"></div>
+  </div>
+</div>
+</body>
+</html>
