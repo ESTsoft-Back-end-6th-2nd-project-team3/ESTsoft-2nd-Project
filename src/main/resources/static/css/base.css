@@ -331,6 +331,155 @@ body * {
     }
 }
 
+#category {
+    width: 380px;
+    height: 320px;
+    padding: 20px;
+    border: 3px solid #0B6623;
+    border-radius: 10px;
+    box-sizing: border-box;
+
+    .category-title {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    .divider {
+        width: 100%;
+        height: 1px;
+        background-color: #0B6623;
+    }
+
+    .item-container {
+        height: 250px;
+        display: flex;
+        flex-flow: column wrap;
+        margin-top: 5px;
+        text-align: center;
+    }
+
+    .item-container a {
+        display: block;
+        margin: 5px 0;
+        font-size: 18px;
+        color: black;
+        box-sizing: border-box;
+    }
+
+    .item-container a:hover {
+        color: #0B6623;
+    }
+}
+
+#edit-objective {
+    width: 800px;
+    height: auto;
+    padding: 20px;
+    border: 3px solid #0B6623;
+    border-radius: 10px;
+    position: relative;
+
+    .objective-title {
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .objective-content {
+        margin: 20px;
+    }
+
+    .box {
+        border: 3px solid #0B6623;
+        border-radius: 10px;
+    }
+
+    .button {
+        width: 55px;
+        height: 30px;
+        border: 3px solid #0B6623;
+        border-radius: 10px;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .header {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .label {
+        font-size: 18px;
+    }
+
+    .label-date {
+        margin-right: 125px;
+    }
+
+    .add-button {
+        margin: 0 300px 0 15px;
+    }
+
+    .objective-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .objective-input {
+        width: 380px;
+        height: 30px;
+        margin-right: 27px;
+        font-size: 16px;
+    }
+
+    .date-input {
+        width: 102px;
+        height: 30px;
+        margin-right: 27px;
+    }
+
+    .checkbox {
+        margin-left: 53px;
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border: 3px solid #0B6623;
+        position: relative;
+        appearance: none;
+        cursor: pointer;
+    }
+
+    .checkbox:checked::after {
+        content: '✔';
+        font-size: 22px;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: rotate(-20deg);
+    }
+
+    .action-buttons {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        justify-content: center;
+    }
+
+    .action-buttons .button{
+        width: 90px;
+        margin: 10px;
+    }
+}
+
 #edit-profile {
     width: 800px;
     height: 797px;
