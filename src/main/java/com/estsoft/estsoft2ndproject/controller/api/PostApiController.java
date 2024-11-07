@@ -32,7 +32,7 @@ public class PostApiController {
 
 	@PostMapping("/{userId}/create")
 	public ResponseEntity<Map<String, Long>> createPost(@RequestBody PostRequestDTO postRequestDTO,
-		@PathVariable(name = "userId") Long userId) {
+		@PathVariable Long userId) {
 		Post post = postService.createPost(postRequestDTO, userId);
 		Map<String, Long> response = new HashMap<>();
 		response.put("postId", post.getPostId()); // 생성된 postId를 JSON 응답으로 반환
@@ -40,13 +40,13 @@ public class PostApiController {
 	}
 
 	@GetMapping("/{postId}")
-	public ResponseEntity<PostResponseDTO> getPost(@PathVariable(name = "postId") Long postId) {
+	public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long postId) {
 		Post post = postService.getPostById(postId);
 		return ResponseEntity.ok(new PostResponseDTO(post));
 	}
 
 	@PutMapping("/{postId}")
-	public ResponseEntity<PostResponseDTO> updatePost(@PathVariable(name = "postId") Long postId,
+	public ResponseEntity<PostResponseDTO> updatePost(@PathVariable Long postId,
 		@RequestBody PostRequestDTO postRequestDTO) {
 		Post post = postService.updatePost(postId, postRequestDTO);
 		return ResponseEntity.ok(new PostResponseDTO(post));
@@ -54,7 +54,7 @@ public class PostApiController {
 
 	@PostMapping("/category/{targetId}")
 	public ResponseEntity<List<PostResponseDTO>> getPostsByCategory(@RequestParam String postType,
-		@PathVariable(name = "targetId") Long targetId) {
+		@PathVariable Long targetId) {
 		List<PostResponseDTO> PostResponseDTOList = postService.getPostsByCategory(postType, targetId).stream()
 			.map(PostResponseDTO::new)
 			.toList();
@@ -62,7 +62,7 @@ public class PostApiController {
 	}
 
 	@DeleteMapping("/{postId}")
-	public ResponseEntity<PostResponseDTO> deletePost(@PathVariable(name = "postId") Long postId) {
+	public ResponseEntity<PostResponseDTO> deletePost(@PathVariable Long postId) {
 		postService.deletePost(postId);
 		return ResponseEntity.ok().build();
 	}
