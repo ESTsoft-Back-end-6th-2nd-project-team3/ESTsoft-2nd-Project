@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.estsoft.estsoft2ndproject.domain.Category;
+import com.estsoft.estsoft2ndproject.domain.Likes;
 import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.PostType;
 import com.estsoft.estsoft2ndproject.domain.Region;
@@ -13,6 +14,7 @@ import com.estsoft.estsoft2ndproject.domain.dto.post.PostRequestDTO;
 import com.estsoft.estsoft2ndproject.exception.PostNotFoundException;
 import com.estsoft.estsoft2ndproject.exception.UserNotFoundException;
 import com.estsoft.estsoft2ndproject.repository.CategoryRepository;
+import com.estsoft.estsoft2ndproject.repository.LikesRepository;
 import com.estsoft.estsoft2ndproject.repository.PostRepository;
 import com.estsoft.estsoft2ndproject.repository.RegionRepository;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
@@ -26,13 +28,15 @@ public class PostService {
 	private final UserRepository userRepository;
 	private final CategoryRepository categoryRepository;
 	private final RegionRepository regionRepository;
+	private final LikesRepository likesRepository;
 
 	public PostService(PostRepository postRepository, UserRepository userRepository,
-		CategoryRepository categoryRepository, RegionRepository regionRepository) {
+		CategoryRepository categoryRepository, RegionRepository regionRepository, LikesRepository likesRepository) {
 		this.postRepository = postRepository;
 		this.userRepository = userRepository;
 		this.categoryRepository = categoryRepository;
 		this.regionRepository = regionRepository;
+		this.likesRepository = likesRepository;
 	}
 
 	@Transactional
@@ -44,10 +48,7 @@ public class PostService {
 
 	@Transactional
 	public Post getPostById(Long postId) {
-		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
-		post.setViewCount(post.getViewCount() + 1);
-		postRepository.save(post);
-		return post;
+		return postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 	}
 
 	public Post updatePost(Long postId, PostRequestDTO postRequestDTO) {
@@ -87,7 +88,8 @@ public class PostService {
 		try {
 			PostType postTypeEnum = PostType.valueOf(postType);
 			return switch (postTypeEnum) {
-				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION -> postRepository.findByPostTypeAndTargetIdAndIsActiveTrue(postType, targetId);
+				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION ->
+					postRepository.findByPostTypeAndTargetIdAndIsActiveTrue(postType, targetId);
 				default -> postRepository.findByPostTypeAndIsActiveTrue(postType);
 			};
 		} catch (IllegalArgumentException e) {
@@ -103,5 +105,39 @@ public class PostService {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 		post.setIsActive(false);
 		postRepository.save(post);
+	}
+
+	public void addViewCount(Long postId) {
+		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+		post.setViewCount(post.getViewCount() + 1);
+		postRepository.save(post);
+	}
+
+	public void Like(Long postId, Long userId) {
+		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+		post.setLikeCount((post.getLikeCount() + 1));
+		postRepository.save(post);
+
+		User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+		Likes likes = new Likes(post.getPostType(), postId, user);
+		likesRepository.save(likes);
+	}
+
+	public void UnLike(Long postId, Long userId) {
+		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+		post.setLikeCount((post.getLikeCount() - 1));
+		postRepository.save(post);
+
+		Likes likes = likesRepository.findByTargetIdAndUser_UserId(postId, userId);
+		likesRepository.delete(likes);
+	}
+
+	public boolean getIsLiked(Long postId, Long userId) {
+		Likes existingLike = likesRepository.findByTargetIdAndUser_UserId(postId, userId);
+		return existingLike != null;
+	}
+
+	public List<Post> searchPostsByKeyword(String keyword) {
+		return postRepository.findByTitleContainingOrContentContaining(keyword, keyword);
 	}
 }

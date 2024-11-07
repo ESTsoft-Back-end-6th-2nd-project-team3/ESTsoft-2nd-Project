@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.estsoft.estsoft2ndproject.domain.Post;
+import com.estsoft.estsoft2ndproject.domain.dto.post.LikeRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.service.PostService;
@@ -35,14 +36,17 @@ public class PostApiController {
 		@PathVariable(name = "userId") Long userId) {
 		Post post = postService.createPost(postRequestDTO, userId);
 		Map<String, Long> response = new HashMap<>();
-		response.put("postId", post.getPostId()); // 생성된 postId를 JSON 응답으로 반환
+		response.put("postId", post.getPostId());
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@GetMapping("/{postId}")
 	public ResponseEntity<PostResponseDTO> getPost(@PathVariable(name = "postId") Long postId) {
 		Post post = postService.getPostById(postId);
-		return ResponseEntity.ok(new PostResponseDTO(post));
+		Boolean isLiked = postService.getIsLiked(postId, 1L);
+		PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+		postResponseDTO.setIsLiked(isLiked);
+		return ResponseEntity.ok(postResponseDTO);
 	}
 
 	@PutMapping("/{postId}")
@@ -65,5 +69,24 @@ public class PostApiController {
 	public ResponseEntity<PostResponseDTO> deletePost(@PathVariable(name = "postId") Long postId) {
 		postService.deletePost(postId);
 		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/like")
+	public ResponseEntity<?> likePost(@RequestBody LikeRequestDTO request) {
+		if (!postService.getIsLiked(request.getTargetId(), request.getUserId())) {
+			postService.Like(request.getTargetId(), request.getUserId());
+		}
+		int likeCount = postService.getPostById(request.getTargetId()).getLikeCount();
+		return ResponseEntity.ok((Map.of("success", true, "likeCount", likeCount)));
+
+	}
+
+	@PostMapping("/unlike")
+	public ResponseEntity<?> unlikePost(@RequestBody LikeRequestDTO request) {
+		if (postService.getIsLiked(request.getTargetId(), request.getUserId())) {
+			postService.UnLike(request.getTargetId(), request.getUserId());
+		}
+		int likeCount = postService.getPostById(request.getTargetId()).getLikeCount();
+		return ResponseEntity.ok((Map.of("success", true, "likeCount", likeCount)));
 	}
 }

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>MyPage Profile</title>
+    <link href="/static/css/reset.css" rel="stylesheet">
+    <link href="/static/css/base.css" rel="stylesheet">
+</head>
+<body>
+<div th:fragment="mypage-profile">
+    <div class="profile-container" id="mypage-profile">
+        <h2 class="profile-title">내 정보</h2>
+        <div class="profile-content">
+            <div class="profile-image">
+                <div class="image-circle"></div>
+            </div>
+            <div class="profile-info">
+                <p>닉네임: <span th:text="${nickname}">nickname</span></p>
+                <p>등급 (활동점수): <span th:text="${level}">level</span></p>
+                <p>한줄 소개: <span th:text="${selfIntro}">selfIntro</span></p>
+                <p>링크: <span th:text="${snsLink}">snsLink</span></p>
+            </div>
+        </div>
+        <button class="edit-btn" onclick="enableEdit()">수정</button>
+    </div>
+</div>
+<script>
+    const userId = [[${user.userId}]];
+</script>
+<script src="/js/mypage-profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="${pageTitle}">Default Title</title>
+    <!-- 공통 스타일 및 CSS -->
+</head>
+<body>
+<header>
+    <!-- 공통 헤더 내용 -->
+    <nav>
+        <!-- 메뉴, 네비게이션 바 -->
+        <ul>
+            <li><a href="/게시글">게시글</a></li>
+            <li><a href="/분석">분석</a></li>
+            <li><a href="/지역 인증 게시물">지역 인증 게시물</a></li>
+            <li><a href="/마이페이지">마이페이지</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <!-- 개별 페이지에서 이 부분에 내용을 채움 -->
+    <section th:fragment="mypage">
+        <!-- 여기에 개별 페이지에서 콘텐츠가 들어갈 자리 -->
+        <div th:replace="mypage.html :: mypageContent"></div>
+    </section>
+</main>
+
+<footer>
+    <!-- 공통 푸터 내용 -->
+    <p>© 2024 Company Name. All rights reserved.</p>
+</footer>
+</body>
+</html>

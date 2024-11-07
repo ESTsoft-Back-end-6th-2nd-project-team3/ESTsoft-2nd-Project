@@ -20,6 +20,11 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+
   security:
     oauth2:
       client:

@@ -34,23 +34,27 @@ public class PostController {
 		} else {
 			Post post = postService.getPostById(postId);
 			model.addAttribute("post", new PostResponseDTO(post));
-			model.addAttribute("selectedPostType", post.getPostType()); // 선택된 postType 값 추가
-			model.addAttribute("selectedCategory", post.getTargetId()); // 선택된 category/region ID 추가
+			model.addAttribute("selectedPostType", post.getPostType());
+			model.addAttribute("selectedCategory", post.getTargetId());
 		}
 		return "post/create-post";
 	}
 
 	@GetMapping("/{postId}")
 	public String getPost(@PathVariable(name = "postId") Long postId, Model model) {
+		postService.addViewCount(postId);
 		Post post = postService.getPostById(postId);
+		Boolean isLiked = postService.getIsLiked(postId, 1L);
 		model.addAttribute("post", post);
+		model.addAttribute("userId", 1);
 		model.addAttribute("PostType", PostType.valueOf(post.getPostType()).getKoreanName());
 		model.addAttribute("Category", postService.getCategoryByPostType(post.getPostType(), post.getTargetId()));
+		model.addAttribute("isLiked", isLiked);
 		return "post/view-post";
 	}
 
 	@GetMapping("/category/{targetId}")
-	public String getCategory(@RequestParam String postType, @PathVariable(name = "targetId") Long targetId, Model model) {
+	public String getCategory(@RequestParam String postType, @PathVariable Long targetId, Model model) {
 		List<Post> postList = postService.getPostsByCategory(postType, targetId);
 		String category = postService.getCategoryByPostType(postType, targetId);
 		model.addAttribute("posts", postList);
@@ -64,5 +68,13 @@ public class PostController {
 		List<Post> postList = postService.getAllPosts();
 		model.addAttribute("posts", postList);
 		return "post/view-post-all";
+	}
+
+	@GetMapping("/search")
+	public String searchPosts(@RequestParam("keyword") String keyword, Model model) {
+		List<Post> searchResults = postService.searchPostsByKeyword(keyword);
+		model.addAttribute("posts", searchResults);
+		model.addAttribute("keyword", keyword);
+		return "post/view-search-results";
 	}
 }

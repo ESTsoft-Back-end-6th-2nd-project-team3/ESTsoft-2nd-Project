@@ -9,33 +9,38 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<article id="my-objective">
-    <h3>내 목표</h3>
-    <div class="container-top">
-        <section class="section-this-month-objective">
-            <h4 th:text="${month}월의 목표">10월의 목표</h4>
-            <hr>
-            <div th:each="item : ${myObjective}">
-                <span th:text="${item.content}">운동 15회</span>
-            </div>
-        </section>
-        <section class="section-achievement-rate">
-            <h4>현재 달성률</h4>
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: 25%" th:style="'width: ' + ${progressValue} + '%'" th:text="${progressValue} + '%'">25%</div>
-            </div>
-        </section>
-    </div>
-    <div class="container-bottom">
-        <section>
-            <h4 class="blind">월별 목표 달성률</h4>
-            <div class="chart-container mt-5">
-                <canvas id="barChart"></canvas>
-            </div>
-        </section>
-        <button>수정</button>
-    </div>
-</article>
+<div th:fragment="my-objective">
+    <article id="my-objective">
+        <h3>내 목표</h3>
+        <div class="container-top">
+            <section class="section-this-month-objective">
+                <h4 th:text="${month} + '월의 목표'">10월의 목표</h4>
+                <hr>
+                <div th:each="item : ${myObjective}">
+                    <span th:text="${item.content}">운동 15회</span>
+                </div>
+            </section>
+            <section class="section-achievement-rate">
+                <h4>현재 달성률</h4>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar"
+                         th:style="'width: ' + ${progressValue} + '%'"
+                         th:text="${progressValue} + '%'">25%
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container-bottom">
+            <section>
+                <h4 class="blind">월별 목표 달성률</h4>
+                <div class="chart-container mt-5">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </section>
+            <button>수정</button>
+        </div>
+    </article>
+</div>
 <script>
     // TODO : Thymeleaf에서 전달받은 데이터를 사용하여 Chart를 생성
     // <![CDATA[
