@@ -98,9 +98,7 @@
         const commentWriteContainer = document.getElementById("comment-write-container");
         const commentEditContainer = document.getElementById("comment-edit-container");
         const cancelButton = document.getElementById("write-cancel-button");
-        // const hrElement = commentContainer.nextElementSibling;
 
-        // commentContainer.parentNode.insertBefore(commentWriteContainer, hrElement);
         commentContainer.appendChild(commentWriteContainer);
 
         commentWriteContainer.style.display = "block";
@@ -139,7 +137,7 @@
                 contentType: 'application/json',
                 success: function () {
                     document.querySelector(".comment-text-box").value = '';
-                    location.reload(); // 새로고침하여 댓글 목록 갱신
+                    location.reload();
                 },
                 error: function () {
                     alert("댓글을 추가하는 데 실패했습니다.");
@@ -166,7 +164,7 @@
                 contentType: 'application/json',
                 success: function () {
                     document.querySelector(".comment-text-box").value = '';
-                    location.reload(); // 새로고침하여 댓글 목록 갱신
+                    location.reload();
                 },
                 error: function () {
                     alert("댓글을 추가하는 데 실패했습니다.");
@@ -177,7 +175,6 @@
         }
     }
 
-    // 댓글 수정
     function editComment(commentId) {
         const commentEditContainer = document.getElementById("comment-edit-container");
         const commentWriteContainer = document.getElementById("comment-write-container");
@@ -215,7 +212,7 @@
                 contentType: 'application/json',
                 success: function () {
                     document.querySelector(".comment-text-box").value = '';
-                    location.reload(); // 새로고침하여 댓글 목록 갱신
+                    location.reload();
                 },
                 error: function () {
                     alert("댓글을 추가하는 데 실패했습니다.");
@@ -227,20 +224,18 @@
 
     }
 
-    // 댓글 삭제
     function deleteComment(commentId) {
         if (confirm("댓글을 삭제하시겠습니까?")) {
             fetch(`/api/post/comment/${commentId}`, {
                 method: "DELETE"
             }).then(response => {
                 if (response.ok) {
-                    location.reload(); // 새로고침하여 댓글 목록 갱신
+                    location.reload();
                 }
             });
         }
     }
 
-    // 답글 취소
     function cancelComment() {
         const commentWriteContainer = document.getElementById("comment-write-container");
         const commentEditContainer = document.getElementById("comment-edit-container");
