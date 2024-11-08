@@ -12,5 +12,5 @@ import com.estsoft.estsoft2ndproject.domain.Post;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 	List<Comment> findByPostAndIsActive(Post postId, Boolean isActive);
 
-	Integer countByPost(Post post);
+	Integer countByPostAndIsActive(Post post, Boolean isActive);
 }
