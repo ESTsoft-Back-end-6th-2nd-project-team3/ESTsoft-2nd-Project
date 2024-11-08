@@ -1,6 +1,7 @@
 package com.estsoft.estsoft2ndproject.controller.main;
 
 import com.estsoft.estsoft2ndproject.domain.SubMenu;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,7 @@ public class PageController {
 		}
 
 		model.addAttribute("subMenus", subMenus);
+
 		return "index";
 	}
 }

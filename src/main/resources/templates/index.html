@@ -1,28 +1,59 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>타임리프 레이아웃</title>
-  <link rel="stylesheet" th:href="@{/css/base.css}">
+    <meta charset="UTF-8">
+    <title>타임리프 레이아웃</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
 </head>
 <body>
-<div class="header">
-  <div class="logo" th:src="@{/images/logo.png}"></div>
-  <input type="text" class="search-bar" placeholder="검색">
-</div>
+<header>
+    <section class="header-top">
+        <div class="logo" th:src="@{/images/logo.png}"></div>
+        <input class="search-bar" placeholder="검색" type="text">
+    </section>
+    <nav>
+        <div class="menu-item" th:each="menu, iterStat : ${subMenus}">
+            <span th:text="${menu.title}"></span>
+            <!-- 서브메뉴 -->
+            <div class="submenu">
+                <span class="submenu-item" th:each="item : ${menu.items}" th:text="${item}"></span>
+            </div>
+        </div>
+    </nav>
+</header>
 
-<div class="menu-bar">
-  <div th:each="menu, iterStat : ${subMenus}" style="display: inline-flex; align-items: center;">
-    <div class="menu-item">
-      <span th:text="${menu.title}"></span>
-      <!-- 서브메뉴 -->
-      <div class="submenu">
-        <span class="submenu-item" th:each="item : ${menu.items}" th:text="${item}"></span>
-      </div>
-    </div>
-    <!-- 마지막 메뉴 뒤에는 divider가 나타나지 않게 설정 -->
-    <div class="divider" th:if="${!iterStat.last}"></div>
-  </div>
-</div>
+<main>
+    <section class="main-contents">
+        <div th:if="${mainFragment1 != null}">
+            <div> th:replace="${mainFragment1}"></div>
+        </div>
+        <div th:if="${mainFragment2 != null}">
+            <div> th:replace="${mainFragment2}"></div>
+        </div>
+        <div th:if="${mainFragment3 != null}">
+            <div> th:replace="${mainFragment3}"></div>
+        </div>
+        <div th:if="${mainFragmen4 != null}">
+            <div> th:replace="${mainFragment4}"></div>
+        </div>
+        <div th:if="${mainFragment5 != null}">
+            <div> th:replace="${mainFragment5}"></div>
+        </div>
+        <div th:if="${mainFragment6 != null}">
+            <div> th:replace="${mainFragment6}"></div>
+        </div>
+    </section>
+    <section class="side-contents">
+        <div th:if="${sideFragment1 != null}">
+            <div> th:replace="${sideFragment1}"></div>
+        </div>
+        <div th:if="${sideFragment2 != null}">
+            <div> th:replace="${sideFragment2}"></div>
+        </div>
+        <div th:if="${sideFragment3 != null}">
+            <div> th:replace="${sideFragment3}"></div>
+        </div>
+    </section>
+</main>
 </body>
 </html>
