@@ -29,7 +29,14 @@
 <script>
     function autoResize(textarea) {
         textarea.style.height = 'auto';
-        textarea.style.height = Math.max(560, textarea.scrollHeight) + 'px';
+        if (textarea.scrollHeight <= 700) {
+            textarea.style.height = Math.max(560, textarea.scrollHeight) + 'px';
+            textarea.style.overflowY = 'hidden';
+        }
+        else {
+            textarea.style.height = '700px';
+            textarea.style.overflowY = 'scroll';
+        }
     }
 
     const modifyButton = document.getElementById("modify-btn");

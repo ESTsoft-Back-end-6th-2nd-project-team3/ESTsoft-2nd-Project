@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <title>내 목표 수정</title>
+    <link href="/css/reset.css" rel="stylesheet">
+    <link href="/css/base.css" rel="stylesheet">
+</head>
+<body>
+<article id="edit-objective" class="container">
+    <div class="objective-title">내 목표</div>
+    <div class="objective-content">
+        <div class="label-header">
+            <div class="label">목표 설정</div>
+            <button class="add-button button" onclick="addObjective()">추가</button>
+            <span class="label label-date">날짜</span>
+            <span class="label">달성 완료 체크</span>
+        </div>
+        <div class="objective-list"></div>
+        <div class="action-buttons">
+            <button class="button">저장</button>
+            <button class="button">취소</button>
+        </div>
+    </div>
+</article>
+<script>
+    // Thymeleaf에서 전달된 데이터를 JavaScript 변수로 받기
+    // const initialObjectives = /*[[${initialObjectives}]]*/ [];
+    const initialObjectives = [
+        {title: "목표 1", date: "2024-01", completed: false},
+        {title: "목표 2", date: "2024-02", completed: true}
+    ];
+
+    function initializeObjectives() {
+        initialObjectives.forEach(obj => addObjective(obj.title, obj.date, obj.completed));
+    }
+
+    function addObjective(title = "", date = "", completed = false) {
+        const objectiveList = document.querySelector('.objective-list');
+        const objectiveItem = document.createElement('div');
+        objectiveItem.classList.add('objective-item');
+
+        const objectiveInput = document.createElement('input');
+        objectiveInput.type = 'text';
+        objectiveInput.placeholder = '목표를 입력하세요';
+        objectiveInput.className = 'objective-input box';
+        objectiveInput.value = title;
+
+        const dateInput = document.createElement('input');
+        dateInput.type = 'month';
+        dateInput.className = 'date-input box';
+        dateInput.value = date;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '삭제';
+        deleteButton.className = 'delete-button button box';
+        deleteButton.onclick = function () {
+            objectiveList.removeChild(objectiveItem);
+            adjustContainerHeight();
+        };
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.classList.add('checkbox');
+        checkbox.checked = completed;
+
+        objectiveItem.appendChild(objectiveInput);
+        objectiveItem.appendChild(dateInput);
+        objectiveItem.appendChild(deleteButton);
+        objectiveItem.appendChild(checkbox);
+        objectiveList.appendChild(objectiveItem);
+
+        adjustContainerHeight();
+    }
+
+    function adjustContainerHeight() {
+        const objectiveContent = document.querySelector('.objective-content');
+        const container = document.querySelector('.container');
+        const objectiveContentHeight = objectiveContent.scrollHeight;
+
+        container.style.height = `${objectiveContentHeight + 80}px`;
+    }
+
+    window.onload = initializeObjectives;
+</script>
+</body>
+</html>
