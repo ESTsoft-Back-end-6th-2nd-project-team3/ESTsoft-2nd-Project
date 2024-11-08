@@ -15,7 +15,6 @@
         <div class="container-top">
             <section class="section-this-month-objective">
                 <h4 th:text="${month} + '월의 목표'">10월의 목표</h4>
-                <hr>
                 <div th:each="item : ${myObjective}">
                     <span th:text="${item.content}">운동 15회</span>
                 </div>

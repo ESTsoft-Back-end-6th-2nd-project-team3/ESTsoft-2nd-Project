@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -154,5 +155,9 @@ public class UserService extends DefaultOAuth2UserService {
 
 	public User getUserById(Long userId) {
 		return userRepository.findById(userId).orElse(null);
+	}
+
+	public Optional<User> getUserWithChallenges(Long userId) {
+		return userRepository.findById(userId);
 	}
 }
