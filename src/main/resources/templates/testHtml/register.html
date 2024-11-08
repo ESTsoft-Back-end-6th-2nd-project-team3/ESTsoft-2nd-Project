@@ -31,8 +31,8 @@
         </div>
 
         <div class="flex items-center space-x-4">
-            <img alt="프로필 이미지" class="w-20 h-20 rounded-full" id="profileImageUrl" th:src="${profileImageUrl}">
-            <input name="profileImageUrl" th:value="${profileImageUrl}" type="hidden">
+            <img alt="프로필 이미지" class="w-20 h-20 rounded-full" th:src="${profileImageUrl}">
+            <input id="profileImageUrl" name="profileImageUrl" th:value="${profileImageUrl}" type="hidden">
         </div>
 
         <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600" onclick="submitForm()" type="button">
@@ -43,6 +43,11 @@
 
 <script>
     function submitForm() {
+        // console.log($("#nickname").val());
+        // console.log($("#profileImageUrl").val());
+        // console.log($("#selfInfo").val());
+        // console.log($("#snsLink").val());
+
         $.ajax({
             type: 'POST',
             url: '/member/register',

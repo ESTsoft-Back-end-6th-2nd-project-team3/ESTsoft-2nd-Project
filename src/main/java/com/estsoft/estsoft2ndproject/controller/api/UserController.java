@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.estsoft.estsoft2ndproject.domain.dto.user.RegisterRequest;
+import com.estsoft.estsoft2ndproject.domain.dto.user.RegisterRequestDTO;
 import com.estsoft.estsoft2ndproject.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,13 +56,13 @@ public class UserController {
 	}
 
 	@PostMapping("/member/register")
-	public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest, HttpServletRequest request) {
+	public ResponseEntity<String> register(@RequestBody RegisterRequestDTO registerRequestDTO, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		session.setAttribute("isComplete", "true");
-		session.setAttribute("nickname", registerRequest.getNickname());
-		session.setAttribute("profileImageUrl", registerRequest.getProfileImageUrl());
-		session.setAttribute("selfIntro", registerRequest.getSelfIntro());
-		session.setAttribute("snsLink", registerRequest.getSnsLink());
+		session.setAttribute("nickname", registerRequestDTO.getNickname());
+		session.setAttribute("profileImageUrl", registerRequestDTO.getProfileImageUrl());
+		session.setAttribute("selfIntro", registerRequestDTO.getSelfIntro());
+		session.setAttribute("snsLink", registerRequestDTO.getSnsLink());
 
 		return ResponseEntity.ok("success");
 	}
