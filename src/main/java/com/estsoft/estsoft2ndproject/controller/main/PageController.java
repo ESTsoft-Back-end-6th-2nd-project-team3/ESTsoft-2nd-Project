@@ -69,7 +69,9 @@ public class PageController {
 
 		// 상단 메뉴와 콘텐츠 프래그먼트 설정
 		model.addAttribute("subMenus", getSubMenus());
-		model.addAttribute("contentFragment", "mypage :: content");
+		model.addAttribute("mainFragment1", "fragment/mypage-profile.html :: mypage-profile");
+		model.addAttribute("mainFragment2", "fragment/my-objective.html :: my-objective");
+		model.addAttribute("mainFragment3", "fragment/participated-challenge.html :: participated-challenge");
 
 		return "index"; // index.html을 사용
 	}

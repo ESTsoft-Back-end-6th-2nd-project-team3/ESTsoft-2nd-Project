@@ -10,64 +10,55 @@
 </head>
 <body>
 <header>
-    <div class="header">
-        <div class="logo"></div>
+    <section class="header-top">
+        <div class="logo" th:src="@{/images/logo.png}"></div>
         <input class="search-bar" placeholder="검색어를 입력하세요" type="text">
         <!-- <button onclick="searchUserPosts()">검색</button> -->
-    </div>
-    <div class="container">
-        <div class="menu-bar">
-            <div style="display: inline-flex; align-items: center;" th:each="menu, iterStat : ${subMenus}">
-                <div class="menu-item">
-                    <span th:text="${menu.title}"></span>
-                    <!-- 서브메뉴 -->
-                    <div class="submenu">
-                        <span class="submenu-item" th:each="item : ${menu.items}" th:text="${item}"></span>
-                    </div>
-                </div>
-                <!-- 마지막 메뉴 뒤에는 divider가 나타나지 않게 설정 -->
-                <div class="divider" th:if="${!iterStat.last}"></div>
+    </section>
+    <nav>
+        <div class="menu-item" th:each="menu, iterStat : ${subMenus}">
+            <span th:text="${menu.title}"></span>
+            <!-- 서브메뉴 -->
+            <div class="submenu">
+                <span class="submenu-item" th:each="item : ${menu.items}" th:text="${item}"></span>
             </div>
         </div>
-    </div>
+        <!-- 마지막 메뉴 뒤에는 divider가 나타나지 않게 설정 -->
+        <div class="divider" th:if="${!iterStat.last}"></div>
+    </nav>
 </header>
-<nav> <!-- 공통 내비게이션 --> </nav>
-
 
 <main>
     <section class="main-contents">
-        <div class="mypage">
+        <div th:if="${mainFragment1 != null}">
             <div th:replace="fragment/mypage-profile.html :: mypage-profile"></div>
-            <div th:replace="fragment/my-objective.html :: my-objective"></div>
-            <div th:replace="fragment/participated-challenge.html :: participated-challenge"></div>
         </div>
         <div th:if="${mainFragment2 != null}">
-            <div> th:replace="${mainFragment2}"></div>
+            <div th:replace="fragment/my-objective.html :: my-objective"></div>
         </div>
         <div th:if="${mainFragment3 != null}">
-            <div> th:replace="${mainFragment3}"></div>
+            <div th:replace="fragment/participated-challenge.html :: participated-challenge"></div>
         </div>
         <div th:if="${mainFragmen4 != null}">
-            <div> th:replace="${mainFragment4}"></div>
+            <div> th:replace="testHtml/register.html :: register"></div>
         </div>
         <div th:if="${mainFragment5 != null}">
-            <div> th:replace="${mainFragment5}"></div>
+            <div> th:replace="/fragment/edit-profile.html :: edit-profile"></div>
         </div>
         <div th:if="${mainFragment6 != null}">
             <div> th:replace="${mainFragment6}"></div>
         </div>
-
-        <section class="side-contents">
-            <div th:if="${sideFragment1 != null}">
-                <div> th:replace="${sideFragment1}"></div>
-            </div>
-            <div th:if="${sideFragment2 != null}">
-                <div> th:replace="${sideFragment2}"></div>
-            </div>
-            <div th:if="${sideFragment3 != null}">
-                <div> th:replace="${sideFragment3}"></div>
-            </div>
-        </section>
+    </section>
+    <section class="side-contents">
+        <div th:if="${sideFragment1 != null}">
+            <div> th:replace="/testHtml/login.html :: login"></div>
+        </div>
+        <div th:if="${sideFragment2 != null}">
+            <div> th:replace="${sideFragment2}"></div>
+        </div>
+        <div th:if="${sideFragment3 != null}">
+            <div> th:replace="${sideFragment3}"></div>
+        </div>
     </section>
 </main>
 
