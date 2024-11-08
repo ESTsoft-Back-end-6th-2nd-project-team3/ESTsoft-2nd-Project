@@ -37,7 +37,7 @@ public class PageController {
 
 	@GetMapping("/mypage/{userId}")
 	public String showMyPage(@PathVariable Long userId, Model model) {
-		// 현재 월을 가져와서 추가
+		// 현재 월 추가
 		int month = LocalDate.now().getMonthValue();
 		model.addAttribute("month", month);
 
@@ -45,9 +45,17 @@ public class PageController {
 		Optional<User> user = userService.getUserWithChallenges(userId);
 		user.ifPresentOrElse(
 			u -> {
+				model.addAttribute("nickname", u.getNickname());
+				model.addAttribute("level", u.getLevel());
+				model.addAttribute("selfIntro", u.getSelfIntro());
+				model.addAttribute("snsLink", u.getSnsLink());
 				model.addAttribute("participatedChallenge", u.getAwardedTitle());
 			},
 			() -> {
+				model.addAttribute("nickname", "알 수 없음");
+				model.addAttribute("level", "등급 없음");
+				model.addAttribute("selfIntro", "소개 없음");
+				model.addAttribute("snsLink", "링크 없음");
 				model.addAttribute("participatedChallenge", "참여한 챌린지가 없습니다.");
 			}
 		);
@@ -97,4 +105,5 @@ public class PageController {
 			);
 		}
 	}
+
 }

@@ -10,22 +10,20 @@
 <div th:fragment="participated-challenge">
     <article id="participated-challenge">
         <h3>참여 챌린지</h3>
-        <section class="container">
-            <div class="table">
-                <div class="table-header">
-                    <span class="header-cell">번호</span>
-                    <span class="header-cell">제목</span>
-                    <span class="header-cell">댓글수</span>
-                    <span class="header-cell">추천수</span>
-                    <span class="header-cell">날짜</span>
-                </div>
-                <div class="table-row" th:each="item, stat : ${participatedChallenge}">
-                    <span class="cell" th:text="${stat.count}">1</span>
-                    <span class="cell" th:text="${item.title}">제목</span>
-                    <span class="cell" th:text="${item.commentCount}">10</span>
-                    <span class="cell" th:text="${item.likeCount}">100</span>
-                    <span class="cell" th:text="${item.createdAt}">24/10/10</span>
-                </div>
+        <section class="table-container">
+            <div class="table-header">
+                <span>번호</span>
+                <span>제목</span>
+                <span>댓글수</span>
+                <span>추천수</span>
+                <span>날짜</span>
+            </div>
+            <div class="table-row">
+                <span>1</span>
+                <span th:text="${awardedTitle}">챌린지 제목</span>
+                <span>0</span>
+                <span>0</span>
+                <span>--/--/--</span>
             </div>
         </section>
     </article>
