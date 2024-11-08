@@ -7,10 +7,10 @@
     <link href="/css/base.css" rel="stylesheet">
 </head>
 <body>
-<article id="edit-objective" class="container">
+<article class="container" id="edit-objective">
     <div class="objective-title">내 목표</div>
     <div class="objective-content">
-        <div class="header">
+        <div class="label-header">
             <div class="label">목표 설정</div>
             <button class="add-button button" onclick="addObjective()">추가</button>
             <span class="label label-date">날짜</span>
@@ -26,7 +26,6 @@
 <script>
     // Thymeleaf에서 전달된 데이터를 JavaScript 변수로 받기
     // const initialObjectives = /*[[${initialObjectives}]]*/ [];
-
     const initialObjectives = [
         {title: "목표 1", date: "2024-01", completed: false},
         {title: "목표 2", date: "2024-02", completed: true}
@@ -75,18 +74,11 @@
     }
 
     function adjustContainerHeight() {
-        const objectiveList = document.querySelector('.objective-list');
+        const objectiveContent = document.querySelector('.objective-content');
         const container = document.querySelector('.container');
-        const objectiveItems = objectiveList.querySelectorAll('.objective-item');
-        const maxVisibleItems = 1;
-        const baseHeight = 225;
-        const itemHeight = 50;
+        const objectiveContentHeight = objectiveContent.scrollHeight;
 
-        if (objectiveItems.length > maxVisibleItems) {
-            container.style.height = `${baseHeight + (objectiveItems.length - maxVisibleItems) * itemHeight}px`;
-        } else {
-            container.style.height = `${baseHeight}px`;
-        }
+        container.style.height = `${objectiveContentHeight + 80}px`;
     }
 
     window.onload = initializeObjectives;

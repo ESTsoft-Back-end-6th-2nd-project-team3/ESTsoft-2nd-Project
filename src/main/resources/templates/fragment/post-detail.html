@@ -33,12 +33,28 @@
         <button type="button" class="button delete-button" id="delete-button">삭제</button>
     </div>
 
-    <button type="button" id="like-button" onclick="toggleLike()">
-        <span th:text="${isLiked ? '좋아요 취소' : '좋아요'}" id="like-text">좋아요</span>
-        <span th:text="${post.likeCount}" id="like-count">0</span>
-    </button>
+    <div class="like-button">
+        <button type="button" id="like-button" onclick="toggleLike()">
+            <span th:text="${isLiked ? '좋아요 취소' : '좋아요'}" id="like-text">좋아요</span>
+            <span th:text="${post.likeCount}" id="like-count">0</span>
+        </button>
+    </div>
 </article>
 <script>
+
+    function adjustContainerHeight() {
+        const postContent = document.querySelector('.post-content');
+        const buttons = document.querySelector('.action-buttons');
+        const minHeight = 700;
+
+        if (postContent.scrollHeight < minHeight) {
+            buttons.style.marginTop = `${minHeight - postContent.scrollHeight + 20}px`;
+        } else {
+            buttons.style.marginTop = '20px';
+        }
+    }
+
+    adjustContainerHeight();
 
     const modifyButton = document.getElementById("modify-button");
     console.log(modifyButton);

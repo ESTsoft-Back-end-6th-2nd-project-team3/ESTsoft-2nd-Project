@@ -9,7 +9,7 @@
 <body>
 <article id="category" class="container">
     <div class="category-title">카테고리</div>
-    <div class="divider"></div>
+    <div class="category-divider"></div>
     <div class="item-container">
         <div th:each="item : ${regions}">
             <a th:href="@{/post/category/{id}(id=${targetId})}"
