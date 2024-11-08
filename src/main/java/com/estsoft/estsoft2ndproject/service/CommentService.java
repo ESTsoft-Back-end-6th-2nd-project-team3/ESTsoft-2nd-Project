@@ -29,7 +29,7 @@ public class CommentService {
 
 	public List<Comment> getCommentsByPostId(Long postId) {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
-		return commentRepository.findByPost(post);
+		return commentRepository.findByPostAndIsActive(post, true);
 	}
 
 	@Transactional
