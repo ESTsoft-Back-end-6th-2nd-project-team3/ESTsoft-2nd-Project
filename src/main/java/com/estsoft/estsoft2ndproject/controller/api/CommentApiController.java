@@ -98,6 +98,7 @@ public class CommentApiController {
 
 		model.addAttribute("comments", commentList);
 		model.addAttribute("userId", userId);
+		model.addAttribute("postId", postId);
 		model.addAttribute("commentCount", commentService.getCommentCountByPostId(postId));
 
 		return "fragment/view-comment";

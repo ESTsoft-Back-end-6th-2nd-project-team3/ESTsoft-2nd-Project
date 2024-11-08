@@ -65,6 +65,6 @@ public class CommentService {
 
 	public Integer getCommentCountByPostId(Long postId) {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
-		return commentRepository.countByPost(post);
+		return commentRepository.countByPostAndIsActive(post, true);
 	}
 }
