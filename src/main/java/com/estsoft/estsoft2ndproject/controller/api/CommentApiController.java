@@ -88,14 +88,14 @@ public class CommentApiController {
 	}
 
 	@GetMapping("/{postId}/comments")
-	public String commentsTest(Model model, @PathVariable(name = "postId") Long postId, @AuthenticationPrincipal OAuth2User oAuth2User) {
+	public String commentsTest(Model model, @PathVariable(name = "postId") Long postId, @AuthenticationPrincipal CustomUserDetails oAuth2User) {
 		List<CommentListResponseDTO> commentList = commentService.getCommentsByPostId(postId)
 			.stream()
 			.map(CommentListResponseDTO::new)
 			.sorted(Comparator.comparing(CommentListResponseDTO::getCreatedAt))
 			.toList();
 
-		Long userId = userService.getUserId(oAuth2User);
+		Long userId = oAuth2User.getUser().getUserId();
 
 		model.addAttribute("comments", commentList);
 		model.addAttribute("userId", userId);
