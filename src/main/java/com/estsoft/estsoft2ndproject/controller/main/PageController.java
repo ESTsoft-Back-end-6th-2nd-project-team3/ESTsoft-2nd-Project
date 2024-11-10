@@ -13,7 +13,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+
 @Controller
+@AllArgsConstructor
 public class PageController {
 
 	@GetMapping("/")
