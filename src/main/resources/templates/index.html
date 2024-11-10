@@ -16,7 +16,7 @@
         <div class="menu-item" th:each="menu, iterStat : ${subMenus}">
             <span th:text="${menu.title}"></span>
             <!-- 서브메뉴 -->
-            <div class="submenu">
+            <div class="submenu" th:if="${menu.items} != null">
                 <span class="submenu-item" th:each="item : ${menu.items}" th:text="${item}"></span>
             </div>
         </div>
