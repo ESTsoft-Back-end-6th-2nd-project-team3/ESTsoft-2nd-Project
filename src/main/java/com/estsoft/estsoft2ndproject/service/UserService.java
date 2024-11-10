@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.estsoft.estsoft2ndproject.custonException.AdditionalInformationRequireException;
 import com.estsoft.estsoft2ndproject.domain.User;
+import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -117,7 +118,8 @@ public class UserService extends DefaultOAuth2UserService {
 
 		userRepository.save(userEntity);
 
-		return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), usernameAttributeName);
+		// return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), usernameAttributeName);
+		return new CustomUserDetails(userEntity, oAuth2User.getAttributes());
 	}
 
 	public void logoutFromKakao(String accessToken) {
@@ -134,8 +136,8 @@ public class UserService extends DefaultOAuth2UserService {
 	}
 
 	@Transactional
-	public void deleteUser(OAuth2User oAuth2User) {
-		User userEntity = userRepository.findByPii(oAuth2User.getName());
+	public void deleteUser(CustomUserDetails oAuth2User) {
+		User userEntity = oAuth2User.getUser();
 
 		userEntity.updateBuilder()
 			.isActive(false)

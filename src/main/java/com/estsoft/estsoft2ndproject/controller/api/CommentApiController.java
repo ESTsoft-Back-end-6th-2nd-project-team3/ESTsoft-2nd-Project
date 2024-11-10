@@ -21,6 +21,7 @@ import com.estsoft.estsoft2ndproject.domain.Comment;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentListResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentResponseDTO;
+import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.service.CommentService;
 import com.estsoft.estsoft2ndproject.service.UserService;
 
@@ -47,7 +48,7 @@ public class CommentApiController {
 	@PostMapping("/{postId}/comment")
 	public ResponseEntity<CommentResponseDTO> createComment(@RequestBody CommentRequestDTO commentRequestDTO,
 		@PathVariable(name = "postId") Long postId,
-		@AuthenticationPrincipal OAuth2User oAuth2User) {
+		@AuthenticationPrincipal CustomUserDetails oAuth2User) {
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
 			.body(commentService.createComment(commentRequestDTO, postId, oAuth2User).convert());
@@ -57,7 +58,7 @@ public class CommentApiController {
 	public ResponseEntity<CommentResponseDTO> createCommentWithParent(@RequestBody CommentRequestDTO commentRequestDTO,
 		@PathVariable(name = "postId") Long postId,
 		@PathVariable(name = "commentId") Long commentId,
-		@AuthenticationPrincipal OAuth2User oAuth2User) {
+		@AuthenticationPrincipal CustomUserDetails oAuth2User) {
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
 			.body(commentService.createComment(commentRequestDTO, postId, commentId, oAuth2User).convert());

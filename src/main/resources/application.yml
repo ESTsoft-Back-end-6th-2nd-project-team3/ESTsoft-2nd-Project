@@ -43,6 +43,7 @@ spring:
             user-name-attribute: id
   mvc:
     dispatch-options-request: true
+
 logging:
   level:
     org.springframework.web: DEBUG
