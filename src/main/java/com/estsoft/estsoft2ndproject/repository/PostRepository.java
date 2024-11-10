@@ -19,7 +19,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	List<Post> findByUser_UserId(Long userId);
 
-	List<Post> findByTitleContainingOrContentContaining(String titleKeyword, String contentKeyword);
+	List<Post> findByTitleContainingOrContentContainingAndIsActiveTrue(String titleKeyword, String contentKeyword);
 
 	@Query(
 		"SELECT new com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse(p.postId, c.name, p.title, COUNT(cmt), u.nickname, p.viewCount, p.likeCount, p.createdAt, p.isActive) "
