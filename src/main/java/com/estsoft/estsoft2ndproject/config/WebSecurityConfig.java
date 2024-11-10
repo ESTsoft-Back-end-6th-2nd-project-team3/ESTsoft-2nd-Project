@@ -22,11 +22,15 @@ public class WebSecurityConfig {
 		return http
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.authorizeHttpRequests(custom -> custom
-				.requestMatchers("/**").permitAll()
-				.requestMatchers("/admin/**").hasAuthority("관리자").anyRequest().authenticated()
+				.requestMatchers("/").permitAll()
+				.requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.*").permitAll()
+				.requestMatchers("/admin/**").hasAuthority("관리자")
+				.requestMatchers("/member/login").permitAll()
+				.requestMatchers("/**").hasAnyAuthority("씨앗", "새싹", "묘목", "성목", "고목", "관리자")
+				.anyRequest().permitAll()
 			)
 			.oauth2Login(oauth2 -> oauth2
-				.loginPage("/member/login")
+				.loginPage("/")
 				.defaultSuccessUrl("/", true)
 				.userInfoEndpoint(endpoint -> endpoint.userService(userService))
 				.failureHandler(((request, response, exception) -> {
