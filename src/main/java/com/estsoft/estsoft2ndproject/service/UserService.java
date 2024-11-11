@@ -22,8 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.estsoft.estsoft2ndproject.custonException.AdditionalInformationRequireException;
+import com.estsoft.estsoft2ndproject.domain.ActivityScore;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
+import com.estsoft.estsoft2ndproject.repository.ActivityScoreRepository;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +40,7 @@ public class UserService extends DefaultOAuth2UserService {
 	private final UserRepository userRepository;
 	private final HttpServletRequest request;
 	private final ApplicationEventPublisher eventPublisher;
+	private final ActivityScoreRepository activityScoreRepository;
 
 	@Override
 	@Transactional
@@ -65,7 +68,9 @@ public class UserService extends DefaultOAuth2UserService {
 		String profileImageUrl = profile.get("profile_image_url").toString();
 
 		User userEntity = userRepository.findByPii(oAuth2User.getName());
+		boolean isNewUser = false;
 		if (userEntity == null || !userEntity.getIsActive()) {
+			isNewUser = true;
 			if (!Objects.equals(session.getAttribute("isComplete"), "true")) {
 				session.setAttribute("email", email);
 				session.setAttribute("nickname", nickname);
@@ -118,6 +123,16 @@ public class UserService extends DefaultOAuth2UserService {
 			.build();
 
 		userRepository.save(userEntity);
+
+		if (isNewUser) {
+			ActivityScore activityScore = new ActivityScore();
+			activityScore.setUser(userEntity);
+			activityScore.setScoreFluctuations(0);
+			activityScore.setFluctuationAt(new Timestamp(System.currentTimeMillis()));
+			activityScore.setFluctuationReason("회원가입");
+
+			activityScoreRepository.save(activityScore);
+		}
 
 		// return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), usernameAttributeName);
 		return new CustomUserDetails(userEntity, oAuth2User.getAttributes());

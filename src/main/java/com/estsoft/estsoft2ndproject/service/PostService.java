@@ -1,5 +1,6 @@
 package com.estsoft.estsoft2ndproject.service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
+import com.estsoft.estsoft2ndproject.domain.ActivityScore;
 import com.estsoft.estsoft2ndproject.domain.Category;
 import com.estsoft.estsoft2ndproject.domain.Likes;
 import com.estsoft.estsoft2ndproject.domain.Post;
@@ -24,6 +26,7 @@ import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.exception.PostNotFoundException;
 import com.estsoft.estsoft2ndproject.exception.UserNotFoundException;
+import com.estsoft.estsoft2ndproject.repository.ActivityScoreRepository;
 import com.estsoft.estsoft2ndproject.repository.CategoryRepository;
 import com.estsoft.estsoft2ndproject.repository.CommentRepository;
 import com.estsoft.estsoft2ndproject.repository.LikesRepository;
@@ -42,22 +45,39 @@ public class PostService {
 	private final RegionRepository regionRepository;
 	private final LikesRepository likesRepository;
 	private final CommentRepository commentRepository;
+	private final ActivityScoreRepository activityScoreRepository;
 
 	public PostService(PostRepository postRepository, UserRepository userRepository,
 		CategoryRepository categoryRepository, RegionRepository regionRepository, LikesRepository likesRepository,
-		CommentRepository commentRepository) {
+		CommentRepository commentRepository, ActivityScoreRepository activityScoreRepository) {
 		this.postRepository = postRepository;
 		this.userRepository = userRepository;
 		this.categoryRepository = categoryRepository;
 		this.regionRepository = regionRepository;
 		this.likesRepository = likesRepository;
 		this.commentRepository = commentRepository;
+		this.activityScoreRepository = activityScoreRepository;
 	}
 
 	@Transactional
 	public Post createPost(PostRequestDTO postRequestDTO, Long userId) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+		updateActivityScore(user, 2, "게시글 작성");
 		return postRepository.save(postRequestDTO.toEntity(user));
+	}
+
+	private void updateActivityScore(User user, int scoreFluctuations, String reason) {
+		// activity_score 테이블에 기록 추가
+		ActivityScore activityScore = new ActivityScore();
+		activityScore.setUser(user);
+		activityScore.setScoreFluctuations(scoreFluctuations);
+		activityScore.setFluctuationAt(new Timestamp(System.currentTimeMillis()));
+		activityScore.setFluctuationReason(reason);
+		activityScoreRepository.save(activityScore);
+
+		// user 테이블의 activity_score 필드 업데이트
+		user.setActivityScore(user.getActivityScore() + scoreFluctuations);
+		userRepository.save(user);
 	}
 
 	@Transactional
@@ -136,6 +156,9 @@ public class PostService {
 		User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 		Likes likes = new Likes(post.getPostType(), postId, user);
 		likesRepository.save(likes);
+
+		User postOwner = post.getUser();
+		updateActivityScore(postOwner, 5, "게시글 추천");
 	}
 
 	public void UnLike(Long postId, Long userId) {
@@ -145,6 +168,9 @@ public class PostService {
 
 		Likes likes = likesRepository.findByTargetIdAndUser_UserId(postId, userId);
 		likesRepository.delete(likes);
+
+		User postOwner = post.getUser();
+		updateActivityScore(postOwner, -5, "게시글 추천 취소");
 	}
 
 	public boolean getIsLiked(Long postId, Long userId) {
