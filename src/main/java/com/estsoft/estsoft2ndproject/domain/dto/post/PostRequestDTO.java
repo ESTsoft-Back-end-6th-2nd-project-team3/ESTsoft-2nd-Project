@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostRequestDTO {
@@ -18,6 +17,7 @@ public class PostRequestDTO {
 	private String postType;
 	private Long targetId;
 	private Boolean isActive;
+	@Setter
 	private Integer viewCount;
 	private Integer likeCount;
 

@@ -1,121 +1,37 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="kor">
-<head>
-    <meta charset="UTF-8">
-    <title>게시글 작성</title>
-    <link href="/css/reset.css" rel="stylesheet">
-    <link href="/css/base.css" rel="stylesheet">
-</head>
-<body>
 <section id="write-post">
     <input type="hidden" id="post-id" th:value="${post.postId}">
     <input type="hidden" id="user-id" th:value="${userId}">
-    <select class="dropdown">
-        <option value="">카테고리를 선택해주세요.</option>
+    <input type="hidden" id="post-type" th:value="${selectedPostType}">
+    <select class="dropdown" id="categories" th:if="${categories} != null">
         <option th:each="category : ${categories}"
                 th:value="${category.id}"
                 th:text="${category.name}"
                 th:selected="${category.id == selectedCategory}">
     </select>
-    <input type="text" class="title-input" placeholder="제목">
-    <textarea class="content-area" placeholder="내용을 입력하세요." oninput="autoResize(this)"></textarea>
+    <select class="dropdown" id="regions" th:if="${regions} != null">
+        <option th:each="region : ${regions}"
+                th:value="${region.id}"
+                th:text="${region.name}"
+                th:selected="${region.id == selectedCategory}">
+    </select>
+    <select class="dropdown" th:if="${postTypes} != null">
+        <option th:each="postType : ${postTypes}"
+                th:value="${postType.name()}"
+                th:text="${postType.koreanName}"
+                th:selected="${postType.name() == selectedPostType}">
+        </option>
+    </select>
+    <input type="text" id="title" class="title-input" placeholder="제목" th:value="${post.title}">
+    <textarea id="content" class="content-area" placeholder="내용을 입력하세요." oninput="autoResize(this)"
+              th:text="${post.content}"></textarea>
     <button class="photo-button button-common" type="button">사진 추가</button>
     <div class="action-buttons">
-        <button th:if="${post.postId} != null" class="submit-button button-common" type="button" id="create-btn">작성완료</button>
-        <button th:if="${post.postId} == null" class="submit-button button-common" type="button" id="modify-btn">수정</button>
-        <button class="cancel-button button-common" type="button">취소</button>
+        <button th:if="${post.postId} == null" class="submit-button button-common" type="button" id="create-btn"
+                onclick="createPost()">작성완료
+        </button>
+        <button th:if="${post.postId} != null" class="submit-button button-common" type="button" id="modify-btn"
+                onclick="updatePost()">수정
+        </button>
+        <button class="cancel-button button-common" type="button" id="cancel-btn" onclick="cancelPost()">취소</button>
     </div>
 </section>
-<script>
-    function autoResize(textarea) {
-        textarea.style.height = 'auto';
-        if (textarea.scrollHeight <= 700) {
-            textarea.style.height = Math.max(560, textarea.scrollHeight) + 'px';
-            textarea.style.overflowY = 'hidden';
-        }
-        else {
-            textarea.style.height = '700px';
-            textarea.style.overflowY = 'scroll';
-        }
-    }
-
-    const modifyButton = document.getElementById("modify-btn");
-
-    if (modifyButton) {
-        modifyButton.addEventListener('click', event => {
-            let id = document.getElementById('post-id').value;
-            let userId = document.getElementById('user-id').value;
-            const postType = document.getElementById('postType').value;
-
-            const targetId = postType === 'PARTICIPATION_CATEGORY'
-                ? document.getElementById('category').value
-                : postType === 'PARTICIPATION_REGION'
-                    ? document.getElementById('region').value
-                    : null;
-
-            fetch(`/api/post/${id}`, {
-                method: 'PUT',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    title: document.getElementById('title').value,
-                    content: document.getElementById('content').value,
-                    userId: userId,
-                    postType: document.getElementById('postType').value,
-                    targetId: targetId
-                })
-            }).then(() => {
-                alert('수정이 완료되었습니다');
-                location.replace(`/post/${id}`);
-            });
-        });
-    }
-
-    const createButton = document.getElementById("create-btn");
-
-    if (createButton) {
-        createButton.addEventListener('click', event => {
-            let userId = document.getElementById('user-id').value;
-            const postType = document.getElementById('postType').value;
-
-            const targetId = postType === 'PARTICIPATION_CATEGORY'
-                ? document.getElementById('category').value
-                : postType === 'PARTICIPATION_REGION'
-                    ? document.getElementById('region').value
-                    : null;
-
-            fetch(`/api/post/${userId}/create`, {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    title: document.getElementById('title').value,
-                    content: document.getElementById('content').value,
-                    userId: userId,
-                    postType: document.getElementById('postType').value,
-                    targetId: targetId
-                }),
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('등록 실패: ' + response.status);
-                    }
-                })
-                .then(data => {
-                    const postId = data.postId;
-                    alert('등록 완료되었습니다');
-                    location.replace(`/post/${postId}`);
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    alert('등록 중 오류가 발생했습니다');
-                });
-        });
-    }
-</script>
-</body>
-</html>

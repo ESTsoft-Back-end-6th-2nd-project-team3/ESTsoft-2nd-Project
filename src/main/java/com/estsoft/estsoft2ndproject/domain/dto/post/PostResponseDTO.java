@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class PostResponseDTO {
 	private Long postId;
@@ -24,7 +23,12 @@ public class PostResponseDTO {
 	private Boolean isActive;
 	private Integer viewCount;
 	private Integer likeCount;
+	@Setter
 	private Boolean isLiked;
+	@Setter
+	private Integer commentCount;
+	@Setter
+	private String nickname;
 
 	public PostResponseDTO(Post post) {
 		User user = post.getUser();
