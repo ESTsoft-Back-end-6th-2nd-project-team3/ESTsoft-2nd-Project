@@ -5,6 +5,8 @@
     <title>타임리프 레이아웃</title>
     <link rel="stylesheet" th:href="@{/css/base.css}">
     <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <header>
@@ -16,7 +18,7 @@
         <div class="menu-item" th:each="menu, iterStat : ${subMenus}">
             <span th:text="${menu.title}"></span>
             <!-- 서브메뉴 -->
-            <div class="submenu">
+            <div class="submenu" th:if="${menu.items} != null">
                 <span class="submenu-item" th:each="item : ${menu.items}" th:text="${item}"></span>
             </div>
         </div>
@@ -56,5 +58,38 @@
         </div>
     </section>
 </main>
+<script>
+    $.ajaxSetup({
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        }
+    });
+
+    // 전역 AJAX 에러 핸들러
+    $(document).ajaxError(function (event, jqXHR) {
+        if (jqXHR.status === 403) {
+            Swal.fire({
+                title: '접근 제한',
+                text: '접근 권한이 없습니다.',
+                icon: 'error',
+                confirmButtonText: '확인',
+                confirmButtonColor: '#3085d6',
+                width: '360px'
+            });
+        }
+    });
+
+    // 사용 예시: AJAX 요청
+    function adminRequest() {
+        $.ajax({
+            url: '/admin/test',
+            type: 'GET',
+            success: function (response) {
+                // 성공 시 처리
+            }
+            // 실패 시에는 위의 전역 에러 핸들러가 처리함
+        });
+    }
+</script>
 </body>
 </html>
