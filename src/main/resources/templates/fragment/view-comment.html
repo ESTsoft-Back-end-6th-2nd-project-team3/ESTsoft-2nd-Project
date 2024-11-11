@@ -5,7 +5,7 @@
         <div class="comment" th:attr="data-comment-id=${comment.commentId}" th:each="comment : ${comments}" th:if="${comment.parentCommentId == null}">
             <div class="parent-comment comments-container">
                 <div class="content-container">
-                    <img th:alt="${comment.profileImageUrl}" th:src="${comment.profileImageUrl}">
+                    <img th:alt="${comment.profileUrl}" th:src="${comment.profileUrl}">
                     <div>
                         <div class="top-container">
                             <div>
