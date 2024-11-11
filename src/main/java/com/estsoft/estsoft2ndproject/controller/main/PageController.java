@@ -393,4 +393,24 @@ public class PageController {
 
 		return "index";
 	}
+
+	@GetMapping("/search")
+	public String searchAllPage(Model model, @RequestParam(defaultValue = "0", name = "page") int page, @RequestParam(name = "keyword") String keyword,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		addMenuData(model, userDetails);
+		addCategoryNamePageData(model);
+
+		Page<PostResponseDTO> postPage = postService.getPaginationPostsByKeyword(keyword, page, 30);
+
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("postList", postPage.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", postPage.getTotalPages());
+		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("mainFragment1", "fragment/search-all");
+		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
+
+		return "index";
+	}
 }

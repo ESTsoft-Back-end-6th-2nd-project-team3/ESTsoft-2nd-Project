@@ -332,4 +332,18 @@ public class PostService {
 	public Boolean isAdmin(CustomUserDetails userDetails) {
 		return userDetails.getUser().getLevel().equals("관리자");
 	}
+
+	public Page<PostResponseDTO> getPaginationPostsByKeyword(String keyword, int page, int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+
+		postPage = postRepository.findPostsByTitleContainingOrContentContainingAndIsActiveTrue(keyword, keyword, pageRequest);
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
+	}
 }
