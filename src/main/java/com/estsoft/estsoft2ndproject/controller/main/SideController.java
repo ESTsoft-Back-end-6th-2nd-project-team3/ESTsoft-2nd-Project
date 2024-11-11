@@ -1,37 +1,38 @@
 package com.estsoft.estsoft2ndproject.controller.main;
 
-import java.util.List;
+import com.estsoft.estsoft2ndproject.domain.Post;
+import com.estsoft.estsoft2ndproject.domain.User;
+import com.estsoft.estsoft2ndproject.service.PostService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.estsoft.estsoft2ndproject.domain.Post;
-import com.estsoft.estsoft2ndproject.repository.PostRepository;
+import java.util.List;
 
 @Controller
 public class SideController {
 
-	private final PostRepository postRepository;
+	private final PostService postService;
 
 	@Autowired
-	public SideController(PostRepository postRepository) {
-		this.postRepository = postRepository;
+	public SideController(PostService postService) {
+		this.postService = postService;
 	}
 
 	@GetMapping("/side-list")
 	public String showSideList(Model model) {
-		// created_at 기준 내림차순으로 정렬된 활성화된 게시글 20개 가져오기
-		List<Post> latestPosts = postRepository.findAllByIsActiveTrue()
-			.stream()
-			.limit(20)
-			.toList();
+		// 오늘의 베스트 게시글
+		List<Post> todayLikedPosts = postService.getTodayTopLikedPosts();
 
-		// 모델에 데이터를 추가
-		model.addAttribute("title", "사이드 목록"); // 페이지 제목
-		model.addAttribute("latestPosts", latestPosts); // 최신 게시글 목록
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
 
-		return "main-page-side"; // side-list.html로 이동
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
+		return "fragment/main-page-best";
 	}
 }

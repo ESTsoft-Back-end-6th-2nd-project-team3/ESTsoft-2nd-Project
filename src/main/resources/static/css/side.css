@@ -1,7 +1,7 @@
 /* 게시글 컨테이너 */
 .side-container {
     width: 380px;
-    height: 800px;
+    height: auto;
     padding: 20px;
     border: 3px solid #0B6623;
     border-radius: 10px;
@@ -66,4 +66,25 @@ h2 {
 .comment-count {
     width: 20%;
     text-align: right;
+}
+
+.item-number {
+    display: inline-block; /* 요소를 인라인 블록으로 설정 */
+    width: 2em; /* 고정된 폭 설정 (숫자 크기에 따라 조정) */
+    text-align: center; /* 텍스트를 중앙 정렬 */
+}
+
+.nickname{
+    width: 50%;
+    text-align: center;
+}
+
+.level{
+    width: 30%;
+    text-align: center;
+}
+
+.score {
+    width: 20%;
+    text-align: center;
 }

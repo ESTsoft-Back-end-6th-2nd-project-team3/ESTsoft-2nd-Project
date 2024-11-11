@@ -1,6 +1,7 @@
 package com.estsoft.estsoft2ndproject.service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -359,4 +360,41 @@ public class PostService {
 	public Boolean isAdmin(CustomUserDetails userDetails) {
 		return userDetails.getUser().getLevel().equals("관리자");
 	}
+
+	// 오늘의 베스트 게시글 (24시간 기준)
+	public List<Post> getTodayTopLikedPosts() {
+		// 현재 시간 기준 24시간 전과 현재 시간 계산
+		Timestamp startOfLast24Hours = Timestamp.valueOf(LocalDateTime.now().minusDays(1));
+		Timestamp endOfCurrentTime = Timestamp.valueOf(LocalDateTime.now());
+
+		// LikesRepository에서 데이터 조회
+		List<Object[]> results = likesRepository.findTopLikedPostsToday(startOfLast24Hours, endOfCurrentTime);
+
+		// PostRepository를 사용해 게시글 데이터 변환
+		return results.stream()
+			.map(result -> postRepository.findById((Long) result[0])
+				.orElseThrow(() -> new RuntimeException("Post not found")))
+			.toList();
+	}
+
+
+	// 이달의 활동왕
+	public List<User> getMonthlyTopUsers() {
+		Timestamp startDate = Timestamp.valueOf(LocalDate.now().minusDays(30).atStartOfDay());
+		Timestamp endDate = Timestamp.valueOf(LocalDateTime.now());
+
+		List<Object[]> results = activityScoreRepository.findMonthlyTopUsers(startDate, endDate);
+
+		return results.stream()
+			.map(result -> {
+				User user = new User();
+				user.setUserId((Long) result[0]);
+				user.setNickname((String) result[1]);
+				user.setLevel((String) result[2]);
+				user.setActivityScore(((Number) result[3]).intValue());
+				return user;
+			})
+			.toList();
+	}
+
 }
