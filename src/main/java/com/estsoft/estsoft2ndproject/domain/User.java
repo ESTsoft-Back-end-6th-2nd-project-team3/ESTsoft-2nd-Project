@@ -109,4 +109,23 @@ public class User {
 		this.selfIntro = selfIntro != null ? selfIntro : this.selfIntro;
 		this.snsLink = snsLink != null ? snsLink : this.snsLink;
 	}
+
+	public void setActivityScore(int activityScore) {
+		this.activityScore = activityScore;
+
+		// 레벨 업데이트 로직 (관리자 제외)
+		if (!"관리자".equals(this.level)) {
+			if (activityScore < 10) {
+				this.level = "Beginner";
+			} else if (activityScore < 30) {
+				this.level = "Novice";
+			} else if (activityScore < 60) {
+				this.level = "Intermediate";
+			} else if (activityScore < 100) {
+				this.level = "Advanced";
+			} else {
+				this.level = "Expert";
+			}
+		}
+	}
 }
