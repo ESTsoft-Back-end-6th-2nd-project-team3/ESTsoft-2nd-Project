@@ -194,21 +194,6 @@ public class PostService {
 		return commentRepository.countByPost_PostIdAndIsActiveTrue(postId);
 	}
 
-	public List<PostResponseDTO> getWeeklyBestPost() {
-		LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
-		PageRequest pageRequest = PageRequest.of(0, 5);
-		Page<Post> topPosts = postRepository.findTop5PostsByLast7DaysSortedByViewsAndLikes(sevenDaysAgo,
-			pageRequest);
-		List<Post> postList = topPosts.getContent();
-		return postList.stream()
-			.map(post -> {
-				PostResponseDTO postResponseDTO = new PostResponseDTO(post);
-				postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
-				return postResponseDTO;
-			})
-			.toList();
-	}
-
 	public List<SubMenu> getSubMenus(String level) {
 		List<String> categories = getCategoryList().stream().map(Category::getName).toList();
 		List<Long> categoryIds = getCategoryList().stream().map(Category::getId).toList();
@@ -234,7 +219,7 @@ public class PostService {
 	}
 
 	public List<PostResponseDTO> getTodayBestPostByPostTypeAndTargetId(String postType, Long targetId) {
-		LocalDateTime today = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
+		LocalDateTime today = LocalDateTime.now().minusDays(1);
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		Page<Post> topPosts = postRepository.findTopPostsForLast24Hours(today, postType, targetId, pageRequest);
 		List<Post> postList = topPosts.getContent();
@@ -280,7 +265,7 @@ public class PostService {
 	}
 
 	public List<PostResponseDTO> getTodayBestChallengePost() {
-		LocalDateTime today = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
+		LocalDateTime today = LocalDateTime.now().minusDays(1);
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		Page<Post> topPosts = postRepository.findTopPostsForLast24HoursByPostType(today,
 			PostType.PARTICIPATION_CHALLENGE.toString(), pageRequest);
@@ -407,11 +392,6 @@ public class PostService {
 		return posts.stream()
 			.filter(post -> types.contains(post.getPostType()))
 			.toList();
-	}
-
-	// 게시글 최신/오래된 목록 가져오기
-	public List<PostResponseDTO> getLatestPosts(List<PostResponseDTO> posts, int start, int end) {
-		return posts.subList(start, Math.min(end, posts.size()));
 	}
 
 	public String getDisplayName(String postType, Long targetId) {
