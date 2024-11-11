@@ -37,14 +37,15 @@
             <option value="likes">추천순</option>
         </select>
         <div class="pagination-container">
-            <button class="prev-btn" onclick="changePage('prev')" th:if="${currentPage > 1}">< 처음</button>
+            <button class="prev-btn" onclick="changePageDirection('prev')" th:if="${currentPage > 0}">< 이전</button>
             <div class="pagination">
-                <a th:classappend="${pageNum == currentPage ? 'active' : ''}"
+                <a th:classappend="${pageNum - 1 == currentPage ? 'active' : ''}"
                    th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
-                   th:href="@{'?page=' + ${pageNum}}"
+                   th:href="'#'"
+                   th:onclick="'changePage(' + ${pageNum} + ')'"
                    th:text="${pageNum}">1</a>
             </div>
-            <button class="next-btn" onclick="changePage('next')" th:if="${currentPage < totalPages}">다음 ></button>
+            <button class="next-btn" onclick="changePageDirection('next')" th:if="${currentPage < totalPages - 1}">다음 ></button>
         </div>
 
         <button class="write-btn" onclick="goToWritePage()"
@@ -59,34 +60,5 @@
         </select>
         <input id="searchQuery" placeholder=" 검색어를 입력하세요" type="text">
         <button onclick="searchUserPosts()">검색</button>
-    </div>
-
-    <!-- 관리자용 필터 및 검색 옵션 -->
-    <div class="admin-controls" th:if="${isAdmin}">
-        <select name="searchType">
-            <option value="title">제목 검색</option>
-            <option value="user">작성자 검색</option>
-        </select>
-
-        <select name="post_type">
-            <option disabled selected>카테고리</option>
-            <option value="music">음악</option>
-            <option value="travel">여행</option>
-            <option value="photo">사진</option>
-            <option value="game">게임</option>
-        </select>
-
-        <select id="target_id_select" name="target_id">
-            <option value="1">지역</option>
-            <option value="2">취미</option>
-        </select>
-
-        <select name="isActive">
-            <option value="1">활성화</option>
-            <option value="0">비활성화</option>
-        </select>
-
-        <input id="search-input" name="searchQuery" placeholder="검색어를 입력하세요" type="text">
-        <button onclick="searchAdminPosts()">검색</button>
     </div>
 </article>
