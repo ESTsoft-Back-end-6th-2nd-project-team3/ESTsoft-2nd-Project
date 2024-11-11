@@ -107,165 +107,140 @@
     }
 
     function updatePost() {
+        let postId = document.getElementById('post-id').value;
+        let userId = document.getElementById('user-id').value;
+        const postType = document.getElementById('post-type').value;
 
-        const modifyButton = document.getElementById("modify-btn");
+        const targetId = postType === 'PARTICIPATION_CATEGORY'
+            ? document.getElementById('categories').value
+            : postType === 'PARTICIPATION_REGION'
+                ? document.getElementById('regions').value
+                : null;
 
-        if (modifyButton) {
-            modifyButton.addEventListener('click', event => {
-                let postId = document.getElementById('post-id').value;
-                let userId = document.getElementById('user-id').value;
-                const postType = document.getElementById('post-type').value;
+        $.ajax({
+            url: `/api/post/${postId}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                title: document.getElementById('title').value,
+                content: document.getElementById('content').value,
+                userId: userId,
+                postType: postType,
+                targetId: targetId
+            }),
+            success: function () {
+                alert('수정이 완료되었습니다');
 
-                const targetId = postType === 'PARTICIPATION_CATEGORY'
-                    ? document.getElementById('categories').value
-                    : postType === 'PARTICIPATION_REGION'
-                        ? document.getElementById('regions').value
-                        : null;
-
-                fetch(`/api/post/${postId}`, {
-                    method: 'PUT',
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        title: document.getElementById('title').value,
-                        content: document.getElementById('content').value,
-                        userId: userId,
-                        postType: postType,
-                        targetId: targetId
-                    })
-                }).then(() => {
-                    alert('수정이 완료되었습니다');
-
-                    let redirectUrl = '';
-                    if (postType === 'PARTICIPATION_CATEGORY') {
-                        redirectUrl = `/category/post/${postId}?targetId=${targetId}`;
-                    } else if (postType === 'PARTICIPATION_REGION') {
-                        redirectUrl = `/region/post/${postId}?targetId=${targetId}`;
-                    } else if (postType === 'PARTICIPATION_CHALLENGE') {
-                        redirectUrl = `/challenge/post/${postId}`;
-                    } else if (postType === 'ANNOUNCEMENT') {
-                        redirectUrl = `/announcement/post/${postId}`;
-                    } else if (postType === 'GENERATION_CHALLENGE') {
-                        redirectUrl = `/announcement/post/${postId}`;
-                    } else {
-                        redirectUrl = `/index`;
-                    }
-                    location.replace(redirectUrl);
-                });
-            });
-        }
+                let redirectUrl = '';
+                if (postType === 'PARTICIPATION_CATEGORY') {
+                    redirectUrl = `/category/post/${postId}?targetId=${targetId}`;
+                } else if (postType === 'PARTICIPATION_REGION') {
+                    redirectUrl = `/region/post/${postId}?targetId=${targetId}`;
+                } else if (postType === 'PARTICIPATION_CHALLENGE') {
+                    redirectUrl = `/challenge/post/${postId}`;
+                } else if (postType === 'ANNOUNCEMENT') {
+                    redirectUrl = `/announcement/post/${postId}`;
+                } else if (postType === 'GENERATION_CHALLENGE') {
+                    redirectUrl = `/announcement/post/${postId}`;
+                } else {
+                    redirectUrl = `/index`;
+                }
+                location.replace(redirectUrl);
+            },
+            error: function () {
+                alert("수정에 실패했습니다.");
+            }
+        });
     }
 
     function createPost() {
-        const createButton = document.getElementById("create-btn");
+        let userId = document.getElementById('user-id').value;
+        const postType = document.getElementById('post-type').value;
 
-        if (createButton) {
-            createButton.addEventListener('click', event => {
-                let userId = document.getElementById('user-id').value;
-                const postType = document.getElementById('post-type').value;
+        const targetId = postType === 'PARTICIPATION_CATEGORY'
+            ? document.getElementById('categories').value
+            : postType === 'PARTICIPATION_REGION'
+                ? document.getElementById('regions').value
+                : null;
 
-                const targetId = postType === 'PARTICIPATION_CATEGORY'
-                    ? document.getElementById('categories').value
-                    : postType === 'PARTICIPATION_REGION'
-                        ? document.getElementById('regions').value
-                        : null;
-
-                fetch(`/api/post/${userId}/create`, {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        title: document.getElementById('title').value,
-                        content: document.getElementById('content').value,
-                        userId: userId,
-                        postType: postType,
-                        targetId: targetId
-                    }),
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            throw new Error('등록 실패: ' + response.status);
-                        }
-                    })
-                    .then(data => {
-                        const postId = data.postId;
-                        alert('등록 완료되었습니다');
-
-                        let redirectUrl = '';
-                        if (postType === 'PARTICIPATION_CATEGORY') {
-                            redirectUrl = `/category/post/${postId}?targetId=` + targetId;
-                        } else if (postType === 'PARTICIPATION_REGION') {
-                            redirectUrl = `/region/post/${postId}?targetId=` + targetId;
-                        } else if (postType === 'PARTICIPATION_CHALLENGE') {
-                            redirectUrl = `/challenge/post/${postId}`;
-                        } else if (postType === 'ANNOUNCEMENT') {
-                            redirectUrl = `/announcement/post/${postId}`;
-                        } else if (postType === 'GENERATION_CHALLENGE') {
-                            redirectUrl = `/announcement/post/${postId}`;
-                        } else {
-                            redirectUrl = `/index`;
-                        }
-
-                        location.replace(redirectUrl);
-                    })
-                    .catch(error => {
-                        console.error('Fetch error:', error);
-                        alert('등록 중 오류가 발생했습니다');
-                    });
-            });
-        }
-    }
-
-    function cancelPost() {
-        const cancelButton = document.getElementById("cancel-btn");
-
-        if (cancelButton) {
-            cancelButton.addEventListener('click', event => {
-                let postId = document.getElementById('post-id').value;
-                const postType = document.getElementById('post-type').value;
-                const targetId = postType === 'PARTICIPATION_CATEGORY'
-                    ? document.getElementById('categories').value
-                    : postType === 'PARTICIPATION_REGION'
-                        ? document.getElementById('regions').value
-                        : null;
+        $.ajax({
+            url: `/api/post/${userId}/create`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                title: $('#title').val(),
+                content: $('#content').val(),
+                userId: userId,
+                postType: postType,
+                targetId: targetId
+            }),
+            success: function (data) {
+                const postId = data.postId;
+                alert('등록이 완료되었습니다.');
 
                 let redirectUrl = '';
-
-                if (postId) {
-                    if (postType === 'PARTICIPATION_CATEGORY') {
-                        redirectUrl = `/category/post/${postId}?targetId=${targetId}`;
-                    } else if (postType === 'PARTICIPATION_REGION') {
-                        redirectUrl = `/region/post/${postId}?targetId=${targetId}`;
-                    } else if (postType === 'PARTICIPATION_CHALLENGE') {
-                        redirectUrl = `/challenge/post/${postId}`;
-                    } else if (postType === 'ANNOUNCEMENT') {
-                        redirectUrl = `/announcement/post/${postId}`;
-                    } else if (postType === 'GENERATION_CHALLENGE') {
-                        redirectUrl = `/announcement/post/${postId}`;
-                    } else {
-                        redirectUrl = `/index`;
-                    }
+                if (postType === 'PARTICIPATION_CATEGORY') {
+                    redirectUrl = `/category/post/${postId}?targetId=` + targetId;
+                } else if (postType === 'PARTICIPATION_REGION') {
+                    redirectUrl = `/region/post/${postId}?targetId=` + targetId;
+                } else if (postType === 'PARTICIPATION_CHALLENGE') {
+                    redirectUrl = `/challenge/post/${postId}`;
+                } else if (postType === 'ANNOUNCEMENT') {
+                    redirectUrl = `/announcement/post/${postId}`;
+                } else if (postType === 'GENERATION_CHALLENGE') {
+                    redirectUrl = `/announcement/post/${postId}`;
                 } else {
-                    if (postType === 'PARTICIPATION_CATEGORY') {
-                        redirectUrl = `/category?id=${targetId}`;
-                    } else if (postType === 'PARTICIPATION_REGION') {
-                        redirectUrl = `/region?id=${targetId}`;
-                    } else if (postType === 'PARTICIPATION_CHALLENGE') {
-                        redirectUrl = `/challenge`;
-                    } else if (postType === 'ANNOUNCEMENT' || postType === 'GENERATION_CHALLENGE') {
-                        redirectUrl = `/announcement`;
-                    } else {
-                        redirectUrl = `/index`;
-                    }
+                    redirectUrl = `/index`;
                 }
 
                 location.replace(redirectUrl);
-            });
+            },
+            error: function () {
+                alert('등록에 실패했습니다.');
+            }
+        });
+    }
+
+    function cancelPost() {
+        let postId = document.getElementById('post-id').value;
+        const postType = document.getElementById('post-type').value;
+        const targetId = postType === 'PARTICIPATION_CATEGORY'
+            ? document.getElementById('categories').value
+            : postType === 'PARTICIPATION_REGION'
+                ? document.getElementById('regions').value
+                : null;
+
+        let redirectUrl = '';
+
+        if (postId) {
+            if (postType === 'PARTICIPATION_CATEGORY') {
+                redirectUrl = `/category/post/${postId}?targetId=${targetId}`;
+            } else if (postType === 'PARTICIPATION_REGION') {
+                redirectUrl = `/region/post/${postId}?targetId=${targetId}`;
+            } else if (postType === 'PARTICIPATION_CHALLENGE') {
+                redirectUrl = `/challenge/post/${postId}`;
+            } else if (postType === 'ANNOUNCEMENT') {
+                redirectUrl = `/announcement/post/${postId}`;
+            } else if (postType === 'GENERATION_CHALLENGE') {
+                redirectUrl = `/announcement/post/${postId}`;
+            } else {
+                redirectUrl = `/index`;
+            }
+        } else {
+            if (postType === 'PARTICIPATION_CATEGORY') {
+                redirectUrl = `/category?id=${targetId}`;
+            } else if (postType === 'PARTICIPATION_REGION') {
+                redirectUrl = `/region?id=${targetId}`;
+            } else if (postType === 'PARTICIPATION_CHALLENGE') {
+                redirectUrl = `/challenge`;
+            } else if (postType === 'ANNOUNCEMENT' || postType === 'GENERATION_CHALLENGE') {
+                redirectUrl = `/announcement`;
+            } else {
+                redirectUrl = `/index`;
+            }
         }
+
+        location.replace(redirectUrl);
     }
 
     // view-post
@@ -286,65 +261,56 @@
     adjustContainerHeight();
 
     function modifyPost() {
-        const modifyButton = document.getElementById("modify-button");
+        const postId = document.getElementById("post-id").value;
+        const postType = document.getElementById("post-type").value;
+        const targetId = document.getElementById("target-id").value;
 
-        if (modifyButton) {
-            modifyButton.addEventListener('click', event => {
-                const postId = document.getElementById("post-id").value;
-                const postType = document.getElementById("post-type").value;
-                const targetId = document.getElementById("target-id").value;
+        if (postId && postType) {
+            let locationPath = ``;
 
-                if (postId && postType) {
-                    let locationPath = ``;
+            if (postType === 'PARTICIPATION_CATEGORY' || postType === 'PARTICIPATION_REGION') {
+                locationPath = `/write?postId=${postId}&postType=${postType}&targetId=${targetId}`;
+            } else {
+                locationPath = `/writeChallenge?postId=${postId}&postType=${postType}`;
+            }
 
-                    if (postType === 'PARTICIPATION_CATEGORY' || postType === 'PARTICIPATION_REGION') {
-                        locationPath = `/write?postId=${postId}&postType=${postType}&targetId=${targetId}`;
-                    } else {
-                        locationPath = `/writeChallenge?postId=${postId}&postType=${postType}`;
-                    }
-
-                    location.href = locationPath;
-                }
-            });
+            location.href = locationPath;
         }
     }
 
     function deletePost() {
+        let id = document.getElementById('post-id').value;
+        const postType = document.getElementById("post-type").value;
+        const targetId = document.getElementById("target-id").value;
 
-        const deleteButton = document.getElementById("delete-button");
+        $.ajax({
+            url: `/api/post/${id}`,
+            type: 'DELETE',
+            success: function () {
+                alert('삭제가 완료되었습니다');
 
-        if (deleteButton) {
-            deleteButton.addEventListener('click', event => {
-                let id = document.getElementById('post-id').value;
-                const postType = document.getElementById("post-type").value;
-                const targetId = document.getElementById("target-id").value;
+                let redirectPath = '/post/posts';
+                switch (postType) {
+                    case 'PARTICIPATION_CATEGORY':
+                        redirectPath = `/category?id=${targetId}`;
+                        break;
+                    case 'PARTICIPATION_REGION':
+                        redirectPath = `/region?id=${targetId}`;
+                        break;
+                    case 'PARTICIPATION_CHALLENGE':
+                        redirectPath = `/challenge`;
+                        break;
+                    default:
+                        redirectPath = `/announcement`;
+                        break;
+                }
 
-                fetch(`/api/post/${id}`, {
-                    method: 'DELETE'
-                }).then(() => {
-                    alert('삭제가 완료되었습니다');
-
-                    let redirectPath = '/post/posts';
-                    switch (postType) {
-                        case 'PARTICIPATION_CATEGORY':
-                            redirectPath = `/category?id=${targetId}`;
-                            break;
-                        case 'PARTICIPATION_REGION':
-                            redirectPath = `/region?id=${targetId}`;
-                            break;
-                        case 'PARTICIPATION_CHALLENGE':
-                            redirectPath = `/challenge`;
-                            break;
-                        default:
-                            redirectPath = `/announcement`;
-                            break;
-                    }
-
-                    location.replace(redirectPath);
-                })
-                    .catch(error => console.error('Error:', error));
-            });
-        }
+                location.replace(redirectPath);
+            },
+            error: function () {
+                console.error('삭제에 실패했습니다.');
+            }
+        });
     }
 
     function toggleLike() {
