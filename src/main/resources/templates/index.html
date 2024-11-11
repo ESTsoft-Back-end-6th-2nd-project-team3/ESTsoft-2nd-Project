@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>타임리프 레이아웃</title>
-    <link rel="stylesheet" th:href="@{/css/base.css}">
     <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <header>
     <section class="header-top">
-        <div class="logo" th:src="@{/images/logo.png}"></div>
+        <h1><a th:href="@{/}"><img alt="MomemTree" class="logo" th:src="@{/images/logo.png}"></a><span class="blind">MomenTree</span></h1>
         <input class="search-bar" placeholder="검색" type="text">
     </section>
     <nav>
@@ -20,8 +20,8 @@
             <div class="submenu" th:if="${menu.items != null}">
                 <a class="submenu-item"
                    th:each="item, stat : ${menu.items}"
-                   th:text="${item}"
-                   th:href="${menu.itemUrls[stat.index.intValue()]}">
+                   th:href="${menu.itemUrls[stat.index.intValue()]}"
+                   th:text="${item}">
                 </a>
             </div>
         </div>
