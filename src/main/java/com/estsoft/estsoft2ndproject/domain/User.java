@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "USER")
@@ -109,4 +111,7 @@ public class User {
 		this.selfIntro = selfIntro != null ? selfIntro : this.selfIntro;
 		this.snsLink = snsLink != null ? snsLink : this.snsLink;
 	}
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Post> posts = new ArrayList<>();
 }

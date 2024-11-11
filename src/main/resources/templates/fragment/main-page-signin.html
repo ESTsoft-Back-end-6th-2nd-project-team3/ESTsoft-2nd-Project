@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+<div class="login-container">
+
+    <!-- 로그인되지 않은 경우 -->
+    <div th:if="${!isLoggedIn}">
+        <h2>로그인이 필요합니다!</h2>
+        <p>Kakao 아이디로<br>손쉽게 가입 및 이용할 수 있습니다.</p>
+
+        <a href="/oauth2/authorization/kakao" class="kakao-login-btn">
+            <img th:src="@{/img/kakao-icon.svg}" alt="카카오로 시작하기 버튼">
+        </a>
+    </div>
+
+    <!-- 로그인된 경우 -->
+    <div th:if="${isLoggedIn}" class="profile-container">
+        <div class="profile-header">
+            <div class="profile-image-circle" th:style="|background-image: url('${profileImageUrl}');|"></div>
+
+            <div class="profile-info">
+                <p th:text="${userNickname}">닉네임</p>
+                <p>
+                    <span th:text="${userLevel}">권한</span> |
+                    <span th:text="${userActivityScore}">활동점수</span>점
+                </p>
+            </div>
+            <form action="/logout" method="post">
+                <button type="submit" class="logout-btn">로그아웃</button>
+            </form>
+        </div>
+
+        <!-- 구분선 -->
+        <div class="divider"></div>
+
+        <!-- 하단 메뉴 -->
+        <div class="profile-menu">
+            <div class="menu-item" onclick="toggleMenu('notifications')">알림</div>
+            <div class="menu-item" onclick="toggleMenu('userPosts')">작성글</div>
+            <div class="menu-item" onclick="toggleMenu('announcements')">공지</div>
+        </div>
+    </div>
+
+    <!-- 데이터 출력 영역 -->
+    <div id="menu-data-container" class="data-container" style="display: none;"></div>
+
+</div>
+
+<script>
+    let activeMenu = null; // 현재 열려 있는 메뉴를 추적합니다.
+
+    // 메뉴 토글 함수
+    function toggleMenu(menuType) {
+        const container = document.getElementById('menu-data-container');
+
+        // 현재 메뉴가 이미 열려있으면 닫고, 새로 클릭된 메뉴를 열기
+        if (activeMenu === menuType) {
+            container.style.display = 'none'; // 메뉴 닫기
+            activeMenu = null;
+        } else {
+            fetchData(menuType); // 새 메뉴 데이터를 가져옴
+            container.style.display = 'block'; // 메뉴 열기
+            activeMenu = menuType;
+        }
+    }
+
+    // 데이터를 가져와 화면에 출력
+    function fetchData(menuType) {
+        fetch(`/api/${menuType}`)
+            .then(response => response.json())
+            .then(data => {
+                if (menuType === 'userPosts') {
+                    renderPostTable(data.slice(0,5)); // 작성글 데이터를 테이블로 렌더링
+                } else {
+                    displayData(menuType, data); // 다른 데이터는 기존 방식으로 출력
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                displayData(menuType, []); // 에러 시 빈 데이터 표시
+            });
+    }
+
+    // 작성글 데이터를 테이블 형식으로 출력
+    function renderPostTable(posts) {
+        const container = document.getElementById('menu-data-container');
+        container.innerHTML = ''; // 기존 내용 제거
+
+        // 데이터가 없는 경우 처리
+        if (posts.length === 0) {
+            container.innerHTML = '<p>(작성글이 없습니다)</p>';
+            return;
+        }
+
+        // 최대 5개의 데이터만 표시
+        const visiblePosts = posts.slice(0, 5);
+
+        let html = `
+        <table class="post-table">
+            <thead>
+                <tr>
+                    <th class="category">카테고리</th>
+                    <th class="title">제목</th>
+                    <th class="comment-count">댓글 수</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+        visiblePosts.forEach(post => {
+            html += `
+            <tr>
+                <td class="category">${post.postType || '카테고리 없음'}</td>
+                <td class="title">${post.title}</td>
+                <td class="comment-count">${post.commentCount}</td>
+            </tr>
+        `;
+        });
+
+        html += `
+                </tbody>
+            </table>
+    `;
+
+        container.innerHTML = html;
+    }
+
+
+    // 데이터를 출력하는 함수 (알림, 공지)
+    function displayData(menuType, data) {
+        const container = document.getElementById('menu-data-container');
+        container.innerHTML = ''; // 기존 내용 제거
+
+        const titleMap = {
+            notifications: '알림',
+            userPosts: '작성글',
+            announcements: '공지'
+        };
+
+        const title = titleMap[menuType] || '정보';
+        let html = `<div class="menu-data"><h3>${title}</h3>`;
+
+        if (data.length === 0) {
+            html += '<p>(내용이 없습니다)</p>';
+        } else {
+            data.forEach(item => {
+                html += `<p>${item}</p>`;
+            });
+        }
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+</script>
+
+</body>
+</html>

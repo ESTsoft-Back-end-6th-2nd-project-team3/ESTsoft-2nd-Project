@@ -1,0 +1,77 @@
+/* 게시글 컨테이너 */
+.board-container {
+    width: 800px;
+    min-height: 630px;
+    padding: 20px;
+    border: 3px solid #0B6623;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* 제목 스타일 */
+h2 {
+    text-align: left;
+    font-size: 24px;
+    color: black;
+    margin-bottom: 20px;
+    margin-top: -1%;
+}
+
+/* 게시글 목록 */
+.board-list {
+    display: flex;
+    height: 100%;
+    justify-content: space-between;
+}
+
+/* 게시글 열 (좌우 2열 구성) */
+.board-column {
+    width: 49%;
+    box-sizing: border-box;
+}
+
+/* 중앙 구분선 */
+.divider {
+    width: 1px;
+    background-color: #0B6623;
+    height: 90%;
+    margin: 0 10px;
+}
+
+/* 게시글 항목 */
+.board-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+/* 빈 게시글 항목 */
+.board-item.empty {
+    border-bottom: none;
+    visibility: hidden;
+}
+
+/* 게시글 항목 스타일 */
+.category, .title, .comment-count {
+    font-size: 14px;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    overflow: hidden;
+    text-overflow: ellipsis; /* 긴 텍스트 생략 처리 */
+}
+
+/* 각 항목의 간격 조정 */
+.category {
+    width: 20%;
+    text-align: left;
+}
+
+.title {
+    width: 60%;
+    text-align: left;
+}
+
+.comment-count {
+    width: 20%;
+    text-align: right;
+}
