@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import com.estsoft.estsoft2ndproject.domain.Category;
@@ -332,5 +331,60 @@ public class PostService {
 
 	public Boolean isAdmin(CustomUserDetails userDetails) {
 		return userDetails.getUser().getLevel().equals("관리자");
+	}
+
+	public Page<PostResponseDTO> searchPostsByTitle(String query, String postType, Long targetId, int page, int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+		String keyword = "%" + query + "%";
+		if (targetId != null) {
+			postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostTypeAndTargetId(query,
+				postType,
+				targetId,
+				pageRequest);
+		} else {
+			if (postType.equals(PostType.PARTICIPATION_CHALLENGE.toString()) || postType.equals(
+				PostType.GENERATION_CHALLENGE.toString())) {
+				postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostTypeSuffix(keyword, "%CHALLENGE",
+					pageRequest);
+			} else {
+				postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostType(query, postType,
+					pageRequest);
+			}
+		}
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
+	}
+
+	public Page<PostResponseDTO> searchPostsByTitleOrContent(String query, String postType, Long targetId, int page,
+		int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+		String keyword = "%" + query + "%";
+		if (targetId != null) {
+			postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeAndTargetId(
+				query, query, postType, targetId, pageRequest);
+		} else {
+			if (postType.equals(PostType.PARTICIPATION_CHALLENGE.toString()) || postType.equals(
+				PostType.GENERATION_CHALLENGE.toString())) {
+				postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeSuffix(
+					keyword, keyword, "%CHALLENGE", pageRequest);
+			} else {
+				postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostType(
+					query, query, postType, pageRequest);
+			}
+		}
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
 	}
 }

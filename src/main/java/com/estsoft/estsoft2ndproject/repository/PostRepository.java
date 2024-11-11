@@ -76,4 +76,30 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		@Param("suffix") String suffix,
 		Pageable pageable
 	);
+
+	Page<Post> findByTitleContainingAndIsActiveTrueAndPostTypeAndTargetId(String title, String postType, Long targetId,
+		Pageable pageable);
+
+	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeAndTargetId(String titleKeyword,
+		String contentKeyword, String postType, Long targetId, Pageable pageable);
+
+	Page<Post> findByTitleContainingAndIsActiveTrueAndPostType(String title, String postType, Pageable pageable);
+
+	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostType(String titleKeyword,
+		String contentKeyword, String postType, Pageable pageable);
+
+	@Query("SELECT p FROM Post p WHERE p.isActive = true AND p.title LIKE %:title AND p.postType LIKE %:suffix")
+	Page<Post> findByTitleContainingAndIsActiveTrueAndPostTypeSuffix(
+		@Param("title") String title,
+		@Param("suffix") String suffix,
+		Pageable pageable
+	);
+
+	@Query("SELECT p FROM Post p WHERE p.isActive = true AND (p.title LIKE %:titleKeyword OR p.content LIKE %:contentKeyword) AND p.postType LIKE %:suffix")
+	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeSuffix(
+		@Param("titleKeyword") String titleKeyword,
+		@Param("contentKeyword") String contentKeyword,
+		@Param("suffix") String suffix,
+		Pageable pageable
+	);
 }

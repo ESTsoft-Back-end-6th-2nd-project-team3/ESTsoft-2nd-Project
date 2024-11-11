@@ -395,4 +395,116 @@ public class PageController {
 
 		return "index";
 	}
+
+	@GetMapping("/category/search")
+	public String searchCategoryPosts(@RequestParam(defaultValue = "0") int page, @RequestParam String searchType,
+		@RequestParam String query, @RequestParam(name = "id") Long categoryId,
+		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		Page<PostResponseDTO> searchResults;
+		if ("title".equals(searchType)) {
+			searchResults = postService.searchPostsByTitle(query, PostType.PARTICIPATION_CATEGORY.toString(),
+				categoryId, page, 30);
+		} else {
+			searchResults = postService.searchPostsByTitleOrContent(query, PostType.PARTICIPATION_CATEGORY.toString(),
+				categoryId, page, 30);
+		}
+
+		model.addAttribute("searchResults", searchResults);
+		addCategoryPageData(categoryId, page, model, userDetails);
+
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/category-best");
+		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+
+		return "index";
+	}
+
+	@GetMapping("/region/search")
+	public String searchRegionPosts(@RequestParam(defaultValue = "0") int page, @RequestParam String searchType,
+		@RequestParam String query, @RequestParam(name = "id") Long regionId,
+		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		Page<PostResponseDTO> searchResults;
+		if ("title".equals(searchType)) {
+			searchResults = postService.searchPostsByTitle(query, PostType.PARTICIPATION_REGION.toString(), regionId,
+				page, 30);
+		} else {
+			searchResults = postService.searchPostsByTitleOrContent(query, PostType.PARTICIPATION_REGION.toString(),
+				regionId, page, 30);
+		}
+
+		model.addAttribute("searchResults", searchResults);
+		addRegionPageData(regionId, page, model, userDetails);
+
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/category-best");
+		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+
+		return "index";
+	}
+
+	@GetMapping("/challenge/search")
+	public String searchChallengePosts(@RequestParam(defaultValue = "0") int page, @RequestParam String searchType,
+		@RequestParam String query, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		String boardName = PostType.PARTICIPATION_CHALLENGE.getKoreanName();
+
+		Page<PostResponseDTO> searchResults;
+		if ("title".equals(searchType)) {
+			searchResults = postService.searchPostsByTitle(query, PostType.PARTICIPATION_CHALLENGE.toString(), null,
+				page, 30);
+		} else {
+			searchResults = postService.searchPostsByTitleOrContent(query, PostType.PARTICIPATION_CHALLENGE.toString(),
+				null, page, 30);
+		}
+
+		addMenuData(model, userDetails);
+		addCategoryNamePageData(model);
+
+		List<PostResponseDTO> todayBest = postService.getTodayBestChallengePost();
+		List<PostResponseDTO> weeklyBest = postService.getWeeklyBestChallengePost();
+
+		model.addAttribute("categoryName", boardName);
+		model.addAttribute("postType", PostType.PARTICIPATION_CHALLENGE.toString());
+		model.addAttribute("todayBest", todayBest);
+		model.addAttribute("weeklyBest", weeklyBest);
+		model.addAttribute("postList", searchResults.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", searchResults.getTotalPages());
+		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/category-best");
+		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+		return "index";
+	}
+
+	@GetMapping("/announcement/search")
+	public String SearchAnnouncementPosts(@RequestParam(defaultValue = "0") int page, @RequestParam String searchType,
+		@RequestParam String query, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		String boardName = PostType.ANNOUNCEMENT.getKoreanName();
+
+		Page<PostResponseDTO> searchResults;
+		if ("title".equals(searchType)) {
+			searchResults = postService.searchPostsByTitle(query, PostType.ANNOUNCEMENT.toString(), null,
+				page, 30);
+		} else {
+			searchResults = postService.searchPostsByTitleOrContent(query, PostType.ANNOUNCEMENT.toString(),
+				null, page, 30);
+		}
+
+		addMenuData(model, userDetails);
+		addCategoryNamePageData(model);
+
+		model.addAttribute("categoryName", boardName);
+		model.addAttribute("postType", PostType.ANNOUNCEMENT.toString());
+		model.addAttribute("postList", searchResults.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", searchResults.getTotalPages());
+		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
+		return "index";
+	}
 }

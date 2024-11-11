@@ -554,17 +554,33 @@
     }
 
     function searchUserPosts() {
-        const searchType = document.querySelector('.admin-controls select').value;
-        const searchQuery = document.querySelector('.admin-controls input[type="text"]').value;
+        const searchType = document.querySelector('.search-box select').value;
+        const searchQuery = document.querySelector('.search-box input[type="text"]').value;
+        const postType = document.getElementById('post-type').value;
+        const targetId = document.getElementById('target-id').value;
 
         if (searchQuery.trim() === "") {
             alert("검색어를 입력하세요.");
             return;
         }
 
-        const url = new URL(window.location.href);
+        const url = new URL(window.location.origin);
+
+        if (postType === 'PARTICIPATION_CATEGORY') {
+            url.pathname = `/category/search`;
+            url.searchParams.set('id', targetId);
+        } else if (postType === 'PARTICIPATION_REGION') {
+            url.pathname = `/region/search`;
+            url.searchParams.set('id', targetId);
+        } else if (postType === 'ANNOUNCEMENT') {
+            url.pathname = `/announcement/search`;
+        } else {
+            url.pathname = `/challenge/search`
+        }
+
         url.searchParams.set('searchType', searchType);
         url.searchParams.set('query', searchQuery);
+
         window.location.href = url.toString();
     }
 
