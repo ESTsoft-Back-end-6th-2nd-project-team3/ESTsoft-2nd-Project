@@ -94,7 +94,7 @@
 /* 데이터 출력 영역 */
 .data-container {
     width: 380px;
-    min-height: 200px; /* 고정된 높이 */
+    min-height: 240px; /* 고정된 높이 */
     border: 3px solid #0B6623;
     border-radius: 10px;
     text-align: left; /* 글씨를 왼쪽 정렬 */

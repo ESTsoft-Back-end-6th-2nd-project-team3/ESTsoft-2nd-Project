@@ -39,7 +39,7 @@ public class MenuDataService {
 		List<PostResponseDTO> postResponseDTOs = postRepository.findByUserUserIdOrderByCreatedAtDesc(userId)
 			.stream()
 			.map(PostResponseDTO::new)
-			.collect(Collectors.toList());
+			.toList();
 
 		// 댓글 수를 추가하여 NewPostResponseDTO로 변환
 		return postResponseDTOs.stream()

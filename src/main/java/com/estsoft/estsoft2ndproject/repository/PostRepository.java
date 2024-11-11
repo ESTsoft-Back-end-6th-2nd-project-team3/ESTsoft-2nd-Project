@@ -42,7 +42,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findUserPosts(@Param("userId") Long userId);
 
 	// 댓글 조회 메서드 (참고용)
-	@Query("SELECT c FROM Comment c WHERE c.post.user.id = :userId")
+	@Query("SELECT c FROM Comment c WHERE c.post.user.userId = :userId")
 	List<Comment> findCommentsByUserId(@Param("userId") Long userId);
 
 	List<Post> findByUserUserIdOrderByCreatedAtDesc(Long userId);
