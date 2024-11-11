@@ -17,4 +17,13 @@ public enum PostType {
 	public String getKoreanName() {
 		return koreanName;
 	}
+
+	public static String getKoreanNameByString(String postType) {
+		for (PostType type : PostType.values()) {
+			if (type.name().equalsIgnoreCase(postType)) {
+				return type.getKoreanName();
+			}
+		}
+		return "알 수 없는 게시판";
+	}
 }
