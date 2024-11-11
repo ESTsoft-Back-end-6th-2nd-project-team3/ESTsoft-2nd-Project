@@ -3,21 +3,18 @@
     <input type="hidden" id="user-id" th:value="${userId}">
     <input type="hidden" id="post-type" th:value="${selectedPostType}">
     <select class="dropdown" id="categories" th:if="${categories} != null">
-        <option value="">카테고리를 선택해주세요.</option>
         <option th:each="category : ${categories}"
                 th:value="${category.id}"
                 th:text="${category.name}"
                 th:selected="${category.id == selectedCategory}">
     </select>
     <select class="dropdown" id="regions" th:if="${regions} != null">
-        <option value="">카테고리를 선택해주세요.</option>
         <option th:each="region : ${regions}"
                 th:value="${region.id}"
                 th:text="${region.name}"
                 th:selected="${region.id == selectedCategory}">
     </select>
     <select class="dropdown" th:if="${postTypes} != null">
-        <option value="">카테고리를 선택해주세요.</option>
         <option th:each="postType : ${postTypes}"
                 th:value="${postType.name()}"
                 th:text="${postType.koreanName}"
@@ -29,9 +26,11 @@
               th:text="${post.content}"></textarea>
     <button class="photo-button button-common" type="button">사진 추가</button>
     <div class="action-buttons">
-        <button th:if="${post.postId} == null" class="submit-button button-common" type="button" id="create-btn" onclick="createPost()">작성완료
+        <button th:if="${post.postId} == null" class="submit-button button-common" type="button" id="create-btn"
+                onclick="createPost()">작성완료
         </button>
-        <button th:if="${post.postId} != null" class="submit-button button-common" type="button" id="modify-btn" onclick="updatePost()">수정
+        <button th:if="${post.postId} != null" class="submit-button button-common" type="button" id="modify-btn"
+                onclick="updatePost()">수정
         </button>
         <button class="cancel-button button-common" type="button" id="cancel-btn" onclick="cancelPost()">취소</button>
     </div>

@@ -2,12 +2,14 @@ package com.estsoft.estsoft2ndproject.service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import com.estsoft.estsoft2ndproject.domain.Category;
@@ -19,6 +21,7 @@ import com.estsoft.estsoft2ndproject.domain.SubMenu;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
+import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.exception.PostNotFoundException;
 import com.estsoft.estsoft2ndproject.exception.UserNotFoundException;
 import com.estsoft.estsoft2ndproject.repository.CategoryRepository;
@@ -53,7 +56,6 @@ public class PostService {
 
 	@Transactional
 	public Post createPost(PostRequestDTO postRequestDTO, Long userId) {
-		// 추후에 User 구현 완료되면 로그인한 사용자 Id 가져와서 사용
 		User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 		return postRepository.save(postRequestDTO.toEntity(user));
 	}
@@ -192,24 +194,16 @@ public class PostService {
 		List<String> regionUrls = regions.isEmpty() ? Collections.emptyList() :
 			regionIds.stream().map(regionId -> "/region?id=" + regionId).toList();
 
-		List<SubMenu> subMenus;
+		List<SubMenu> subMenus = new ArrayList<>();
+		subMenus.add(new SubMenu("카테고리", categories, null, categoryUrls));
+		subMenus.add(new SubMenu("챌린지", null, "/challenge", null));
+		subMenus.add(new SubMenu("지역 친목 게시판", regions, null, regionUrls));
+		subMenus.add(new SubMenu("마이페이지", null, "/mypage", null));
 
-		if ("관리자".equals(level)) {
-			subMenus = Arrays.asList(
-				new SubMenu("카테고리", categories, null, categoryUrls),
-				new SubMenu("챌린지", null, "/challenge", null),
-				new SubMenu("지역 친목 게시판", regions, null, regionUrls),
-				new SubMenu("마이페이지", null, "/mypage", null),
-				new SubMenu("관리자 메뉴", null, "/admin", null)
-			);
-		} else {
-			subMenus = Arrays.asList(
-				new SubMenu("카테고리", categories, null, categoryUrls),
-				new SubMenu("챌린지", null, "/challenge", null),
-				new SubMenu("지역 친목 게시판", regions, null, regionUrls),
-				new SubMenu("마이페이지", null, "/mypage", null)
-			);
+		if (level.equals("관리자")) {
+			subMenus.add(3, new SubMenu("관리자 메뉴", null, "/admin", null));
 		}
+
 		return subMenus;
 	}
 
@@ -233,7 +227,8 @@ public class PostService {
 	public List<PostResponseDTO> getWeeklyBestPostByPostTypeAndTargetId(String postType, Long targetId) {
 		LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
 		PageRequest pageRequest = PageRequest.of(0, 5);
-		Page<Post> topPosts = postRepository.findTopPostsForLast7Days(sevenDaysAgo, postType, targetId, pageRequest);
+		Page<Post> topPosts = postRepository.findTopPostsForLast7Days(sevenDaysAgo, postType, targetId,
+			pageRequest);
 		List<Post> postList = topPosts.getContent();
 		return postList.stream()
 			.map(post -> {
@@ -293,7 +288,12 @@ public class PostService {
 
 	public Page<PostResponseDTO> getPaginationPostsByPostType(String postType, int page, int size) {
 		PageRequest pageRequest = PageRequest.of(page, size);
-		Page<Post> postPage = postRepository.findPostsByPostTypeAndIsActiveTrue(postType, pageRequest);
+		Page<Post> postPage;
+		if (postType.equals(PostType.PARTICIPATION_CHALLENGE.toString())) {
+			postPage = postRepository.findPostsByPostTypeSuffixAndIsActiveTrue("CHALLENGE", pageRequest);
+		} else {
+			postPage = postRepository.findPostsByPostTypeAndIsActiveTrue(postType, pageRequest);
+		}
 
 		return postPage.map(post -> {
 			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
@@ -303,10 +303,11 @@ public class PostService {
 		});
 	}
 
-	public List<String> getEtcList(String level) {
-		if ("관리자".equals(level)) {
-			return Arrays.asList(PostType.PARTICIPATION_CHALLENGE.toString(), PostType.GENERATION_CHALLENGE.toString(),
-				PostType.ANNOUNCEMENT.toString());
+	public List<String> getEtcList(String level, String postType) {
+		if (postType.equals(PostType.ANNOUNCEMENT.toString())) {
+			return Arrays.asList(PostType.ANNOUNCEMENT.toString());
+		} else if (level.equals("관리자")) {
+			return Arrays.asList(PostType.GENERATION_CHALLENGE.toString());
 		} else {
 			return Arrays.asList(PostType.PARTICIPATION_CHALLENGE.toString());
 		}
@@ -327,5 +328,9 @@ public class PostService {
 		postResponseDTO.setIsLiked(isLiked);
 
 		return postResponseDTO;
+	}
+
+	public Boolean isAdmin(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return userDetails.getUser().getLevel().equals("관리자");
 	}
 }

@@ -47,7 +47,9 @@
             <button class="next-btn" onclick="changePage('next')" th:if="${currentPage < totalPages}">다음 ></button>
         </div>
 
-        <button class="write-btn" onclick="goToWritePage()">글쓰기</button>
+        <button class="write-btn" onclick="goToWritePage()"
+                th:if="${postType == 'ANNOUNCEMENT' ? isAdmin == true : true}">글쓰기
+        </button>
     </div>
 
     <div class="search-box">

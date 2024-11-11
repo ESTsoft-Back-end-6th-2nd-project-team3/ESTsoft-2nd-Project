@@ -71,4 +71,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	Page<Post> findPostsByPostTypeAndIsActiveTrue(String postType, Pageable pageable);
 
+	@Query("SELECT p FROM Post p WHERE p.isActive = true AND p.postType LIKE %:suffix")
+	Page<Post> findPostsByPostTypeSuffixAndIsActiveTrue(
+		@Param("suffix") String suffix,
+		Pageable pageable
+	);
 }
