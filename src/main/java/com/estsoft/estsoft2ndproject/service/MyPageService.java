@@ -9,6 +9,7 @@ import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.repository.ObjectiveRepository;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
 import com.estsoft.estsoft2ndproject.repository.PostRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +31,46 @@ public class MyPageService {
 
 	public void updateMyInfo(Long userId, UserInfoResponseDTO userInfo) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-		user.updateUser(userInfo.getNickname(), null, null, null, null, null, userInfo.getProfileImageUrl(), userInfo.getActivityScore(),
-			null, userInfo.getAwardedTitle(), userInfo.getSelfIntro(), userInfo.getSnsLink());
+		user.updateUser(userInfo.getNickname(), null, null, null, null, null, userInfo.getProfileImageUrl(),
+			userInfo.getActivityScore(), null, userInfo.getAwardedTitle(), userInfo.getSelfIntro(), userInfo.getSnsLink());
 		userRepository.save(user);
 	}
 
 	public List<Objective> getObjectives(Long userId) {
 		return objectiveRepository.findByUser_UserId(userId);
+	}
+
+	public void saveOrUpdateObjectives(Long userId, List<ObjectiveRequestDTO> objectiveRequestDTOs) {
+		List<Objective> existingObjectives = objectiveRepository.findByUser_UserId(userId);
+
+		List<Long> requestedIds = objectiveRequestDTOs.stream()
+			.map(ObjectiveRequestDTO::getId)
+			.toList();
+
+		List<Objective> objectivesToDelete = existingObjectives.stream()
+			.filter(obj -> !requestedIds.contains(obj.getId()))
+			.collect(Collectors.toList());
+
+		objectiveRepository.deleteAll(objectivesToDelete);
+
+		for (ObjectiveRequestDTO dto : objectiveRequestDTOs) {
+			if (dto.getId() != null) {
+				Objective objective = objectiveRepository.findById(dto.getId())
+					.orElseThrow(() -> new RuntimeException("Objective not found"));
+				objective.setContent(dto.getContent());
+				objective.setIsCompleted(dto.getIsCompleted());
+				objective.setObjectiveYearMonth(dto.getObjectiveYearMonth());
+				objectiveRepository.save(objective);
+			} else {
+				Objective newObjective = new Objective();
+				newObjective.setUser(userRepository.findById(userId)
+					.orElseThrow(() -> new RuntimeException("User not found")));
+				newObjective.setContent(dto.getContent());
+				newObjective.setObjectiveYearMonth(dto.getObjectiveYearMonth());
+				newObjective.setIsCompleted(dto.getIsCompleted());
+				objectiveRepository.save(newObjective);
+			}
+		}
 	}
 
 	public Objective createObjective(Long userId, ObjectiveRequestDTO objectiveRequestDTO) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko-KR">
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>내 목표 수정</title>
@@ -16,72 +16,76 @@
             <span class="label label-date">날짜</span>
             <span class="label">달성 완료 체크</span>
         </div>
-        <div class="objective-list"></div>
+        <div class="objective-list">
+            <!-- 목표 리스트를 Thymeleaf로 렌더링 -->
+            <div th:each="objective : ${objectives}" class="objective-item">
+                <input type="hidden" th:value="${objective.id}" class="objective-id">
+                <input type="text" th:value="${objective.content}" class="objective-input box" placeholder="목표를 입력하세요">
+                <input type="month" th:value="${#dates.format(objective.objectiveYearMonth, 'yyyy-MM')}" class="date-input box">
+                <input type="checkbox" th:checked="${objective.isCompleted}" class="checkbox">
+                <button class="delete-button button box" onclick="deleteObjective(this)">삭제</button>
+            </div>
+        </div>
         <div class="action-buttons">
-            <button class="button">저장</button>
-            <button class="button">취소</button>
+            <button class="button" onclick="saveObjectives()">저장</button>
+            <button class="button" onclick="cancelEdit()">취소</button>
         </div>
     </div>
 </article>
 <script>
-    // Thymeleaf에서 전달된 데이터를 JavaScript 변수로 받기
-    // const initialObjectives = /*[[${initialObjectives}]]*/ [];
-    const initialObjectives = [
-        {title: "목표 1", date: "2024-01", completed: false},
-        {title: "목표 2", date: "2024-02", completed: true}
-    ];
-
-    function initializeObjectives() {
-        initialObjectives.forEach(obj => addObjective(obj.title, obj.date, obj.completed));
-    }
-
-    function addObjective(title = "", date = "", completed = false) {
+    // 목표 추가 함수
+    function addObjective() {
         const objectiveList = document.querySelector('.objective-list');
         const objectiveItem = document.createElement('div');
         objectiveItem.classList.add('objective-item');
-
-        const objectiveInput = document.createElement('input');
-        objectiveInput.type = 'text';
-        objectiveInput.placeholder = '목표를 입력하세요';
-        objectiveInput.className = 'objective-input box';
-        objectiveInput.value = title;
-
-        const dateInput = document.createElement('input');
-        dateInput.type = 'month';
-        dateInput.className = 'date-input box';
-        dateInput.value = date;
-
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = '삭제';
-        deleteButton.className = 'delete-button button box';
-        deleteButton.onclick = function () {
-            objectiveList.removeChild(objectiveItem);
-            adjustContainerHeight();
-        };
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.classList.add('checkbox');
-        checkbox.checked = completed;
-
-        objectiveItem.appendChild(objectiveInput);
-        objectiveItem.appendChild(dateInput);
-        objectiveItem.appendChild(deleteButton);
-        objectiveItem.appendChild(checkbox);
+        objectiveItem.innerHTML = `
+            <input type="hidden" class="objective-id" value="">
+            <input type="text" class="objective-input box" placeholder="목표를 입력하세요">
+            <input type="month" class="date-input box">
+            <input type="checkbox" class="checkbox">
+            <button class="delete-button button box" onclick="deleteObjective(this)">삭제</button>
+        `;
         objectiveList.appendChild(objectiveItem);
-
-        adjustContainerHeight();
     }
 
-    function adjustContainerHeight() {
-        const objectiveContent = document.querySelector('.objective-content');
-        const container = document.querySelector('.container');
-        const objectiveContentHeight = objectiveContent.scrollHeight;
-
-        container.style.height = `${objectiveContentHeight + 80}px`;
+    // 목표 삭제 함수
+    function deleteObjective(button) {
+        const objectiveItem = button.parentElement;
+        objectiveItem.remove();
     }
 
-    window.onload = initializeObjectives;
+    // 목표 저장 함수
+    function saveObjectives() {
+        const objectives = [];
+        document.querySelectorAll('.objective-item').forEach(item => {
+            const id = item.querySelector('.objective-id').value;
+            const content = item.querySelector('.objective-input').value;
+            const date = item.querySelector('.date-input').value + "-01"; // 날짜 형식 수정
+            const isCompleted = item.querySelector('.checkbox').checked;
+            if (content.trim() && date) {
+                objectives.push({ id: id || null, content, objectiveYearMonth: date, isCompleted });
+            }
+        });
+
+        fetch('/mypage/objectives', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(objectives)
+        }).then(response => {
+            if (response.ok) {
+                alert('목표가 저장되었습니다.');
+                location.reload();
+            } else {
+                alert('목표 저장에 실패했습니다.');
+            }
+        });
+    }
+
+
+    // 취소 함수
+    function cancelEdit() {
+        location.reload();
+    }
 </script>
 </body>
 </html>

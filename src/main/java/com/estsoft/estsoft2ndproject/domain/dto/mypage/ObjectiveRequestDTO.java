@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class ObjectiveRequestDTO {
+	private Long id;
 	private String content;
 	private Boolean isCompleted;
 	private Date objectiveYearMonth;
