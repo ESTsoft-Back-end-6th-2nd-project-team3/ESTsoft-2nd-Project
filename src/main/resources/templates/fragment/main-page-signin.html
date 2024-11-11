@@ -75,10 +75,10 @@
         fetch(`/api/${menuType}`)
             .then(response => response.json())
             .then(data => {
-                if (menuType === 'userPosts') {
-                    renderPostTable(data.slice(0,5)); // 작성글 데이터를 테이블로 렌더링
+                if (menuType === 'userPosts' || menuType === 'notifications' || menuType === 'announcements') {
+                    renderDataWithLinks(menuType, data.slice(0, 5)); // 최대 5개 표시
                 } else {
-                    displayData(menuType, data); // 다른 데이터는 기존 방식으로 출력
+                    displayData(menuType, data);
                 }
             })
             .catch(error => {
@@ -87,49 +87,40 @@
             });
     }
 
-    // 작성글 데이터를 테이블 형식으로 출력
-    function renderPostTable(posts) {
-        const container = document.getElementById('menu-data-container');
-        container.innerHTML = ''; // 기존 내용 제거
 
-        // 데이터가 없는 경우 처리
-        if (posts.length === 0) {
-            container.innerHTML = '<p>(작성글이 없습니다)</p>';
+
+    // 작성글 데이터를 테이블 형식으로 출력
+    function renderDataWithLinks(menuType, data) {
+        const container = document.getElementById('menu-data-container');
+        container.innerHTML = '';
+
+        if (data.length === 0) {
+            container.innerHTML = '<p>(내용이 없습니다)</p>';
             return;
         }
 
-        // 최대 5개의 데이터만 표시
-        const visiblePosts = posts.slice(0, 5);
-
         let html = `
-        <table class="post-table">
-            <thead>
-                <tr>
-                    <th class="category">카테고리</th>
-                    <th class="title">제목</th>
-                    <th class="comment-count">댓글 수</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="post-list">
     `;
 
-        visiblePosts.forEach(post => {
+        data.forEach(item => {
             html += `
-            <tr>
-                <td class="category">${post.postType || '카테고리 없음'}</td>
-                <td class="title">${post.title}</td>
-                <td class="comment-count">${post.commentCount}</td>
-            </tr>
+            <div class="post-item">
+                <span class="post-category">${item.postType || '카테고리 없음'}</span>
+                <a href="${item.postLink}" class="post-title">${item.title}</a>
+                <span class="post-comments">${item.commentCount || ''}</span>
+            </div>
         `;
         });
 
         html += `
-                </tbody>
-            </table>
+        </div>
     `;
 
         container.innerHTML = html;
     }
+
+
 
 
     // 데이터를 출력하는 함수 (알림, 공지)

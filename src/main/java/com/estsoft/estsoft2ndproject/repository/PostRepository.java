@@ -46,4 +46,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Comment> findCommentsByUserId(@Param("userId") Long userId);
 
 	List<Post> findByUserUserIdOrderByCreatedAtDesc(Long userId);
+
 }

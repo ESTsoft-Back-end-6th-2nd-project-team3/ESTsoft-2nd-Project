@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.estsoft.estsoft2ndproject.domain.Comment;
 import com.estsoft.estsoft2ndproject.domain.Post;
-import com.estsoft.estsoft2ndproject.domain.dto.post.NewPostResponseDTO;
+import com.estsoft.estsoft2ndproject.domain.dto.post.CommentResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.repository.CommentRepository;
 import com.estsoft.estsoft2ndproject.repository.PostRepository;
@@ -26,15 +26,20 @@ public class MenuDataService {
 
 	// 알림 데이터 가져오기
 	@Transactional(readOnly = true)
-	public List<String> getNotifications(Long userId) {
-		List<Comment> comments = postRepository.findCommentsByUserId(userId);
-		return comments.stream()
-			.map(comment -> "게시글 '" + comment.getPost().getTitle() + "'에 댓글이 달렸습니다: " + comment.getContent())
+	public List<CommentResponseDTO> getNotificationsWithLinks(Long userId) {
+		// 댓글 정보를 통해 알림 데이터 생성
+		return commentRepository.findByPostUserId(userId)
+			.stream()
+			.map(comment -> {
+				PostResponseDTO postDTO = new PostResponseDTO(comment.getPost());
+				return new CommentResponseDTO(postDTO, 0); // 댓글 수는 0으로 설정
+			})
 			.collect(Collectors.toList());
 	}
 
+
 	@Transactional(readOnly = true)
-	public List<NewPostResponseDTO> getUserPostsWithComments(Long userId) {
+	public List<CommentResponseDTO> getUserPostsWithComments(Long userId) {
 		// 기존 방식으로 PostResponseDTO 리스트 생성
 		List<PostResponseDTO> postResponseDTOs = postRepository.findByUserUserIdOrderByCreatedAtDesc(userId)
 			.stream()
@@ -45,17 +50,18 @@ public class MenuDataService {
 		return postResponseDTOs.stream()
 			.map(postDTO -> {
 				int commentCount = commentRepository.countCommentsByPostId(postDTO.getPostId()); // 댓글 수 계산
-				return new NewPostResponseDTO(postDTO, commentCount);
+				return new CommentResponseDTO(postDTO, commentCount);
 			})
 			.collect(Collectors.toList());
 	}
 
 	// 공지 데이터 가져오기
 	@Transactional(readOnly = true)
-	public List<String> getAnnouncements() {
+	public List<CommentResponseDTO> getAnnouncementsWithLinks() {
 		List<Post> announcements = postRepository.findAnnouncements();
 		return announcements.stream()
-			.map(announcement -> "공지: " + announcement.getTitle())
+			.map(post -> new CommentResponseDTO(new PostResponseDTO(post), 0)) // 댓글 수는 0으로 설정
 			.collect(Collectors.toList());
 	}
+
 }

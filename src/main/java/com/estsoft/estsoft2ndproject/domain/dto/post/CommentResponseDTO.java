@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NewPostResponseDTO {
+public class CommentResponseDTO {
 	private Long postId;
 	private String title;
 	private String content;
@@ -22,9 +22,10 @@ public class NewPostResponseDTO {
 	private Integer viewCount;
 	private Integer likeCount;
 	private Boolean isLiked;
-	private Integer commentCount; // 댓글 수 추가
+	private Integer commentCount;
+	private String postLink; // 게시글 링크 추가
 
-	public NewPostResponseDTO(PostResponseDTO postResponseDTO, int commentCount) {
+	public CommentResponseDTO(PostResponseDTO postResponseDTO, int commentCount) {
 		this.postId = postResponseDTO.getPostId();
 		this.title = postResponseDTO.getTitle();
 		this.content = postResponseDTO.getContent();
@@ -38,5 +39,7 @@ public class NewPostResponseDTO {
 		this.likeCount = postResponseDTO.getLikeCount();
 		this.isLiked = postResponseDTO.getIsLiked();
 		this.commentCount = commentCount;
+		this.postLink = "/post/" + postResponseDTO.getPostId(); // 링크 생성
 	}
 }
+

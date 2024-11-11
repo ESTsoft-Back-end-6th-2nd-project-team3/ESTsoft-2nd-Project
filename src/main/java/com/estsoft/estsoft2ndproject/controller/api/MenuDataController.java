@@ -1,6 +1,6 @@
 package com.estsoft.estsoft2ndproject.controller.api;
 
-import com.estsoft.estsoft2ndproject.domain.dto.post.NewPostResponseDTO;
+import com.estsoft.estsoft2ndproject.domain.dto.post.CommentResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.service.MenuDataService;
 import lombok.RequiredArgsConstructor;
@@ -21,19 +21,22 @@ public class MenuDataController {
 
 	// 알림 데이터 가져오기
 	@GetMapping("/notifications")
-	public List<String> getNotifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		return menuDataService.getNotifications(userDetails.getUser().getUserId());
+	public List<CommentResponseDTO> getNotifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+		return menuDataService.getNotificationsWithLinks(userId);
 	}
+
 
 	// 작성글 데이터 가져오기
 	@GetMapping("/userPosts")
-	public List<NewPostResponseDTO> getUserPosts(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public List<CommentResponseDTO> getUserPosts(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return menuDataService.getUserPostsWithComments(userDetails.getUser().getUserId());
 	}
 
 	// 공지 데이터 가져오기
 	@GetMapping("/announcements")
-	public List<String> getAnnouncements() {
-		return menuDataService.getAnnouncements();
+	public List<CommentResponseDTO> getAnnouncements() {
+		return menuDataService.getAnnouncementsWithLinks();
 	}
+
 }
