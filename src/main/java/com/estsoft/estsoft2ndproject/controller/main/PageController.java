@@ -29,11 +29,6 @@ public class PageController {
 	private final PostService postService;
 	private final CommentService commentService;
 
-	public PageController(PostService postService, CommentService commentService) {
-		this.postService = postService;
-		this.commentService = commentService;
-	}
-
 	@GetMapping("/")
 	public String menuPage(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		addMenuData(model, userDetails);
@@ -118,7 +113,7 @@ public class PageController {
 	}
 
 	@GetMapping("/category")
-	public String categoryPage(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "id") Long categoryId,
+	public String categoryPage(@RequestParam(defaultValue = "0", name = "page") int page, @RequestParam(name = "id") Long categoryId,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addCategoryPageData(categoryId, page, model, userDetails);
@@ -131,7 +126,7 @@ public class PageController {
 	}
 
 	@GetMapping("/region")
-	public String regionPage(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "id") Long regionId,
+	public String regionPage(@RequestParam(defaultValue = "0", name = "page") int page, @RequestParam(name = "id") Long regionId,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addRegionPageData(regionId, page, model, userDetails);
@@ -144,7 +139,7 @@ public class PageController {
 	}
 
 	@GetMapping("/challenge")
-	public String challengePage(@RequestParam(defaultValue = "0") int page,
+	public String challengePage(@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.PARTICIPATION_CHALLENGE.getKoreanName();
@@ -172,7 +167,7 @@ public class PageController {
 	}
 
 	@GetMapping("/announcement")
-	public String announcementPage(@RequestParam(defaultValue = "0") int page,
+	public String announcementPage(@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.ANNOUNCEMENT.getKoreanName();
@@ -195,7 +190,7 @@ public class PageController {
 	}
 
 	@GetMapping("/write")
-	public String writeCategoryPost(@RequestParam(required = false) Long postId,
+	public String writeCategoryPost(@RequestParam(required = false, name = "postId") Long postId,
 		@RequestParam(name = "postType") String postType,
 		@RequestParam(name = "targetId") Long targetId, Model model,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -236,7 +231,7 @@ public class PageController {
 	}
 
 	@GetMapping("/writeChallenge")
-	public String writeChallengePost(@RequestParam(required = false) Long postId,
+	public String writeChallengePost(@RequestParam(required = false, name = "postId") Long postId,
 		@RequestParam(name = "postType") String postType, Model model,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
@@ -271,7 +266,7 @@ public class PageController {
 	@GetMapping("/category/post/{postId}")
 	public String categoryPostDetailPage(@PathVariable(name = "postId") Long postId,
 		@RequestParam(name = "targetId") Long categoryId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addCategoryPageData(categoryId, page, model, userDetails);
@@ -299,7 +294,7 @@ public class PageController {
 	@GetMapping("/region/post/{postId}")
 	public String regionPostDetailPage(@PathVariable(name = "postId") Long postId,
 		@RequestParam(name = "targetId") Long regionId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addRegionPageData(regionId, page, model, userDetails);
@@ -326,7 +321,7 @@ public class PageController {
 
 	@GetMapping("/challenge/post/{postId}")
 	public String challengePostDetailPage(@PathVariable(name = "postId") Long postId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.PARTICIPATION_CHALLENGE.getKoreanName();
@@ -366,7 +361,7 @@ public class PageController {
 
 	@GetMapping("/announcement/post/{postId}")
 	public String announcementPostDetailPage(@PathVariable(name = "postId") Long postId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.ANNOUNCEMENT.getKoreanName();

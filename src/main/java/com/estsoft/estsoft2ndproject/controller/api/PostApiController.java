@@ -33,7 +33,7 @@ public class PostApiController {
 
 	@PostMapping("/{userId}/create")
 	public ResponseEntity<Map<String, Long>> createPost(@RequestBody PostRequestDTO postRequestDTO,
-		@PathVariable Long userId) {
+		@PathVariable(name = "userId") Long userId) {
 		Post post = postService.createPost(postRequestDTO, userId);
 		Map<String, Long> response = new HashMap<>();
 		response.put("postId", post.getPostId());
@@ -41,7 +41,7 @@ public class PostApiController {
 	}
 
 	@GetMapping("/{postId}")
-	public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long postId) {
+	public ResponseEntity<PostResponseDTO> getPost(@PathVariable(name = "postId") Long postId) {
 		Post post = postService.getPostById(postId);
 		Boolean isLiked = postService.getIsLiked(postId, 1L);
 		PostResponseDTO postResponseDTO = new PostResponseDTO(post);
@@ -50,7 +50,7 @@ public class PostApiController {
 	}
 
 	@PutMapping("/{postId}")
-	public ResponseEntity<PostResponseDTO> updatePost(@PathVariable Long postId,
+	public ResponseEntity<PostResponseDTO> updatePost(@PathVariable(name = "postId") Long postId,
 		@RequestBody PostRequestDTO postRequestDTO) {
 		Post post = postService.updatePost(postId, postRequestDTO);
 		return ResponseEntity.ok(new PostResponseDTO(post));
@@ -58,7 +58,7 @@ public class PostApiController {
 
 	@PostMapping("/category/{targetId}")
 	public ResponseEntity<List<PostResponseDTO>> getPostsByCategory(@RequestParam String postType,
-		@PathVariable Long targetId) {
+		@PathVariable(name = "targetId") Long targetId) {
 		List<PostResponseDTO> PostResponseDTOList = postService.getPostsByCategory(postType, targetId).stream()
 			.map(PostResponseDTO::new)
 			.toList();
@@ -66,7 +66,7 @@ public class PostApiController {
 	}
 
 	@DeleteMapping("/{postId}")
-	public ResponseEntity<PostResponseDTO> deletePost(@PathVariable Long postId) {
+	public ResponseEntity<PostResponseDTO> deletePost(@PathVariable(name = "postId") Long postId) {
 		postService.deletePost(postId);
 		return ResponseEntity.ok().build();
 	}
