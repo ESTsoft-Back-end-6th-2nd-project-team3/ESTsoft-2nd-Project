@@ -42,7 +42,7 @@ public class PostController {
 
 	@GetMapping("/{postId}")
 	public String getPost(@PathVariable(name = "postId") Long postId, Model model) {
-		postService.addViewCount(postId);
+		postService.increaseViewCount(postId);
 		Post post = postService.getPostById(postId);
 		Boolean isLiked = postService.getIsLiked(postId, 1L);
 		model.addAttribute("post", post);

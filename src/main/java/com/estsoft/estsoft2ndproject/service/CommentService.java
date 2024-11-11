@@ -10,6 +10,7 @@ import com.estsoft.estsoft2ndproject.domain.Comment;
 import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentRequestDTO;
+import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentResponseDTO;
 import com.estsoft.estsoft2ndproject.exception.PostNotFoundException;
 import com.estsoft.estsoft2ndproject.repository.CommentRepository;
 import com.estsoft.estsoft2ndproject.repository.PostRepository;
@@ -66,5 +67,17 @@ public class CommentService {
 	public Integer getCommentCountByPostId(Long postId) {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 		return commentRepository.countByPostAndIsActive(post, true);
+	}
+
+	public List<CommentResponseDTO> getCommentsDetailByPostId(Long postId) {
+		return getCommentsByPostId(postId)
+			.stream()
+			.map(comment -> {
+				CommentResponseDTO commentResponseDTO = new CommentResponseDTO(comment);
+				commentResponseDTO.setNickname(comment.getUser().getNickname());
+				commentResponseDTO.setProfileUrl(comment.getUser().getProfileImageUrl());
+				return commentResponseDTO;
+			})
+			.toList();
 	}
 }

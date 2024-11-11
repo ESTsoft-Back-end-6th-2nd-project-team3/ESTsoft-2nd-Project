@@ -13,4 +13,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	List<Comment> findByPostAndIsActive(Post postId, Boolean isActive);
 
 	Integer countByPostAndIsActive(Post post, Boolean isActive);
+	Integer countByPost_PostIdAndIsActiveTrue(Long postId);
 }

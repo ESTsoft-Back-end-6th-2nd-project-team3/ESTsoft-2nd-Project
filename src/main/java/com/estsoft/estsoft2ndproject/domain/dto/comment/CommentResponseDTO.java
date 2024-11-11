@@ -21,6 +21,8 @@ public class CommentResponseDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm:ss", timezone = "Asia/Seoul")
 	private Timestamp updatedAt;
 	private Integer likeCount;
+	private String nickname;
+	private String profileUrl;
 
 	public CommentResponseDTO(Comment comment) {
 		this.commentId = comment.getCommentId();
@@ -32,5 +34,16 @@ public class CommentResponseDTO {
 		}
 		this.updatedAt = comment.getUpdatedAt();
 		this.likeCount = comment.getLikeCount();
+	}
+
+	public CommentResponseDTO(Long commentId, String content, Long postId, Long userId, Long parentCommentId,
+		Timestamp updatedAt, Integer likeCount) {
+		this.commentId = commentId;
+		this.content = content;
+		this.postId = postId;
+		this.userId = userId;
+		this.parentCommentId = parentCommentId;
+		this.updatedAt = updatedAt;
+		this.likeCount = likeCount;
 	}
 }
