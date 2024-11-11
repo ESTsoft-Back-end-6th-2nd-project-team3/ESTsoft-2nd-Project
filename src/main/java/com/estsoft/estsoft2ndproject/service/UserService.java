@@ -10,10 +10,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -26,22 +30,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.estsoft.estsoft2ndproject.custonException.AdditionalInformationRequireException;
 import com.estsoft.estsoft2ndproject.domain.User;
+import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService extends DefaultOAuth2UserService {
 	private final UserRepository userRepository;
 	private final HttpServletRequest request;
-
-	public UserService(UserRepository userRepository, HttpServletRequest request) {
-		this.userRepository = userRepository;
-		this.request = request;
-	}
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Override
 	@Transactional
@@ -123,7 +126,8 @@ public class UserService extends DefaultOAuth2UserService {
 
 		userRepository.save(userEntity);
 
-		return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), usernameAttributeName);
+		// return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), usernameAttributeName);
+		return new CustomUserDetails(userEntity, oAuth2User.getAttributes());
 	}
 
 	public void logoutFromKakao(String accessToken) {
@@ -140,8 +144,30 @@ public class UserService extends DefaultOAuth2UserService {
 	}
 
 	@Transactional
-	public void deleteUser(OAuth2User oAuth2User) {
-		User userEntity = userRepository.findByPii(oAuth2User.getName());
+	public void updateUser(User user) {
+		userRepository.save(user);
+	}
+
+	@Transactional
+	public void updateUserLevel(User user, String level) {
+		user.updateBuilder()
+			.level(level)
+			.build();
+		userRepository.save(user);
+
+		Authentication oldAuth = SecurityContextHolder.getContext().getAuthentication();
+		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken)oldAuth;
+
+		CustomUserDetails newPrincipal = new CustomUserDetails(user, ((OAuth2User)oldAuth.getPrincipal()).getAttributes());
+
+		OAuth2AuthenticationToken newAuth = new OAuth2AuthenticationToken(newPrincipal, newPrincipal.getAuthorities(), oauthToken.getAuthorizedClientRegistrationId());
+
+		SecurityContextHolder.getContext().setAuthentication(newAuth);
+	}
+
+	@Transactional
+	public void deleteUser(CustomUserDetails oAuth2User) {
+		User userEntity = oAuth2User.getUser();
 
 		userEntity.updateBuilder()
 			.isActive(false)
@@ -164,10 +190,6 @@ public class UserService extends DefaultOAuth2UserService {
 
 	public Optional<User> getUserWithChallenges(Long userId) {
 		return userRepository.findById(userId);
-	}
-
-	public void updateUser(User user) {
-		userRepository.save(user);
 	}
 
 	public boolean isNicknameAvailable(String nickname) {

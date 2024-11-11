@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.domain.dto.user.RegisterRequestDTO;
 import com.estsoft.estsoft2ndproject.service.UserService;
 
@@ -76,7 +77,7 @@ public class UserController {
 	}
 
 	@GetMapping("/member/cancellation")
-	public ResponseEntity<String> delete(@AuthenticationPrincipal OAuth2User oAuth2User, HttpServletRequest request) {
+	public ResponseEntity<String> delete(@AuthenticationPrincipal CustomUserDetails oAuth2User, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		session.invalidate();
 

@@ -10,6 +10,8 @@ import com.estsoft.estsoft2ndproject.domain.Comment;
 import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentRequestDTO;
+import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentResponseDTO;
+import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.exception.PostNotFoundException;
 import com.estsoft.estsoft2ndproject.repository.CommentRepository;
 import com.estsoft.estsoft2ndproject.repository.PostRepository;
@@ -33,17 +35,17 @@ public class CommentService {
 	}
 
 	@Transactional
-	public Comment createComment(CommentRequestDTO commentRequestDTO, Long postId, OAuth2User oAuth2User) {
+	public Comment createComment(CommentRequestDTO commentRequestDTO, Long postId, CustomUserDetails oAuth2User) {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
-		User user = userRepository.findByPii(oAuth2User.getName());
+		User user = oAuth2User.getUser();
 
 		return commentRepository.save(commentRequestDTO.toEntity(post, user));
 	}
 
 	@Transactional
-	public Comment createComment(CommentRequestDTO commentRequestDTO, Long postId, Long commentId, OAuth2User oAuth2User) {
+	public Comment createComment(CommentRequestDTO commentRequestDTO, Long postId, Long commentId, CustomUserDetails oAuth2User) {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
-		User user = userRepository.findByPii(oAuth2User.getName());
+		User user = oAuth2User.getUser();
 		Comment parentComment = commentRepository.findById(commentId).orElse(null);
 
 		return commentRepository.save(commentRequestDTO.toEntity(post, user, parentComment));
@@ -66,5 +68,17 @@ public class CommentService {
 	public Integer getCommentCountByPostId(Long postId) {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 		return commentRepository.countByPostAndIsActive(post, true);
+	}
+
+	public List<CommentResponseDTO> getCommentsDetailByPostId(Long postId) {
+		return getCommentsByPostId(postId)
+			.stream()
+			.map(comment -> {
+				CommentResponseDTO commentResponseDTO = new CommentResponseDTO(comment);
+				commentResponseDTO.setNickname(comment.getUser().getNickname());
+				commentResponseDTO.setProfileUrl(comment.getUser().getProfileImageUrl());
+				return commentResponseDTO;
+			})
+			.toList();
 	}
 }

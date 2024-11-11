@@ -12,21 +12,31 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.estsoft.estsoft2ndproject.custonException.AdditionalInformationRequireException;
+import com.estsoft.estsoft2ndproject.exception.CustomAccessDeniedHandler;
 import com.estsoft.estsoft2ndproject.service.UserService;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
+	private final CustomAccessDeniedHandler accessDeniedHandler;
+
 	@Bean
 	public SecurityFilterChain sercurityFilterChain(HttpSecurity http, UserService userService) throws Exception {
 		return http
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.authorizeHttpRequests(custom -> custom
-				.requestMatchers("/**").permitAll()
-				.requestMatchers("/admin/**").hasAuthority("관리자").anyRequest().authenticated()
+				.requestMatchers("/").permitAll()
+				.requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.*").permitAll()
+				.requestMatchers("/admin/**").hasAuthority("관리자")
+				.requestMatchers("/member/login").permitAll()
+				// .requestMatchers("/**").hasAnyAuthority("씨앗", "새싹", "묘목", "성목", "고목", "관리자")
+				.anyRequest().permitAll()
 			)
 			.oauth2Login(oauth2 -> oauth2
-				.loginPage("/member/login")
+				.loginPage("/")
 				.defaultSuccessUrl("/", true)
 				.userInfoEndpoint(endpoint -> endpoint.userService(userService))
 				.failureHandler(((request, response, exception) -> {
@@ -48,6 +58,8 @@ public class WebSecurityConfig {
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 			)
+			.exceptionHandling(handling -> handling
+				.accessDeniedHandler(accessDeniedHandler))
 			.csrf(csrf -> csrf.disable())
 			.build();
 	}
