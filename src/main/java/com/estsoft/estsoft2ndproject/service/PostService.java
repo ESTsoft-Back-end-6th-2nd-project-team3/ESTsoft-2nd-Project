@@ -194,6 +194,21 @@ public class PostService {
 		return commentRepository.countByPost_PostIdAndIsActiveTrue(postId);
 	}
 
+	public List<PostResponseDTO> getWeeklyBestPost() {
+		LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+		PageRequest pageRequest = PageRequest.of(0, 5);
+		Page<Post> topPosts = postRepository.findTop5PostsByLast7DaysSortedByViewsAndLikes(sevenDaysAgo,
+			pageRequest);
+		List<Post> postList = topPosts.getContent();
+		return postList.stream()
+			.map(post -> {
+				PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+				postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+				return postResponseDTO;
+			})
+			.toList();
+	}
+
 	public List<SubMenu> getSubMenus(String level) {
 		List<String> categories = getCategoryList().stream().map(Category::getName).toList();
 		List<Long> categoryIds = getCategoryList().stream().map(Category::getId).toList();
