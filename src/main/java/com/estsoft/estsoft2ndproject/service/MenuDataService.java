@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.estsoft.estsoft2ndproject.domain.Comment;
 import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.dto.post.CommentResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;

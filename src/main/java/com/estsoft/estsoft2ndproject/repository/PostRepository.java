@@ -37,14 +37,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	@Query("SELECT p FROM Post p WHERE p.postType = 'announcement' AND p.isActive = true")
 	List<Post> findAnnouncements();
 
-	// 특정 사용자의 작성글 조회
-	@Query("SELECT p FROM Post p WHERE p.user.userId = :userId")
-	List<Post> findUserPosts(@Param("userId") Long userId);
-
-	// 댓글 조회 메서드 (참고용)
-	@Query("SELECT c FROM Comment c WHERE c.post.user.userId = :userId")
-	List<Comment> findCommentsByUserId(@Param("userId") Long userId);
-
 	List<Post> findByUserUserIdOrderByCreatedAtDesc(Long userId);
 
 }
