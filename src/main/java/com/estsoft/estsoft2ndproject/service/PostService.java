@@ -330,7 +330,7 @@ public class PostService {
 		return postResponseDTO;
 	}
 
-	public Boolean isAdmin(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public Boolean isAdmin(CustomUserDetails userDetails) {
 		return userDetails.getUser().getLevel().equals("관리자");
 	}
 }

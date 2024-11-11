@@ -37,7 +37,7 @@ public class PageController {
 		return "index";
 	}
 
-	private void addMenuData(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	private void addMenuData(Model model, CustomUserDetails userDetails) {
 		String level = "";
 
 		if (userDetails != null) {
