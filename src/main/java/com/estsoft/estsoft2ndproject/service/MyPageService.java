@@ -4,7 +4,6 @@ import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.ObjectiveRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.Objective;
-import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.repository.ObjectiveRepository;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
