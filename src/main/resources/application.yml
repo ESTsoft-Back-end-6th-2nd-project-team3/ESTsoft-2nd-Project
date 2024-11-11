@@ -48,6 +48,13 @@ spring:
             user-name-attribute: id
   mvc:
     dispatch-options-request: true
+
+  web:
+    resources:
+      static-locations:
+        - "classpath:/static/"
+        - "file:uploads/"
+
 logging:
   level:
     org.springframework.web: DEBUG

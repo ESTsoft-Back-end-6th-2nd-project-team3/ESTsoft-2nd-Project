@@ -1232,7 +1232,6 @@ header {
             justify-content: center;
             position: relative;
             margin: 0 20px; /* 메뉴 아이템의 좌우 간격 설정 */
-            right: 20%;
 
             .submenu {
                 width: 150px;
@@ -1245,7 +1244,7 @@ header {
                 text-align: center;
                 position: absolute;
                 top: 100%; /* 메뉴 아이템 바로 아래에 표시 */
-                left: 50%;
+                left: 40%;
                 transform: translateX(-50%);
                 z-index: 100;
 

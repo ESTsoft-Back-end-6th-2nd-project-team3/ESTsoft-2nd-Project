@@ -1,5 +1,9 @@
 package com.estsoft.estsoft2ndproject.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +22,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.estsoft.estsoft2ndproject.custonException.AdditionalInformationRequireException;
 import com.estsoft.estsoft2ndproject.domain.User;
@@ -153,11 +158,49 @@ public class UserService extends DefaultOAuth2UserService {
 		return userRepository.findByPii(oAuth2User.getName());
 	}
 
-	public User getUserById(Long userId) {
-		return userRepository.findById(userId).orElse(null);
+	public Optional<User> getUserById(Long userId) {
+		return userRepository.findById(userId);
 	}
 
 	public Optional<User> getUserWithChallenges(Long userId) {
 		return userRepository.findById(userId);
 	}
+
+	public void updateUser(User user) {
+		userRepository.save(user);
+	}
+
+	public boolean isNicknameAvailable(String nickname) {
+		return !userRepository.existsByNickname(nickname);
+	}
+
+	public String saveProfileImage(Long userId, MultipartFile file) throws IOException {
+		String uploadDir = "uploads/profile-images/" + userId;
+		String fileName = file.getOriginalFilename();
+		Path filePath = Paths.get(uploadDir, fileName);
+
+		Files.createDirectories(filePath.getParent()); // 디렉터리 생성
+		file.transferTo(filePath.toFile()); // 파일 저장
+
+		// 이미지 URL 생성 (예: http://localhost:8080/uploads/profile-images/{userId}/{fileName})
+		return "/uploads/profile-images/" + userId + "/" + fileName;
+	}
+
+	public void updateUserProfile(Long userId, String nickname, String selfIntro, String snsLink,
+		String profileImageUrl) {
+		Optional<User> optionalUser = userRepository.findById(userId);
+
+		if (optionalUser.isPresent()) {
+			User user = optionalUser.get();
+			user.setNickname(nickname);
+			user.setSelfIntro(selfIntro);
+			user.setSnsLink(snsLink);
+			user.setProfileImageUrl(profileImageUrl);
+
+			userRepository.save(user); // 업데이트된 사용자 정보 저장
+		} else {
+			throw new RuntimeException("User not found with ID: " + userId);
+		}
+	}
+
 }
