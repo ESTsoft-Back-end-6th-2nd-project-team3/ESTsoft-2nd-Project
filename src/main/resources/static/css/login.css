@@ -66,9 +66,10 @@
 /* 하단 프로필 메뉴 */
 .profile-menu {
     display: flex;
-    width: 100%;
+    width: 380px;
     margin-top: auto;
     justify-content: space-between;
+    margin-left: -23px;
 }
 
 .menu-item {
