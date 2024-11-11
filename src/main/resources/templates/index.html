@@ -94,6 +94,18 @@
         });
     }
 
+    // 전체 검색
+    $(document).ready(function () {
+        $('.search-bar').on('keypress', function (event) {
+            if (event.which === 13) { // Enter 키의 키코드
+                event.preventDefault(); // 기본 동작 방지
+                let keyword = $(this).val(); // 입력된 값 가져오기
+
+                window.location.href = '/search?keyword=' + keyword;
+            }
+        });
+    });
+
     // write-post
     function autoResize(textarea) {
         textarea.style.height = 'auto';
