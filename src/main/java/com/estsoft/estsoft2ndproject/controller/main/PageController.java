@@ -413,4 +413,23 @@ public class PageController {
 
 		return "index";
 	}
+
+	@GetMapping("/mypage/written")
+	public String myPageWrittenPosts(Model model, @RequestParam(defaultValue = "0", name = "page") int page, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		addMenuData(model, userDetails);
+		addCategoryNamePageData(model);
+
+		Page<PostResponseDTO> postPage = postService.getPaginationPostsByUser(userDetails.getUser(), page, 30);
+
+		model.addAttribute("categoryName", "작성한 글");
+		model.addAttribute("postList", postPage.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", postPage.getTotalPages());
+		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
+
+		return "index";
+	}
 }

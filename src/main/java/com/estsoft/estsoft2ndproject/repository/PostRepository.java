@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.estsoft.estsoft2ndproject.domain.Post;
+import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse;
 
 @Repository
@@ -26,6 +27,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findByTitleContainingOrContentContainingAndIsActiveTrue(String titleKeyword, String contentKeyword);
 
 	Page<Post> findPostsByTitleContainingOrContentContainingAndIsActiveTrue(String titleKeyword, String contentKeyword, Pageable pageable);
+
+	Page<Post> findPostsByUserAndIsActiveTrue(User user, Pageable pageable);
 
 	@Query(
 		"SELECT new com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse(p.postId, c.name, p.title, COUNT(cmt), u.nickname, p.viewCount, p.likeCount, p.createdAt, p.isActive) "

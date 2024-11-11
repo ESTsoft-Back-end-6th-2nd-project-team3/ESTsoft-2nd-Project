@@ -346,4 +346,18 @@ public class PostService {
 			return postResponseDTO;
 		});
 	}
+
+	public Page<PostResponseDTO> getPaginationPostsByUser(User user, int page, int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+
+		postPage = postRepository.findPostsByUserAndIsActiveTrue(user, pageRequest);
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
+	}
 }
