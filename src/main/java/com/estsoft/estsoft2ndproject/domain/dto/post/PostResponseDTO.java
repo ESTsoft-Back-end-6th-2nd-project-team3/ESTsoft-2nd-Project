@@ -29,6 +29,7 @@ public class PostResponseDTO {
 	private Integer commentCount;
 	@Setter
 	private String nickname;
+	private String displayName;
 
 	public PostResponseDTO(Post post) {
 		User user = post.getUser();
@@ -45,4 +46,15 @@ public class PostResponseDTO {
 		this.viewCount = post.getViewCount();
 		this.likeCount = post.getLikeCount();
 	}
+
+	public PostResponseDTO(Long postId, String title, String postType, Long targetId, String displayName, Integer viewCount, Timestamp createdAt) {
+		this.postId = postId;
+		this.title = title;
+		this.postType = postType;
+		this.targetId = targetId;
+		this.displayName = displayName; // 추가
+		this.viewCount = viewCount;
+		this.createdAt = createdAt;
+	}
+
 }

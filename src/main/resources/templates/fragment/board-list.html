@@ -8,33 +8,64 @@
 </head>
 <body>
 <div th:fragment="boardList(title, latestPosts, olderPosts)" class="board-container">
-    <!-- 제목을 매개변수로 받아서 설정 -->
-    <h2 th:text="${title}">게시글</h2>
-
+    <h2>게시글</h2>
     <div class="board-list">
         <!-- 왼쪽 최신 게시글 -->
         <div class="board-column">
             <div class="board-item" th:each="post : ${latestPosts}">
-                <span class="category" th:text="${post.postType}">카테고리</span>
+                <span class="category" th:text="${post.displayName}">카테고리</span>
                 <span class="title" th:text="${post.title}">제목</span>
                 <span class="comment-count" th:text="${post.viewCount}">댓글수</span>
             </div>
-            <!-- 빈 칸 추가 (게시글이 20개 미만일 경우) -->
-            <div class="board-item empty" th:if="${latestPosts.size() < 20}" th:each="i : ${#numbers.sequence(latestPosts.size() + 1, 20)}"></div>
+            <div class="board-item empty"
+                 th:if="${latestPosts != null and #lists.size(latestPosts) < 20}"
+                 th:each="i : ${#numbers.sequence(#lists.size(latestPosts) + 1, 20)}">
+            </div>
         </div>
-
-        <!-- 중앙 구분선 -->
         <div class="divider"></div>
-
         <!-- 오른쪽 오래된 게시글 -->
         <div class="board-column">
             <div class="board-item" th:each="post : ${olderPosts}">
-                <span class="category" th:text="${post.postType}">카테고리</span>
+                <span class="category" th:text="${post.displayName}">카테고리</span>
                 <span class="title" th:text="${post.title}">제목</span>
                 <span class="comment-count" th:text="${post.viewCount}">댓글수</span>
             </div>
-            <!-- 빈 칸 추가 (게시글이 20개 미만일 경우) -->
-            <div class="board-item empty" th:if="${olderPosts.size() < 20}" th:each="i : ${#numbers.sequence(olderPosts.size() + 1, 20)}"></div>
+            <div class="board-item empty"
+                 th:if="${olderPosts != null and #lists.size(olderPosts) < 20}"
+                 th:each="i : ${#numbers.sequence(#lists.size(olderPosts) + 1, 20)}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 챌린지 게시글 -->
+<div class="board-container">
+    <h2>챌린지 게시글</h2>
+    <div class="board-list">
+        <!-- 왼쪽 최신 챌린지 -->
+        <div class="board-column">
+            <div class="board-item" th:each="post : ${latestChallenges}">
+                <span class="category" th:text="${post.displayName}">카테고리</span>
+                <span class="title" th:text="${post.title}">제목</span>
+                <span class="comment-count" th:text="${post.viewCount}">댓글수</span>
+            </div>
+            <div class="board-item empty"
+                 th:if="${latestChallenges != null and #lists.size(latestChallenges) < 20}"
+                 th:each="i : ${#numbers.sequence(#lists.size(latestChallenges) + 1, 20)}">
+            </div>
+        </div>
+        <div class="divider"></div>
+        <!-- 오른쪽 오래된 챌린지 -->
+        <div class="board-column">
+            <div class="board-item" th:each="post : ${olderChallenges}">
+                <span class="category" th:text="${post.displayName}">카테고리</span>
+                <span class="title" th:text="${post.title}">제목</span>
+                <span class="comment-count" th:text="${post.viewCount}">댓글수</span>
+            </div>
+            <div class="board-item empty"
+                 th:if="${olderChallenges != null and #lists.size(olderChallenges) < 20}"
+                 th:each="i : ${#numbers.sequence(#lists.size(olderChallenges) + 1, 20)}">
+            </div>
         </div>
     </div>
 </div>

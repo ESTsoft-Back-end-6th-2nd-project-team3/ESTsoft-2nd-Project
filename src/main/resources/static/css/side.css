@@ -88,3 +88,8 @@ h2 {
     width: 20%;
     text-align: center;
 }
+
+a.title {
+    text-decoration: none; /* 밑줄 제거 */
+    color: inherit; /* 부모 요소의 색상 상속 */
+}

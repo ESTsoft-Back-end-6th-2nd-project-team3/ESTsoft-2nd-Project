@@ -41,6 +41,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	List<Post> findByUserUserIdOrderByCreatedAtDesc(Long userId);
 
+	@Query("SELECT p FROM Post p WHERE p.isActive = true ORDER BY p.createdAt DESC")
+	List<Post> findAllByIsActiveTrueOrderByCreatedAtDesc();
+
 
 	Post findTop1ByPostTypeOrderByCreatedAtDesc(String postType);
 
@@ -83,4 +86,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		@Param("suffix") String suffix,
 		Pageable pageable
 	);
+
 }

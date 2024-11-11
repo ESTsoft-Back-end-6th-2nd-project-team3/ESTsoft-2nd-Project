@@ -396,4 +396,61 @@ public class PostService {
 			.toList();
 	}
 
+	// 모든 활성화된 게시글 가져오기 (DTO로 변환)
+	public List<PostResponseDTO> getAllActivePostsAsDTO() {
+		List<Post> activePosts = postRepository.findAllByIsActiveTrueOrderByCreatedAtDesc();
+		return convertToDTO(activePosts);
+	}
+
+	// 특정 타입의 게시글 필터링
+	public List<PostResponseDTO> filterPostsByType(List<PostResponseDTO> posts, List<String> types) {
+		return posts.stream()
+			.filter(post -> types.contains(post.getPostType()))
+			.toList();
+	}
+
+	// 게시글 최신/오래된 목록 가져오기
+	public List<PostResponseDTO> getLatestPosts(List<PostResponseDTO> posts, int start, int end) {
+		return posts.subList(start, Math.min(end, posts.size()));
+	}
+
+	public String getDisplayName(String postType, Long targetId) {
+		if (postType == null || postType.isEmpty()) {
+			return "Unknown"; // 기본값 처리
+		}
+
+		try {
+			PostType postTypeEnum = PostType.valueOf(postType);
+			return switch (postTypeEnum) {
+				case PARTICIPATION_CATEGORY -> categoryRepository.findById(targetId)
+					.orElseThrow(() -> new IllegalArgumentException("Invalid category ID"))
+					.getName();
+				case PARTICIPATION_REGION -> regionRepository.findById(targetId)
+					.orElseThrow(() -> new IllegalArgumentException("Invalid region ID"))
+					.getName();
+				case PARTICIPATION_CHALLENGE, GENERATION_CHALLENGE -> "Challenge";
+				case ANNOUNCEMENT -> "Announcement";
+				default -> "Other";
+			};
+		} catch (IllegalArgumentException e) {
+			return "Unknown"; // 예외 발생 시 기본값 반환
+		}
+	}
+
+	public List<PostResponseDTO> convertToDTO(List<Post> posts) {
+		return posts.stream()
+			.map(post -> {
+				String displayName = getDisplayName(post.getPostType(), post.getTargetId());
+				return new PostResponseDTO(
+					post.getPostId(),
+					post.getTitle(),
+					post.getPostType(),
+					post.getTargetId(),
+					displayName,
+					post.getViewCount(),
+					post.getCreatedAt()
+				);
+			})
+			.toList();
+	}
 }
