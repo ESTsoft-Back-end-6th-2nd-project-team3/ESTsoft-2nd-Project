@@ -47,11 +47,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	Post findTop1ByPostTypeOrderByCreatedAtDesc(String postType);
 
-	@Query("SELECT p FROM Post p WHERE p.createdAt >= :sevenDaysAgo AND p.isActive = true " +
-		"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
-	Page<Post> findTop5PostsByLast7DaysSortedByViewsAndLikes(@Param("sevenDaysAgo") LocalDateTime sevenDaysAgo,
-		Pageable pageable);
-
 	@Query(
 		"SELECT p FROM Post p WHERE p.createdAt >= :today AND p.postType = :postType AND p.targetId = :targetId AND p.isActive = true "
 			+
