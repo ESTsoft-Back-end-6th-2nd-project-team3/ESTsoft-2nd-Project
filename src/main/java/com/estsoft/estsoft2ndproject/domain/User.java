@@ -111,7 +111,4 @@ public class User {
 		this.selfIntro = selfIntro != null ? selfIntro : this.selfIntro;
 		this.snsLink = snsLink != null ? snsLink : this.snsLink;
 	}
-
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Post> posts = new ArrayList<>();
 }

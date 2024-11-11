@@ -40,7 +40,7 @@ public class Objective {
 	private Timestamp updatedAt;
 
 	@Column(name = "objective_year_month", nullable = false)
-	private String objectiveYearMonth;
+	private Date objectiveYearMonth;
 
 	@Column(name = "is_completed", columnDefinition = "TINYINT(1)", nullable = false)
 	private Boolean isCompleted;

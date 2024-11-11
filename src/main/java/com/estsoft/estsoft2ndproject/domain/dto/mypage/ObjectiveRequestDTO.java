@@ -8,5 +8,5 @@ import lombok.Data;
 public class ObjectiveRequestDTO {
 	private String content;
 	private Boolean isCompleted;
-	private String objectiveYearMonth;
+	private Date objectiveYearMonth;
 }
