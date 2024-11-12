@@ -9,7 +9,9 @@ import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.repository.ObjectiveRepository;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
 import com.estsoft.estsoft2ndproject.repository.PostRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -66,11 +68,12 @@ public class MyPageService {
 				post.getPostId(),
 				post.getTitle(),
 				post.getContent(),
+				post.getUser().getUserId(),
 				post.getPostType(),
-				post.getViewCount(),
-				post.getLikeCount(),
 				post.getCreatedAt(),
-				post.getUpdatedAt()
+				post.getUpdatedAt(),
+				post.getViewCount(),
+				post.getLikeCount()
 			))
 			.collect(Collectors.toList());
 	}
