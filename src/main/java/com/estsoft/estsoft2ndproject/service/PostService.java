@@ -182,7 +182,7 @@ public class PostService {
 			.toList();
 	}
 
-	public List<SubMenu> getSubMenus(String level) {
+	public List<SubMenu> getSubMenus(String level, Long userId) {
 		List<String> categories = getCategoryList().stream().map(Category::getName).toList();
 		List<Long> categoryIds = getCategoryList().stream().map(Category::getId).toList();
 		List<String> categoryUrls = categories.isEmpty() ? Collections.emptyList() :
@@ -197,7 +197,7 @@ public class PostService {
 		subMenus.add(new SubMenu("카테고리", categories, null, categoryUrls));
 		subMenus.add(new SubMenu("챌린지", null, "/challenge", null));
 		subMenus.add(new SubMenu("지역 친목 게시판", regions, null, regionUrls));
-		subMenus.add(new SubMenu("마이페이지", null, "/mypage", null));
+		subMenus.add(new SubMenu("마이페이지", null, "/mypage/" + userId, null));
 
 		if (level.equals("관리자")) {
 			subMenus.add(3, new SubMenu("관리자 메뉴", null, "/admin", null));
@@ -329,7 +329,7 @@ public class PostService {
 		return postResponseDTO;
 	}
 
-	public Boolean isAdmin(CustomUserDetails userDetails) {
+	public Boolean isAdmin(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return userDetails.getUser().getLevel().equals("관리자");
 	}
 

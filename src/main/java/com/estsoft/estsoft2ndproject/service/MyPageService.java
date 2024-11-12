@@ -1,5 +1,6 @@
 package com.estsoft.estsoft2ndproject.service;
 
+import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.ObjectiveRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.PostResponseDTO;
@@ -30,10 +31,16 @@ public class MyPageService {
 			user.getAwardedTitle(), user.getSelfIntro(), user.getSnsLink(), user.getActivityScore());
 	}
 
-	public void updateMyInfo(Long userId, UserInfoResponseDTO userInfo) {
+	public void updateMyInfo(Long userId, UserInfoRequestDTO userInfo) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-		user.updateUser(userInfo.getNickname(), null, null, null, null, null, userInfo.getProfileImageUrl(), userInfo.getActivityScore(),
-			null, userInfo.getAwardedTitle(), userInfo.getSelfIntro(), userInfo.getSnsLink());
+
+		user.updateBuilder()
+			.nickname(userInfo.getNickname())
+			.profileImageUrl(userInfo.getProfileImageUrl())
+			.selfIntro(userInfo.getSelfIntro())
+			.snsLink(userInfo.getSnsLink())
+			.build();
+
 		userRepository.save(user);
 	}
 

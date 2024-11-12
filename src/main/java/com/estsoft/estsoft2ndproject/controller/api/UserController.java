@@ -48,21 +48,6 @@ public class UserController {
 		return oAuth2User;
 	}
 
-	@GetMapping("/member/register")
-	public String register(Model model, HttpServletRequest request) {
-		HttpSession session = request.getSession();
-
-		String email = (String)session.getAttribute("email");
-		String nickname = (String)session.getAttribute("nickname");
-		String profileImageUrl = (String)session.getAttribute("profileImageUrl");
-
-		model.addAttribute("email", email);
-		model.addAttribute("nickname", nickname);
-		model.addAttribute("profileImageUrl", profileImageUrl);
-
-		return "index";
-	}
-
 	@PostMapping("/member/register")
 	public ResponseEntity<String> register(@RequestBody RegisterRequestDTO registerRequestDTO,
 		HttpServletRequest request) {

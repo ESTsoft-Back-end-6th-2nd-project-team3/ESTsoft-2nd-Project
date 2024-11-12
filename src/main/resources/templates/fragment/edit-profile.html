@@ -1,57 +1,37 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Profile</title>
-    <link href="/static/css/reset.css" rel="stylesheet">
-    <link href="/static/css/base.css" rel="stylesheet">
-</head>
-<body>
-<div th:fragment="edit-profile">
-    <div class="profile-container" id="edit-profile">
-        <h2>내 정보</h2>
-        <div class="profile-content">
-            <div class="profile-image">
-                <div class="image-circle" id="imagePreview"></div>
-                <input id="imageInput" onchange="previewImage(event)" style="display: none;" type="file">
-                <button class="image-btn" onclick="document.getElementById('imageInput').click()">이미지 변경</button>
-            </div>
-            <div class="profile-form">
-                <label>
-                    <span>닉네임</span>
-                    <input id="nickname" th:placeholder="${user.nickname}" th:value="${user.nickname}" type="text">
-                    <button class="check-btn" onclick="checkNickname()">중복 확인</button>
-                </label>
-                <label>
-                    <span>이메일</span>
-                    <input id="email" readonly th:placeholder="'oremi6@kakao.com'" th:value="${user.email}"
-                           type="email">
-                </label>
-                <label>
-                    <span>등급</span>
-                    <input id="level" readonly th:placeholder="'씨앗'" th:value="${user.level}" type="text">
-                </label>
-                <label>
-                    <span>한줄 소개</span>
-                    <textarea id="selfIntro" th:placeholder="'안녕하세요 오르미 6기입니다'"
-                              th:text="${user.selfIntro}"></textarea>
-                </label>
-                <label>
-                    <span>링크</span>
-                    <input id="snsLink" th:placeholder="${user.snsLink}" th:value="${user.snsLink}" type="text">
-                </label>
-            </div>
+<section class="profile-container" id="edit-profile" th:attr="data-user-id=${userId}">
+    <h2>내 정보</h2>
+    <div class="profile-content">
+        <div class="profile-image">
+            <div class="image-circle" id="imagePreview"></div>
+            <input id="imageInput" onchange="previewImage(event)" style="display: none;" th:attr="data-image-url=${profileImageUrl}" type="file">
+            <button class="image-btn" onclick="document.getElementById('imageInput').click()">이미지 변경</button>
         </div>
-        <div class="btn-group">
-            <button class="save-btn" onclick="saveProfile()">저장</button>
-            <button class="cancel-btn" onclick="cancelEdit()">취소</button>
+        <div class="profile-form">
+            <label>
+                <span>닉네임</span>
+                <input id="nickname" name="nickname" th:placeholder="${nickname}" th:value="${nickname}" type="text">
+                <button class="check-btn" onclick="checkNickname()">중복 확인</button>
+            </label>
+            <label>
+                <span>이메일</span>
+                <input id="email" readonly th:value="${email}" type="email">
+            </label>
+            <label>
+                <span>등급</span>
+                <input id="level" readonly th:value="${level}" type="text">
+            </label>
+            <label>
+                <span>한줄 소개</span>
+                <input id="selfIntro" th:placeholder="${selfIntro}" th:value="${selfIntro}" type="text">
+            </label>
+            <label>
+                <span>소셜 링크</span>
+                <input id="snsLink" th:placeholder="${snsLink}" th:value="${snsLink}" type="text">
+            </label>
         </div>
     </div>
-</div>
-<script>
-    // window.userId = 1;
-    const userId = [[${user.userId}]];
-</script>
-<script src="/js/edit-profile.js"></script>
-</body>
-</html>
+    <div class="btn-group">
+        <button class="save-btn" onclick="submitProfileEditForm()">저장</button>
+        <button class="cancel-btn" onclick="cancelProfileEdit()">취소</button>
+    </div>
+</section>

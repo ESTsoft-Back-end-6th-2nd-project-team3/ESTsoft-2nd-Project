@@ -59,14 +59,16 @@ public class PageController {
 
 	private void addMenuData(Model model, CustomUserDetails userDetails) {
 		String level = "";
+		Long userId = null;
 
 		if (userDetails != null) {
 			User user = userDetails.getUser();
 
 			level = user.getLevel();
+			userId = user.getUserId();
 		}
 
-		model.addAttribute("subMenus", postService.getSubMenus(level));
+		model.addAttribute("subMenus", postService.getSubMenus(level, userId));
 	}
 
 	private void addCategoryNamePageData(Model model) {
@@ -418,6 +420,23 @@ public class PageController {
 		return "index";
 	}
 
+	@GetMapping("/member/register")
+	public String register(Model model, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		addMenuData(model, null);
+
+		String email = (String)session.getAttribute("email");
+		String nickname = (String)session.getAttribute("nickname");
+		String profileImageUrl = (String)session.getAttribute("profileImageUrl");
+
+		model.addAttribute("email", email);
+		model.addAttribute("nickname", nickname);
+		model.addAttribute("profileImageUrl", profileImageUrl);
+		model.addAttribute("mainFragment1", "fragment/register");
+
+		return "index";
+	}
+
 	@GetMapping("/search")
 	public String searchAllPage(Model model, @RequestParam(defaultValue = "0", name = "page") int page,
 		@RequestParam(name = "keyword") String keyword,
@@ -460,14 +479,14 @@ public class PageController {
 	}
 
 	@GetMapping("/mypage/{userId}")
-	public String showMyPage(@PathVariable("userId") Long userId, Model model,
-		@SessionAttribute("userId") Long sessionUserId,
-		@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public String showMyPage(@PathVariable(name = "userId") Long userId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		addMenuData(model, userDetails);
 
 		Optional<User> user = userService.getUserWithChallenges(userId);
 		if (user.isPresent()) {
 			User currentUser = user.get();
 			model.addAttribute("nickname", currentUser.getNickname());
+			model.addAttribute("profileImageUrl", currentUser.getProfileImageUrl());
 			model.addAttribute("level", currentUser.getLevel());
 			model.addAttribute("selfIntro", currentUser.getSelfIntro());
 			model.addAttribute("snsLink", currentUser.getSnsLink());
@@ -480,68 +499,45 @@ public class PageController {
 			model.addAttribute("participatedChallenge", "참여한 챌린지가 없습니다.");
 		}
 
-		addMenuData(model, userDetails);
-
 		int month = LocalDate.now().getMonthValue();
-		model.addAttribute("month", month);
 
-		List<Objective> myObjective = objectiveService.getObjectivesForUserAndMonth(userId,
-			LocalDate.now().withDayOfMonth(1));
+		List<Objective> myObjective = objectiveService.getObjectivesForUserAndMonth(userId, LocalDate.now().withDayOfMonth(1));
 
 		int completedCount = (int)myObjective.stream().filter(Objective::getIsCompleted).count();
 		int totalCount = myObjective.size();
 		int progressValue = totalCount > 0 ? (completedCount * 100) / totalCount : 0;
 
+		model.addAttribute("month", month);
 		model.addAttribute("progressValue", progressValue);
+		model.addAttribute("myObjective", myObjective);
+		model.addAttribute("objectiveData", null);
 
-		model.addAttribute("mainFragment1", "fragment/mypage-profile.html :: mypage-profile");
-		model.addAttribute("mainFragment2", "fragment/my-objective.html :: my-objective");
-		model.addAttribute("mainFragment3", "fragment/participated-challenge.html :: participated-challenge");
+		model.addAttribute("mainFragment1", "fragment/mypage-profile");
+		model.addAttribute("mainFragment2", "fragment/my-objective");
+		model.addAttribute("mainFragment3", "fragment/participated-challenge");
 
 		// 자신의 마이페이지인지 확인하기 위해 현재 로그인한 사용자 ID와 비교
-		model.addAttribute("isOwner", userId.equals(sessionUserId));
+		model.addAttribute("isOwner", userId.equals(userDetails.getUser().getUserId()));
 
 		return "index";
 	}
 
-	@GetMapping("/edit-profile")
-	public String showEditProfile(Model model, @SessionAttribute(value = "userId", required = false) Long userId,
-		@AuthenticationPrincipal CustomUserDetails userDetails) {
-		Optional<User> user = (userId != null) ? userService.getUserById(userId) : Optional.empty();
+	@GetMapping("/mypage/edit-profile")
+	public String showEditProfile(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		User user = userDetails.getUser();
 
-		model.addAttribute("user", user.orElse(new User()));
+		model.addAttribute("userId", user.getUserId());
+		model.addAttribute("profileImageUrl", user.getProfileImageUrl());
+		model.addAttribute("nickname", user.getNickname());
+		model.addAttribute("email", user.getEmail());
+		model.addAttribute("level", user.getLevel());
+		model.addAttribute("selfIntro", user.getSelfIntro());
+		model.addAttribute("snsLink", user.getSnsLink());
 
 		addMenuData(model, userDetails);
-		model.addAttribute("mainFragment1", "fragment/edit-profile.html :: edit-profile");
+		model.addAttribute("mainFragment1", "fragment/edit-profile");
 
 		return "index";
-	}
-
-	@PostMapping("/mypage/{userId}/userinfo")
-	public ResponseEntity<Map<String, Object>> updateProfile(
-		@PathVariable Long userId,
-		@RequestParam("nickname") String nickname,
-		@RequestParam("selfIntro") String selfIntro,
-		@RequestParam("snsLink") String snsLink,
-		@RequestParam("profileImage") MultipartFile profileImage) {
-
-		String filePath = "uploads/" + profileImage.getOriginalFilename();
-		File file = new File(filePath);
-		try {
-			profileImage.transferTo(file);
-		} catch (IOException e) {
-			e.printStackTrace();
-			Map<String, Object> errorResponse = new HashMap<>();
-			errorResponse.put("success", false);
-			errorResponse.put("message", "이미지 업로드에 실패했습니다.");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-		}
-
-		userService.updateUserProfile(userId, nickname, selfIntro, snsLink, filePath);
-
-		Map<String, Object> response = new HashMap<>();
-		response.put("success", true);
-		return ResponseEntity.ok(response);
 	}
 }
 
