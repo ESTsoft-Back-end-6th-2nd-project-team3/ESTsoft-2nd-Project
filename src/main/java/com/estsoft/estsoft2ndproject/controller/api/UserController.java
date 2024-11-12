@@ -60,7 +60,7 @@ public class UserController {
 		model.addAttribute("nickname", nickname);
 		model.addAttribute("profileImageUrl", profileImageUrl);
 
-		return "redirect:/member/register-form";
+		return "index";
 	}
 
 	@PostMapping("/member/register")

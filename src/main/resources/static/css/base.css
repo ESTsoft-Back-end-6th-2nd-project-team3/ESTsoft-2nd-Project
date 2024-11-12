@@ -482,7 +482,7 @@ body * {
     }
 }
 
-#edit-profile {
+#edit-profile, #register {
     width: 800px;
     height: 797px;
     margin: 0 auto;

@@ -7,27 +7,24 @@
     <link href="/css/base.css" rel="stylesheet">
 </head>
 <body>
-<div th:fragment="participated-challenge">
-    <article id="participated-challenge">
-        <h3>참여 챌린지</h3>
-        <section class="table-container">
-            <div class="table-header">
-                <span>번호</span>
-                <span>제목</span>
-                <span>댓글수</span>
-                <span>추천수</span>
-                <span>날짜</span>
-            </div>
-            <div class="table-row">
-                <span>1</span>
-                <span th:text="${awardedTitle}">챌린지 제목</span>
-                <span>0</span>
-                <span>0</span>
-                <span>--/--/--</span>
-            </div>
-        </section>
-    </article>
-</div>
-
+<article id="participated-challenge">
+    <h3>참여 챌린지</h3>
+    <section class="table-container">
+        <div class="table-header">
+            <span>번호</span>
+            <span>제목</span>
+            <span>댓글수</span>
+            <span>추천수</span>
+            <span>날짜</span>
+        </div>
+        <div class="table-row">
+            <span>1</span>
+            <span th:text="${awardedTitle}">챌린지 제목</span>
+            <span>0</span>
+            <span>0</span>
+            <span>--/--/--</span>
+        </div>
+    </section>
+</article>
 </body>
 </html>

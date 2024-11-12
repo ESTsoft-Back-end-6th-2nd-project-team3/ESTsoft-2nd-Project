@@ -459,34 +459,11 @@ public class PageController {
 		return "index";
 	}
 
-	@GetMapping("/member/register-form")
-	public String showRegisterPage(Model model, HttpServletRequest request) {
-		HttpSession session = request.getSession();
+	@GetMapping("/mypage/{userId}")
+	public String showMyPage(@PathVariable("userId") Long userId, Model model,
+		@SessionAttribute("userId") Long sessionUserId,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-		// 예시 데이터 설정 (테스트용)
-		session.setAttribute("email", "example@example.com");
-		session.setAttribute("nickname", "테스트닉네임");
-		session.setAttribute("profileImageUrl", "/images/default-profile.png");
-
-		String email = (String)session.getAttribute("email");
-		String nickname = (String)session.getAttribute("nickname");
-		String profileImageUrl = (String)session.getAttribute("profileImageUrl");
-
-		model.addAttribute("email", email);
-		model.addAttribute("nickname", nickname);
-		model.addAttribute("profileImageUrl", profileImageUrl);
-
-		model.addAttribute("subMenus", getSubMenus("일반"));
-
-		if (email != null && nickname != null) {
-			model.addAttribute("mainFragment1", "testHtml/register :: register");
-		}
-
-		return "index";
-	}
-
-	@GetMapping("/mypage")
-	public String showMyPage(@SessionAttribute("userId") Long userId, Model model) {
 		Optional<User> user = userService.getUserWithChallenges(userId);
 		if (user.isPresent()) {
 			User currentUser = user.get();
@@ -495,17 +472,15 @@ public class PageController {
 			model.addAttribute("selfIntro", currentUser.getSelfIntro());
 			model.addAttribute("snsLink", currentUser.getSnsLink());
 			model.addAttribute("participatedChallenge", currentUser.getAwardedTitle());
-
-			model.addAttribute("subMenus", getSubMenus(currentUser.getLevel()));
 		} else {
 			model.addAttribute("nickname", "알 수 없음");
 			model.addAttribute("level", "등급 없음");
 			model.addAttribute("selfIntro", "소개 없음");
 			model.addAttribute("snsLink", "링크 없음");
 			model.addAttribute("participatedChallenge", "참여한 챌린지가 없습니다.");
-
-			model.addAttribute("subMenus", getSubMenus("일반"));
 		}
+
+		addMenuData(model, userDetails);
 
 		int month = LocalDate.now().getMonthValue();
 		model.addAttribute("month", month);
@@ -523,16 +498,20 @@ public class PageController {
 		model.addAttribute("mainFragment2", "fragment/my-objective.html :: my-objective");
 		model.addAttribute("mainFragment3", "fragment/participated-challenge.html :: participated-challenge");
 
+		// 자신의 마이페이지인지 확인하기 위해 현재 로그인한 사용자 ID와 비교
+		model.addAttribute("isOwner", userId.equals(sessionUserId));
+
 		return "index";
 	}
 
 	@GetMapping("/edit-profile")
-	public String showEditProfile(Model model, @SessionAttribute(value = "userId", required = false) Long userId) {
+	public String showEditProfile(Model model, @SessionAttribute(value = "userId", required = false) Long userId,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		Optional<User> user = (userId != null) ? userService.getUserById(userId) : Optional.empty();
 
 		model.addAttribute("user", user.orElse(new User()));
 
-		model.addAttribute("subMenus", getSubMenus("일반"));
+		addMenuData(model, userDetails);
 		model.addAttribute("mainFragment1", "fragment/edit-profile.html :: edit-profile");
 
 		return "index";
@@ -563,29 +542,6 @@ public class PageController {
 		Map<String, Object> response = new HashMap<>();
 		response.put("success", true);
 		return ResponseEntity.ok(response);
-	}
-
-	private List<SubMenu> getSubMenus(String level) {
-		if ("관리자".equals(level)) {
-			return Arrays.asList(
-				new SubMenu("카테고리", Arrays.asList("음악", "사진", "여행", "게임"), null, null),
-				new SubMenu("챌린지", Arrays.asList("챌린지 아이템", "특별 챌린지"), null, null),
-				new SubMenu("지역 친목 게시판", Arrays.asList(
-					"강원특별자치도", "경기도", "경상남도", "경상북도", "광주광역시", "대구광역시",
-					"대전광역시", "부산광역시", "서울특별시", "세종특별자치시", "울산광역시",
-					"인천광역시", "전라남도", "전북특별자치도", "제주특별자치도", "충청남도", "충청북도"
-				), null, null),
-				new SubMenu("마이페이지", Arrays.asList("프로필 설정", "내 활동 보기"), null, null),
-				new SubMenu("관리자 메뉴", Arrays.asList("사용자 관리", "사이트 설정"), null, null)
-			);
-		} else {
-			return Arrays.asList(
-				new SubMenu("카테고리", Arrays.asList("취미1", "취미2"), null, null),
-				new SubMenu("챌린지", Arrays.asList("챌린지 아이템 1"), null, null),
-				new SubMenu("지역 친목 게시판", Arrays.asList("강원도", "경기도", "서울특별시"), null, null),
-				new SubMenu("마이페이지", Arrays.asList("프로필 설정", "내 활동 보기"), null, null)
-			);
-		}
 	}
 }
 

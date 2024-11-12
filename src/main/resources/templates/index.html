@@ -13,9 +13,9 @@
 <body>
 <header>
     <section class="header-top">
-        <h1><a th:href="@{/}"><img alt="MomemTree" class="logo" th:src="@{/images/logo.png}"></a><span class="blind">MomenTree</span></h1>
+        <h1><a th:href="@{/}"><img alt="MomemTree" class="logo" th:src="@{/images/logo.png}"></a><span class="blind">MomenTree</span>
+        </h1>
         <input class="search-bar" placeholder="검색" type="text">
-        <!-- <button onclick="searchUserPosts()">검색</button> -->
     </section>
     <nav>
         <div class="menu-item" th:each="menu : ${subMenus}">
@@ -664,6 +664,65 @@
         }
 
         link.setAttribute('href', url);
+    });
+
+    const objectivesData = /*[[${objectiveData}]]*/ [];
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Chart.js를 사용하여 차트 생성
+        const ctx = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: objectivesData.map(item => item.month + '월'), // 월별 레이블
+                datasets: [{
+                    label: '달성률 (%)',
+                    data: objectivesData.map(item => item.amount), // 달성률 데이터
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 15
+                            }
+                        },
+                        border: {
+                            width: 1,
+                            color: 'black',
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function (value) {
+                                return value + '%'; // y축에 % 표시
+                            }
+                        },
+                        border: {
+                            width: 1,
+                            color: 'black',
+                        },
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    }
+                }
+            }
+        });
     });
 </script>
 </body>

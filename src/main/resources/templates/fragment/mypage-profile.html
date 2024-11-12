@@ -8,8 +8,8 @@
     <link href="/css/base.css" rel="stylesheet">
 </head>
 <body>
-<div th:fragment="mypage-profile">
-    <div class="profile-container" id="mypage-profile">
+<article id="mypage-profile">
+    <div class="profile-container">
         <h2 class="profile-title">내 정보</h2>
         <div class="profile-content">
             <div class="profile-image">
@@ -24,7 +24,7 @@
         </div>
         <button class="edit-btn" onclick="enableEdit()">수정</button>
     </div>
-</div>
+</article>
 <script>
     const userId = [[${user.userId}]];
 </script>
