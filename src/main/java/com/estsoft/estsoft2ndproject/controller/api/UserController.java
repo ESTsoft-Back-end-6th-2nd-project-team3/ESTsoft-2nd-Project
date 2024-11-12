@@ -60,6 +60,8 @@ public class UserController {
 		model.addAttribute("nickname", nickname);
 		model.addAttribute("profileImageUrl", profileImageUrl);
 
+		model.addAttribute("mainFragment1", "fragment/register");
+
 		return "index";
 	}
 

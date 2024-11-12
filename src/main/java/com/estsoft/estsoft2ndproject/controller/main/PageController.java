@@ -494,9 +494,9 @@ public class PageController {
 
 		model.addAttribute("progressValue", progressValue);
 
-		model.addAttribute("mainFragment1", "fragment/mypage-profile.html :: mypage-profile");
-		model.addAttribute("mainFragment2", "fragment/my-objective.html :: my-objective");
-		model.addAttribute("mainFragment3", "fragment/participated-challenge.html :: participated-challenge");
+		model.addAttribute("mainFragment1", "fragment/mypage-profile");
+		model.addAttribute("mainFragment2", "fragment/my-objective");
+		model.addAttribute("mainFragment3", "fragment/participated-challenge");
 
 		// 자신의 마이페이지인지 확인하기 위해 현재 로그인한 사용자 ID와 비교
 		model.addAttribute("isOwner", userId.equals(sessionUserId));
@@ -512,7 +512,7 @@ public class PageController {
 		model.addAttribute("user", user.orElse(new User()));
 
 		addMenuData(model, userDetails);
-		model.addAttribute("mainFragment1", "fragment/edit-profile.html :: edit-profile");
+		model.addAttribute("mainFragment1", "fragment/edit-profile");
 
 		return "index";
 	}
