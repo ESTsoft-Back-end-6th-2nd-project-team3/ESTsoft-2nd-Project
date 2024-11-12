@@ -1645,3 +1645,8 @@ h2.main-board-title {
     text-align: right;
 }
 
+.kakao-login-btn{
+    position: relative;
+    top: 40px;
+}
+
