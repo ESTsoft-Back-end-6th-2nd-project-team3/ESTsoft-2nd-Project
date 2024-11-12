@@ -23,17 +23,14 @@ import com.estsoft.estsoft2ndproject.repository.UserRepository;
 import com.estsoft.estsoft2ndproject.service.CommentService;
 import com.estsoft.estsoft2ndproject.service.PostService;
 
+import lombok.AllArgsConstructor;
+
 @Controller
+@AllArgsConstructor
 public class PageController {
 	private final PostService postService;
 	private final CommentService commentService;
 	private final UserRepository userRepository;
-
-	public PageController(PostService postService, CommentService commentService, UserRepository userRepository) {
-		this.postService = postService;
-		this.commentService = commentService;
-		this.userRepository = userRepository;
-	}
 
 	@GetMapping("/")
 	public String menuPage(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -174,7 +171,7 @@ public class PageController {
 	}
 
 	@GetMapping("/category")
-	public String categoryPage(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "id") Long categoryId,
+	public String categoryPage(@RequestParam(defaultValue = "0", name = "page") int page, @RequestParam(name = "id") Long categoryId,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addCategoryPageData(categoryId, page, model, userDetails);
@@ -207,14 +204,12 @@ public class PageController {
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
-		model.addAttribute("sideFragment1", "fragment/main-page-signin");
-		model.addAttribute("sideFragment2", "fragment/main-page-best");
 
 		return "index";
 	}
 
 	@GetMapping("/region")
-	public String regionPage(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "id") Long regionId,
+	public String regionPage(@RequestParam(defaultValue = "0", name = "page") int page, @RequestParam(name = "id") Long regionId,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addRegionPageData(regionId, page, model, userDetails);
@@ -227,7 +222,7 @@ public class PageController {
 	}
 
 	@GetMapping("/challenge")
-	public String challengePage(@RequestParam(defaultValue = "0") int page,
+	public String challengePage(@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.PARTICIPATION_CHALLENGE.getKoreanName();
@@ -255,7 +250,7 @@ public class PageController {
 	}
 
 	@GetMapping("/announcement")
-	public String announcementPage(@RequestParam(defaultValue = "0") int page,
+	public String announcementPage(@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.ANNOUNCEMENT.getKoreanName();
@@ -278,7 +273,7 @@ public class PageController {
 	}
 
 	@GetMapping("/write")
-	public String writeCategoryPost(@RequestParam(required = false) Long postId,
+	public String writeCategoryPost(@RequestParam(required = false, name = "postId") Long postId,
 		@RequestParam(name = "postType") String postType,
 		@RequestParam(name = "targetId") Long targetId, Model model,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -319,7 +314,7 @@ public class PageController {
 	}
 
 	@GetMapping("/writeChallenge")
-	public String writeChallengePost(@RequestParam(required = false) Long postId,
+	public String writeChallengePost(@RequestParam(required = false, name = "postId") Long postId,
 		@RequestParam(name = "postType") String postType, Model model,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
@@ -354,7 +349,7 @@ public class PageController {
 	@GetMapping("/category/post/{postId}")
 	public String categoryPostDetailPage(@PathVariable(name = "postId") Long postId,
 		@RequestParam(name = "targetId") Long categoryId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addCategoryPageData(categoryId, page, model, userDetails);
@@ -382,7 +377,7 @@ public class PageController {
 	@GetMapping("/region/post/{postId}")
 	public String regionPostDetailPage(@PathVariable(name = "postId") Long postId,
 		@RequestParam(name = "targetId") Long regionId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addRegionPageData(regionId, page, model, userDetails);
@@ -409,7 +404,7 @@ public class PageController {
 
 	@GetMapping("/challenge/post/{postId}")
 	public String challengePostDetailPage(@PathVariable(name = "postId") Long postId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.PARTICIPATION_CHALLENGE.getKoreanName();
@@ -449,7 +444,7 @@ public class PageController {
 
 	@GetMapping("/announcement/post/{postId}")
 	public String announcementPostDetailPage(@PathVariable(name = "postId") Long postId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.ANNOUNCEMENT.getKoreanName();
@@ -478,6 +473,45 @@ public class PageController {
 		model.addAttribute("mainFragment3", "fragment/view-comment");
 		model.addAttribute("mainFragment4", "fragment/category-name");
 		model.addAttribute("mainFragment5", "fragment/bulletin-board-list");
+
+		return "index";
+	}
+
+	@GetMapping("/search")
+	public String searchAllPage(Model model, @RequestParam(defaultValue = "0", name = "page") int page, @RequestParam(name = "keyword") String keyword,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		addMenuData(model, userDetails);
+		addCategoryNamePageData(model);
+
+		Page<PostResponseDTO> postPage = postService.getPaginationPostsByKeyword(keyword, page, 30);
+
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("postList", postPage.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", postPage.getTotalPages());
+		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("mainFragment1", "fragment/search-all");
+		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
+
+		return "index";
+	}
+
+	@GetMapping("/mypage/written")
+	public String myPageWrittenPosts(Model model, @RequestParam(defaultValue = "0", name = "page") int page, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		addMenuData(model, userDetails);
+		addCategoryNamePageData(model);
+
+		Page<PostResponseDTO> postPage = postService.getPaginationPostsByUser(userDetails.getUser(), page, 30);
+
+		model.addAttribute("categoryName", "작성한 글");
+		model.addAttribute("postList", postPage.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", postPage.getTotalPages());
+		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
 
 		return "index";
 	}

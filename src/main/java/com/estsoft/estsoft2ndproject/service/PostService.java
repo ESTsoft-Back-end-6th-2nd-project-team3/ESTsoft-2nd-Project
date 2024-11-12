@@ -3,6 +3,7 @@ package com.estsoft.estsoft2ndproject.service;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import com.estsoft.estsoft2ndproject.domain.ActivityScore;
@@ -122,8 +124,7 @@ public class PostService {
 		try {
 			PostType postTypeEnum = PostType.valueOf(postType);
 			return switch (postTypeEnum) {
-				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION ->
-					postRepository.findByPostTypeAndTargetIdAndIsActiveTrue(postType, targetId);
+				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION -> postRepository.findByPostTypeAndTargetIdAndIsActiveTrue(postType, targetId);
 				default -> postRepository.findByPostTypeAndIsActiveTrue(postType);
 			};
 		} catch (IllegalArgumentException e) {
@@ -431,5 +432,33 @@ public class PostService {
 				);
 			})
 			.toList();
+	}
+
+	public Page<PostResponseDTO> getPaginationPostsByKeyword(String keyword, int page, int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+
+		postPage = postRepository.findPostsByTitleContainingOrContentContainingAndIsActiveTrue(keyword, keyword, pageRequest);
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
+	}
+
+	public Page<PostResponseDTO> getPaginationPostsByUser(User user, int page, int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+
+		postPage = postRepository.findPostsByUserAndIsActiveTrue(user, pageRequest);
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
 	}
 }

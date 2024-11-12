@@ -6,6 +6,7 @@ import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.ObjectiveRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.service.MyPageService;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,8 @@ public class MyPageControllerTest {
 
 		mockMvc.perform(put("/mypage/1/userinfo")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"userId\":1,\"email\":\"updated@example.com\",\"nickname\":\"newNick\",\"profileImageUrl\":\"newProfile.png\",\"awardedTitle\":\"newTitle\",\"selfIntro\":\"newIntro\",\"snsLink\":\"newLink\",\"activityScore\":200}"))
+				.content(
+					"{\"userId\":1,\"email\":\"updated@example.com\",\"nickname\":\"newNick\",\"profileImageUrl\":\"newProfile.png\",\"awardedTitle\":\"newTitle\",\"selfIntro\":\"newIntro\",\"snsLink\":\"newLink\",\"activityScore\":200}"))
 			.andExpect(status().isOk());
 	}
 
@@ -127,11 +129,12 @@ public class MyPageControllerTest {
 			1L,
 			"Post Title",
 			"Post Content",
+			31L,
 			"General",
-			100,
-			50,
 			new Timestamp(System.currentTimeMillis()),
-			new Timestamp(System.currentTimeMillis())
+			new Timestamp(System.currentTimeMillis()),
+			100,
+			50
 		);
 
 		Mockito.when(myPageService.getMyPosts(anyLong())).thenReturn(Collections.singletonList(mockPost));

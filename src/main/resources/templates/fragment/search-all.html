@@ -1,0 +1,26 @@
+<article id="search-all" th:fragment="search-all">
+    <h3><span class="keyword">'[[${keyword}]]'</span>의 검색 결과입니다.</h3>
+    <section id="notice">
+        <h4>공지</h4>
+        <div class="bar"></div>
+        <a class="category-name-title" th:href="@{'/announcement/post/' + ${notice.postId}}" th:text="${notice.title}">공지 제목~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</a>
+        <div class="bar"></div>
+        <a class="category-name-user" th:href="@{'/mypage/' + ${noticeUser.userId}}" th:text="${noticeUser.nickname}">작성자</a>
+        <div class="bar"></div>
+        <span th:text="${notice.viewCount}">조회수</span>
+        <div class="bar"></div>
+        <span th:text="${#dates.format(notice.createdAt, 'yyyy-MM-dd')}">작성일</span>
+    </section>
+    <section id="challenge">
+        <h4>챌린지</h4>
+        <div class="bar"></div>
+        <a class="category-name-title" th:href="@{'/announcement/post/' + ${challenge.postId}}" th:text="${challenge.title}">챌린지
+            제목~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</a>
+        <div class="bar"></div>
+        <a class="category-name-user" th:href="@{'/mypage/' + ${challengeUser.userId}}" th:text="${challengeUser.nickname}">작성자</a>
+        <div class="bar"></div>
+        <span th:text="${challenge.viewCount}">조회수</span>
+        <div class="bar"></div>
+        <span th:text="${#dates.format(challenge.createdAt, 'yyyy-MM-dd')}">작성일</span>
+    </section>
+</article>
