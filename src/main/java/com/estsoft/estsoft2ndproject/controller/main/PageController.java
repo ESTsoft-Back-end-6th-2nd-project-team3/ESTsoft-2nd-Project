@@ -35,6 +35,7 @@ import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.service.CommentService;
+import com.estsoft.estsoft2ndproject.service.MyPageService;
 import com.estsoft.estsoft2ndproject.service.ObjectiveService;
 import com.estsoft.estsoft2ndproject.service.PostService;
 import com.estsoft.estsoft2ndproject.service.UserService;
@@ -51,6 +52,7 @@ public class PageController {
 	private final CommentService commentService;
 	private final UserService userService;
 	private final ObjectiveService objectiveService;
+	private final MyPageService myPageService;
 
 	@GetMapping("/")
 	public String menuPage(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -507,7 +509,7 @@ public class PageController {
 		model.addAttribute("month", month);
 		model.addAttribute("progressValue", progressValue);
 		model.addAttribute("myObjective", myObjective);
-		model.addAttribute("objectiveData", null);
+		model.addAttribute("objectiveData", myPageService.getMonthlyCompletionStats(userDetails.getUser().getUserId()));
 
 		model.addAttribute("mainFragment1", "fragment/mypage-profile");
 		model.addAttribute("mainFragment2", "fragment/my-objective");

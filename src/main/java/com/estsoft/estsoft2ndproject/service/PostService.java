@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import com.estsoft.estsoft2ndproject.domain.Category;
@@ -21,6 +22,7 @@ import com.estsoft.estsoft2ndproject.domain.SubMenu;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
+import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.exception.PostNotFoundException;
 import com.estsoft.estsoft2ndproject.exception.UserNotFoundException;
 import com.estsoft.estsoft2ndproject.repository.CategoryRepository;
