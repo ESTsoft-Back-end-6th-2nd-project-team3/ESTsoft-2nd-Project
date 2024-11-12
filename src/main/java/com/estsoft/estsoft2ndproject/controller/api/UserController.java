@@ -79,23 +79,4 @@ public class UserController {
 		response.put("isAvailable", isAvailable);
 		return response;
 	}
-
-	@PostMapping("/api/upload-profile-image/{userId}")
-	public ResponseEntity<Map<String, Object>> uploadProfileImage(
-		@PathVariable Long userId,
-		@RequestParam("profileImage") MultipartFile file) {
-		Map<String, Object> response = new HashMap<>();
-		try {
-			String imageUrl = userService.saveProfileImage(userId, file);
-
-			response.put("success", true);
-			response.put("imageUrl", imageUrl);
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			response.put("success", false);
-			response.put("message", "이미지 업로드 중 오류가 발생했습니다.");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-		}
-	}
-
 }
