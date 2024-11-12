@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>타임리프 레이아웃</title>
+    <title>MomenTree</title>
     <link rel="stylesheet" th:href="@{/css/reset.css}">
     <link rel="stylesheet" th:href="@{/css/base.css}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -545,7 +545,7 @@
 
     function changePageDirection(direction) {
         const currentPage = parseInt(new URLSearchParams(window.location.search).get('page')) || 1;
-        const totalPages = [[${totalPages}]];
+        const totalPages = /*[[${totalPages}]]*/ 0;
         let newPage = currentPage;
 
         if (direction === 'prev' && currentPage > 0) {
@@ -565,7 +565,12 @@
         window.location.search = urlParams.toString();
     }
 
+    let isSearching = false;
+
     function searchUserPosts() {
+        if (isSearching) return;
+        isSearching = true;
+
         const searchType = document.querySelector('.search-box select').value;
         const searchQuery = document.querySelector('.search-box input[type="text"]').value;
         const postType = document.getElementById('post-type').value;
@@ -573,6 +578,7 @@
 
         if (searchQuery.trim() === "") {
             alert("검색어를 입력하세요.");
+            isSearching = false;
             return;
         }
 
@@ -594,6 +600,10 @@
         url.searchParams.set('query', searchQuery);
 
         window.location.href = url.toString();
+
+        setTimeout(() => {
+            isSearching = false;
+        }, 1000);
     }
 
     function goToWritePage() {

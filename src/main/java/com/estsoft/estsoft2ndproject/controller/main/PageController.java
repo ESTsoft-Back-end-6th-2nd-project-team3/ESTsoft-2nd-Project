@@ -407,7 +407,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/search-all");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
 
@@ -426,7 +426,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
 

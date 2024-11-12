@@ -59,7 +59,7 @@
             <option value="title">제목 검색</option>
             <option value="content">제목+내용 검색</option>
         </select>
-        <input id="searchQuery" placeholder=" 검색어를 입력하세요" type="text">
+        <input id="searchQuery" placeholder=" 검색어를 입력하세요" type="text" onkeydown="if(event.keyCode === 13) searchUserPosts()">
         <button onclick="searchUserPosts()">검색</button>
     </div>
 </article>
