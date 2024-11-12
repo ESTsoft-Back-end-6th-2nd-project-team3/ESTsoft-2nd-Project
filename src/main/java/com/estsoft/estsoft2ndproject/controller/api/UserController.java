@@ -60,7 +60,7 @@ public class UserController {
 		model.addAttribute("nickname", nickname);
 		model.addAttribute("profileImageUrl", profileImageUrl);
 
-		return "testHtml/register";
+		return "redirect:/member/register-form";
 	}
 
 	@PostMapping("/member/register")
@@ -77,7 +77,8 @@ public class UserController {
 	}
 
 	@GetMapping("/member/cancellation")
-	public ResponseEntity<String> delete(@AuthenticationPrincipal CustomUserDetails oAuth2User, HttpServletRequest request) {
+	public ResponseEntity<String> delete(@AuthenticationPrincipal CustomUserDetails oAuth2User,
+		HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		session.invalidate();
 
@@ -88,7 +89,7 @@ public class UserController {
 
 	@GetMapping("/nickname-check")
 	public Map<String, Boolean> checkNickname(@RequestParam String nickname) {
-		boolean isAvailable = userService.isNicknameAvailable(nickname); // 실제 닉네임 중복 체크 로직
+		boolean isAvailable = userService.isNicknameAvailable(nickname);
 		Map<String, Boolean> response = new HashMap<>();
 		response.put("isAvailable", isAvailable);
 		return response;
@@ -100,7 +101,6 @@ public class UserController {
 		@RequestParam("profileImage") MultipartFile file) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			// 파일 저장 처리 로직 (예: 로컬 파일 시스템 또는 클라우드 스토리지)
 			String imageUrl = userService.saveProfileImage(userId, file);
 
 			response.put("success", true);

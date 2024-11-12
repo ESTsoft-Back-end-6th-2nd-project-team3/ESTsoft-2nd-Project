@@ -13,7 +13,7 @@
 <body>
 <header>
     <section class="header-top">
-        <div class="logo" th:src="@{/images/logo.png}"></div>
+        <img alt="Logo" class="logo" th:src="@{/images/logo.png}">
         <input class="search-bar" placeholder="검색어를 입력하세요" type="text">
         <!-- <button onclick="searchUserPosts()">검색</button> -->
     </section>
@@ -42,7 +42,7 @@
         <div th:if="${mainFragment3 != null}">
             <div th:replace="${mainFragment3}"></div>
         </div>
-        <div th:if="${mainFragmen4 != null}">
+        <div th:if="${mainFragment4 != null}">
             <div th:replace="${mainFragment4}"></div>
         </div>
         <div th:if="${mainFragment5 != null}">

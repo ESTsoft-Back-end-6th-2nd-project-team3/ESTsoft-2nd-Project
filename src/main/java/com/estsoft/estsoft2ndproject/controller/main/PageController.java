@@ -39,6 +39,7 @@ import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.service.CommentService;
 import com.estsoft.estsoft2ndproject.service.PostService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -421,6 +422,32 @@ public class PageController {
 		return "index";
 	}
 
+	@GetMapping("/member/register-form")
+	public String showRegisterPage(Model model, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+
+		// 예시 데이터 설정 (테스트용)
+		session.setAttribute("email", "example@example.com");
+		session.setAttribute("nickname", "테스트닉네임");
+		session.setAttribute("profileImageUrl", "/images/default-profile.png");
+
+		String email = (String)session.getAttribute("email");
+		String nickname = (String)session.getAttribute("nickname");
+		String profileImageUrl = (String)session.getAttribute("profileImageUrl");
+
+		model.addAttribute("email", email);
+		model.addAttribute("nickname", nickname);
+		model.addAttribute("profileImageUrl", profileImageUrl);
+
+		model.addAttribute("subMenus", getSubMenus("일반"));
+
+		if (email != null && nickname != null) {
+			model.addAttribute("mainFragment1", "testHtml/register :: register");
+		}
+
+		return "index";
+	}
+
 	@GetMapping("/mypage")
 	public String showMyPage(@SessionAttribute("userId") Long userId, Model model) {
 		Optional<User> user = userService.getUserWithChallenges(userId);
@@ -469,7 +496,7 @@ public class PageController {
 		model.addAttribute("user", user.orElse(new User()));
 
 		model.addAttribute("subMenus", getSubMenus("일반"));
-		model.addAttribute("mainFragment5", "fragment/edit-profile.html :: edit-profile");
+		model.addAttribute("mainFragment1", "fragment/edit-profile.html :: edit-profile");
 
 		return "index";
 	}
@@ -482,11 +509,10 @@ public class PageController {
 		@RequestParam("snsLink") String snsLink,
 		@RequestParam("profileImage") MultipartFile profileImage) {
 
-		// 파일을 저장할 경로 설정
 		String filePath = "uploads/" + profileImage.getOriginalFilename();
 		File file = new File(filePath);
 		try {
-			profileImage.transferTo(file); // 파일 저장
+			profileImage.transferTo(file);
 		} catch (IOException e) {
 			e.printStackTrace();
 			Map<String, Object> errorResponse = new HashMap<>();
@@ -495,7 +521,6 @@ public class PageController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 		}
 
-		// 사용자 정보 업데이트 로직
 		userService.updateUserProfile(userId, nickname, selfIntro, snsLink, filePath);
 
 		Map<String, Object> response = new HashMap<>();
