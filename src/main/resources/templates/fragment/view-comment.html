@@ -22,7 +22,7 @@
                             <button class="edit-button" th:commentId="${comment.commentId}" th:if="${comment.userId == userId}" th:onclick="editComment(this.getAttribute('commentId'))" type="button">
                                 수정
                             </button>
-                            <button class="delete-button" th:commentId="${comment.commentId}" th:if="${comment.userId == userId}" th:onclick="deleteComment(this.getAttribute('commentId'))"
+                            <button class="delete-button" th:commentId="${comment.commentId}" th:if="${comment.userId == userId || isAdmin}" th:onclick="deleteComment(this.getAttribute('commentId'))"
                                     type="button">
                                 삭제
                             </button>
@@ -48,7 +48,7 @@
                                 <button class="edit-button" th:commentId="${reply.commentId}" th:if="${reply.userId == userId}" th:onclick="editComment(this.getAttribute('commentId'))" type="button">
                                     수정
                                 </button>
-                                <button class="delete-button" th:commentId="${reply.commentId}" th:if="${reply.userId == userId}" th:onclick="deleteComment(this.getAttribute('commentId'))"
+                                <button class="delete-button" th:commentId="${reply.commentId}" th:if="${reply.userId == userId || isAdmin}" th:onclick="deleteComment(this.getAttribute('commentId'))"
                                         type="button">
                                     삭제
                                 </button>

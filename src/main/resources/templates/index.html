@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>타임리프 레이아웃</title>
-    <link rel="stylesheet" th:href="@{/css/base.css}">
     <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <header>
     <section class="header-top">
-        <div class="logo" th:src="@{/images/logo.png}"></div>
+        <h1><a th:href="@{/}"><img alt="MomemTree" class="logo" th:src="@{/images/logo.png}"></a><span class="blind">MomenTree</span></h1>
         <input class="search-bar" placeholder="검색" type="text">
     </section>
     <nav>
@@ -20,8 +20,8 @@
             <div class="submenu" th:if="${menu.items != null}">
                 <a class="submenu-item"
                    th:each="item, stat : ${menu.items}"
-                   th:text="${item}"
-                   th:href="${menu.itemUrls[stat.index.intValue()]}">
+                   th:href="${menu.itemUrls[stat.index.intValue()]}"
+                   th:text="${item}">
                 </a>
             </div>
         </div>
@@ -93,6 +93,18 @@
             // 실패 시에는 위의 전역 에러 핸들러가 처리함
         });
     }
+
+    // 전체 검색
+    $(document).ready(function () {
+        $('.search-bar').on('keypress', function (event) {
+            if (event.which === 13) { // Enter 키의 키코드
+                event.preventDefault(); // 기본 동작 방지
+                let keyword = $(this).val(); // 입력된 값 가져오기
+
+                window.location.href = '/search?keyword=' + keyword;
+            }
+        });
+    });
 
     // write-post
     function autoResize(textarea) {
