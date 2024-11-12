@@ -664,6 +664,10 @@ body * {
     justify-content: center;
     align-items: center;
 
+    h3 {
+        margin-bottom: 20px;
+    }
+
     .board-table {
         width: 100%;
         height: auto;
@@ -768,9 +772,11 @@ body * {
         margin: 0 5px;
         font-size: 14px;
         width: 10px;
+        text-align: center;
+        cursor: pointer;
     }
 
-    .pagination a, .pagination-container button {
+    .pagination-container button {
         margin: 0;
         text-align: center;
         cursor: pointer;
