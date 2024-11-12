@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import com.estsoft.estsoft2ndproject.domain.Category;
@@ -21,6 +22,7 @@ import com.estsoft.estsoft2ndproject.domain.SubMenu;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
+import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.exception.PostNotFoundException;
 import com.estsoft.estsoft2ndproject.exception.UserNotFoundException;
 import com.estsoft.estsoft2ndproject.repository.CategoryRepository;
@@ -182,7 +184,7 @@ public class PostService {
 			.toList();
 	}
 
-	public List<SubMenu> getSubMenus(String level) {
+	public List<SubMenu> getSubMenus(String level, Long userId) {
 		List<String> categories = getCategoryList().stream().map(Category::getName).toList();
 		List<Long> categoryIds = getCategoryList().stream().map(Category::getId).toList();
 		List<String> categoryUrls = categories.isEmpty() ? Collections.emptyList() :
@@ -197,7 +199,7 @@ public class PostService {
 		subMenus.add(new SubMenu("카테고리", categories, null, categoryUrls));
 		subMenus.add(new SubMenu("챌린지", null, "/challenge", null));
 		subMenus.add(new SubMenu("지역 친목 게시판", regions, null, regionUrls));
-		subMenus.add(new SubMenu("마이페이지", null, "/mypage", null));
+		subMenus.add(new SubMenu("마이페이지", null, "/mypage/" + userId, null));
 
 		if (level.equals("관리자")) {
 			subMenus.add(3, new SubMenu("관리자 메뉴", null, "/admin", null));
@@ -327,6 +329,10 @@ public class PostService {
 		postResponseDTO.setIsLiked(isLiked);
 
 		return postResponseDTO;
+	}
+
+	public Boolean isAdmin(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return userDetails.getUser().getLevel().equals("관리자");
 	}
 
 	public Page<PostResponseDTO> searchPostsByTitle(String keyword, String postType, Long targetId, int page,
