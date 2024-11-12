@@ -204,6 +204,7 @@ public class PageController {
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
 
 		return "index";
 	}

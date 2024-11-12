@@ -179,7 +179,7 @@ public class PostService {
 	}
 
 	public List<Post> searchPostsByKeyword(String keyword) {
-		return postRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+		return postRepository.findByTitleContainingOrContentContainingAndIsActiveTrue(keyword, keyword);
 	}
 
 	public Post getNoticeTop1() {
