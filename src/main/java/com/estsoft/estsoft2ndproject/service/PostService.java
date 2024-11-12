@@ -1,5 +1,6 @@
 package com.estsoft.estsoft2ndproject.service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -168,7 +169,8 @@ public class PostService {
 	}
 
 	public List<PostResponseDTO> getWeeklyBestPost() {
-		LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+		Timestamp sevenDaysAgo = Timestamp.valueOf(LocalDateTime.now().minusDays(7));
+		// LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		Page<Post> topPosts = postRepository.findTop5PostsByLast7DaysSortedByViewsAndLikes(sevenDaysAgo,
 			pageRequest);
@@ -182,7 +184,7 @@ public class PostService {
 			.toList();
 	}
 
-	public List<SubMenu> getSubMenus(String level) {
+	public List<SubMenu> getSubMenus(String level, Long userId) {
 		List<String> categories = getCategoryList().stream().map(Category::getName).toList();
 		List<Long> categoryIds = getCategoryList().stream().map(Category::getId).toList();
 		List<String> categoryUrls = categories.isEmpty() ? Collections.emptyList() :
@@ -197,7 +199,7 @@ public class PostService {
 		subMenus.add(new SubMenu("카테고리", categories, null, categoryUrls));
 		subMenus.add(new SubMenu("챌린지", null, "/challenge", null));
 		subMenus.add(new SubMenu("지역 친목 게시판", regions, null, regionUrls));
-		subMenus.add(new SubMenu("마이페이지", null, "/mypage", null));
+		subMenus.add(new SubMenu("마이페이지", null, "/mypage/" + userId, null));
 
 		if (level.equals("관리자")) {
 			subMenus.add(3, new SubMenu("관리자 메뉴", null, "/admin", null));
@@ -207,7 +209,7 @@ public class PostService {
 	}
 
 	public List<PostResponseDTO> getTodayBestPostByPostTypeAndTargetId(String postType, Long targetId) {
-		LocalDateTime today = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
+		Timestamp today = Timestamp.valueOf(LocalDateTime.now().minus(1, ChronoUnit.DAYS));
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		Page<Post> topPosts = postRepository.findTopPostsForLast24Hours(today, postType, targetId, pageRequest);
 		List<Post> postList = topPosts.getContent();
@@ -224,7 +226,7 @@ public class PostService {
 	}
 
 	public List<PostResponseDTO> getWeeklyBestPostByPostTypeAndTargetId(String postType, Long targetId) {
-		LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+		Timestamp sevenDaysAgo = Timestamp.valueOf(LocalDateTime.now().minusDays(7));
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		Page<Post> topPosts = postRepository.findTopPostsForLast7Days(sevenDaysAgo, postType, targetId,
 			pageRequest);
@@ -253,7 +255,7 @@ public class PostService {
 	}
 
 	public List<PostResponseDTO> getTodayBestChallengePost() {
-		LocalDateTime today = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
+		Timestamp today = Timestamp.valueOf(LocalDateTime.now().minus(1, ChronoUnit.DAYS));
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		Page<Post> topPosts = postRepository.findTopPostsForLast24HoursByPostType(today,
 			PostType.PARTICIPATION_CHALLENGE.toString(), pageRequest);
@@ -271,7 +273,7 @@ public class PostService {
 	}
 
 	public List<PostResponseDTO> getWeeklyBestChallengePost() {
-		LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+		Timestamp sevenDaysAgo = Timestamp.valueOf(LocalDateTime.now().minusDays(7));
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		Page<Post> topPosts = postRepository.findTopPostsForLast7DaysByPostType(sevenDaysAgo,
 			PostType.PARTICIPATION_CHALLENGE.toString(), pageRequest);
@@ -329,8 +331,63 @@ public class PostService {
 		return postResponseDTO;
 	}
 
-	public Boolean isAdmin(CustomUserDetails userDetails) {
+	public Boolean isAdmin(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return userDetails.getUser().getLevel().equals("관리자");
+	}
+
+	public Page<PostResponseDTO> searchPostsByTitle(String keyword, String postType, Long targetId, int page,
+		int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+		if (targetId != null) {
+			postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostTypeAndTargetId(keyword,
+				postType,
+				targetId,
+				pageRequest);
+		} else {
+			if (postType.equals(PostType.PARTICIPATION_CHALLENGE.toString()) || postType.equals(
+				PostType.GENERATION_CHALLENGE.toString())) {
+				postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostTypeSuffix("%" + keyword + "%",
+					"%CHALLENGE",
+					pageRequest);
+			} else {
+				postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostType(keyword, postType,
+					pageRequest);
+			}
+		}
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
+	}
+
+	public Page<PostResponseDTO> searchPostsByTitleOrContent(String keyword, String postType, Long targetId, int page,
+		int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+		if (targetId != null) {
+			postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeAndTargetId(
+				keyword, keyword, postType, targetId, pageRequest);
+		} else {
+			if (postType.equals(PostType.PARTICIPATION_CHALLENGE.toString()) || postType.equals(
+				PostType.GENERATION_CHALLENGE.toString())) {
+				postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeSuffix(
+					"%" + keyword + "%", "%" + keyword + "%", "%CHALLENGE", pageRequest);
+			} else {
+				postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostType(
+					keyword, keyword, postType, pageRequest);
+			}
+		}
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
 	}
 
 	public Page<PostResponseDTO> getPaginationPostsByKeyword(String keyword, int page, int size) {

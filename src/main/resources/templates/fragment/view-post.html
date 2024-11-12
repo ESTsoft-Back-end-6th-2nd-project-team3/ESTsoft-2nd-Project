@@ -22,9 +22,9 @@
     </div>
 
     <div class="action-buttons">
-        <button type="button" class="button modify-button" id="modify-button" data-postType="${post.postType}" onclick="modifyPost()">수정
+        <button type="button" class="button modify-button" id="modify-button" data-postType="${post.postType}" onclick="modifyPost()" th:if="${post.userId == userId}">수정
         </button>
-        <button type="button" class="button delete-button" id="delete-button" data-postType="${post.postType}" onclick="deletePost()">삭제
+        <button type="button" class="button delete-button" id="delete-button" data-postType="${post.postType}" onclick="deletePost()" th:if="${post.userId == userId || isAdmin}">삭제
         </button>
     </div>
 

@@ -48,23 +48,6 @@ public class UserController {
 		return oAuth2User;
 	}
 
-	@GetMapping("/member/register")
-	public String register(Model model, HttpServletRequest request) {
-		HttpSession session = request.getSession();
-
-		String email = (String)session.getAttribute("email");
-		String nickname = (String)session.getAttribute("nickname");
-		String profileImageUrl = (String)session.getAttribute("profileImageUrl");
-
-		model.addAttribute("email", email);
-		model.addAttribute("nickname", nickname);
-		model.addAttribute("profileImageUrl", profileImageUrl);
-
-		model.addAttribute("mainFragment1", "fragment/register");
-
-		return "index";
-	}
-
 	@PostMapping("/member/register")
 	public ResponseEntity<String> register(@RequestBody RegisterRequestDTO registerRequestDTO,
 		HttpServletRequest request) {
@@ -96,23 +79,4 @@ public class UserController {
 		response.put("isAvailable", isAvailable);
 		return response;
 	}
-
-	@PostMapping("/api/upload-profile-image/{userId}")
-	public ResponseEntity<Map<String, Object>> uploadProfileImage(
-		@PathVariable Long userId,
-		@RequestParam("profileImage") MultipartFile file) {
-		Map<String, Object> response = new HashMap<>();
-		try {
-			String imageUrl = userService.saveProfileImage(userId, file);
-
-			response.put("success", true);
-			response.put("imageUrl", imageUrl);
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			response.put("success", false);
-			response.put("message", "이미지 업로드 중 오류가 발생했습니다.");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-		}
-	}
-
 }

@@ -1,5 +1,6 @@
 package com.estsoft.estsoft2ndproject.service;
 
+import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.ObjectiveRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.PostResponseDTO;
@@ -14,7 +15,13 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,10 +37,16 @@ public class MyPageService {
 			user.getAwardedTitle(), user.getSelfIntro(), user.getSnsLink(), user.getActivityScore());
 	}
 
-	public void updateMyInfo(Long userId, UserInfoResponseDTO userInfo) {
+	public void updateMyInfo(Long userId, UserInfoRequestDTO userInfo) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-		user.updateUser(userInfo.getNickname(), null, null, null, null, null, userInfo.getProfileImageUrl(), userInfo.getActivityScore(),
-			null, userInfo.getAwardedTitle(), userInfo.getSelfIntro(), userInfo.getSnsLink());
+
+		user.updateBuilder()
+			.nickname(userInfo.getNickname())
+			.profileImageUrl(userInfo.getProfileImageUrl())
+			.selfIntro(userInfo.getSelfIntro())
+			.snsLink(userInfo.getSnsLink())
+			.build();
+
 		userRepository.save(user);
 	}
 
@@ -76,5 +89,52 @@ public class MyPageService {
 				post.getLikeCount()
 			))
 			.collect(Collectors.toList());
+	}
+
+	public List<Map<String, Object>> getMonthlyCompletionStats(Long userId) {
+		// 현재 날짜 가져오기
+		Timestamp now = new Timestamp(System.currentTimeMillis());
+		LocalDate currentDate = now.toLocalDateTime().toLocalDate();
+
+		// 최근 12개월 생성
+		List<LocalDate> last12Months = new ArrayList<>();
+		for (int i = 0; i < 12; i++) {
+			last12Months.add(currentDate.minusMonths(i));
+		}
+
+		// 목표 가져오기
+		List<Objective> objectives = objectiveRepository.findByUser_UserId(userId);
+
+		// 목표를 연-월 기준으로 그룹화
+		Map<String, List<Objective>> groupedObjectives = objectives.stream()
+			.collect(Collectors.groupingBy(obj -> {
+				LocalDate date = obj.getObjectiveYearMonth().toLocalDate();
+				return date.getYear() + "-" + String.format("%02d", date.getMonthValue()); // "YYYY-MM" 형식
+			}));
+
+		// 결과 데이터 생성
+		List<Map<String, Object>> result = new ArrayList<>();
+		for (LocalDate month : last12Months) {
+			String yearMonth = month.getYear() + "-" + String.format("%02d", month.getMonthValue());
+
+			// 해당 월의 목표 가져오기
+			List<Objective> monthObjectives = groupedObjectives.getOrDefault(yearMonth, Collections.emptyList());
+
+			// 완료율 계산
+			long total = monthObjectives.size();
+			long completed = monthObjectives.stream().filter(Objective::getIsCompleted).count();
+			int completionRate = total > 0 ? (int)((completed / (double)total) * 100) : 0;
+
+			// 결과 데이터 추가
+			Map<String, Object> monthData = new HashMap<>();
+			monthData.put("month", month.getMonthValue());
+			monthData.put("amount", completionRate);
+			result.add(monthData);
+		}
+
+		// 월 순서 뒤집기 (최신순으로)
+		Collections.reverse(result);
+
+		return result;
 	}
 }
