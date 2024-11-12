@@ -57,4 +57,14 @@ public class PostResponseDTO {
 		this.createdAt = createdAt;
 	}
 
+	public PostResponseDTO(Long postId, String title, String postType, Long targetId, String displayName, Integer viewCount, Timestamp createdAt, Boolean isActive) {
+		this.postId = postId;
+		this.title = title;
+		this.postType = postType;
+		this.targetId = targetId;
+		this.displayName = displayName;
+		this.viewCount = viewCount;
+		this.createdAt = createdAt;
+		this.isActive = isActive; // 활성화 여부 설정
+	}
 }

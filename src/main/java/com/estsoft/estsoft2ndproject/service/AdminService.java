@@ -13,6 +13,7 @@ import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse;
 import com.estsoft.estsoft2ndproject.domain.dto.admin.UserListResponse;
+import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.repository.CategoryRepository;
 import com.estsoft.estsoft2ndproject.repository.PostRepository;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
@@ -91,4 +92,29 @@ public class AdminService {
 		category.setName(newCategoryName);
 		return categoryRepository.save(category);
 	}
+
+	@Transactional(readOnly = true)
+	public List<PostResponseDTO> getPostList() {
+		// 모든 게시글 가져오기
+		List<Post> posts = postRepository.findAll(); // Post 엔터티를 가져옴
+
+		// 각 게시글에 대해 필요한 정보 추출 및 DTO 변환
+		return posts.stream().map(post -> {
+			// 게시글 작성자 닉네임 가져오기
+			String nickname = post.getUser().getNickname();
+
+			// PostResponseDTO 생성
+			return new PostResponseDTO(
+				post.getPostId(),
+				post.getTitle(),
+				post.getPostType(),
+				post.getTargetId(),
+				nickname, // 닉네임 추가
+				post.getViewCount(),
+				post.getCreatedAt(),
+				post.getIsActive() // 활성화 여부 추가
+			);
+		}).collect(Collectors.toList());
+	}
+
 }
