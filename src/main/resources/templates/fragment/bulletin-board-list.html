@@ -1,7 +1,7 @@
 <article class="board-container" id="bulletin-board-list" th:fragment="bulletin-board-list">
     <!-- 일반 사용자 게시글 목록 테이블 -->
-    <input type="hidden" id="post-type" th:value="${postType}">
-    <input type="hidden" id="target-id" th:value="${targetId}">
+    <input id="post-type" th:value="${postType}" type="hidden">
+    <input id="target-id" th:value="${targetId}" type="hidden">
     <h3 th:if="${keyword != null}"><span class="keyword">'[[${keyword}]]'</span>의 검색 결과입니다.</h3>
     <table class="board-table">
         <thead>
@@ -18,8 +18,8 @@
         <tr th:each="post, iterStat : ${searchResults != null ? searchResults : postList}">
             <td th:text="${iterStat.index + 1}">1</td>
             <td>
-                <a id="post-link" th:text="${post.title}"
-                   th:attr="data-postId=${post.postId}">제목</a>
+                <a class="post-link" th:attr="data-postId=${post.postId}"
+                   th:text="${post.title}">제목</a>
             </td>
             <td th:text="${post.commentCount}">댓글수</td>
             <td>

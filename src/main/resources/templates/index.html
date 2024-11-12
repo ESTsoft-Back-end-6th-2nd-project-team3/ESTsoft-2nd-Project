@@ -634,7 +634,7 @@
         window.location.href = url.toString();
     }
 
-    document.querySelectorAll('#post-link').forEach(function (link) {
+    document.querySelectorAll('.post-link').forEach(function (link) {
         const postType = document.getElementById('post-type').value;
         const postId = link.getAttribute('data-postId');
         const targetId = document.getElementById('target-id').value;

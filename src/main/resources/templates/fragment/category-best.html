@@ -7,7 +7,7 @@
             <div th:each="item : ${todayBest}">
                 <div class="best-item">
                     <div class="best-item-count" th:text="${itemStat.count}"></div>
-                    <a th:href="@{|/post/${item.postId}|}" th:text="${item.title}"></a>
+                    <a class="post-link" th:attr="data-postId=${item.postId}" th:text="${item.title}">제목</a>
                     <span th:text="${item.commentCount}"></span>
                 </div>
             </div>
@@ -18,7 +18,7 @@
             <div th:each="item : ${weeklyBest}">
                 <div class="best-item">
                     <div class="best-item-count" th:text="${itemStat.count}"></div>
-                    <a th:href="@{|/post/${item.postId}|}" th:text="${item.title}"></a>
+                    <a class="post-link" th:attr="data-postId=${item.postId}" th:text="${item.title}">제목</a>
                     <span th:text="${item.commentCount}"></span>
                 </div>
             </div>
