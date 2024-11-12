@@ -31,8 +31,9 @@ public class WebSecurityConfig {
 				.requestMatchers("/").permitAll()
 				.requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.*").permitAll()
 				.requestMatchers("/admin/**").hasAuthority("관리자")
-				.requestMatchers("/member/login").permitAll()
-				// .requestMatchers("/**").hasAnyAuthority("씨앗", "새싹", "묘목", "성목", "고목", "관리자")
+				.requestMatchers("/member/login").permitAll()    // TODO: 메인 페이지에서 로그인 예정
+				.requestMatchers("/region").hasAnyAuthority("묘목", "성목", "고목", "관리자")
+				// .requestMatchers("/**").authenticated()
 				.anyRequest().permitAll()
 			)
 			.oauth2Login(oauth2 -> oauth2

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.estsoft.estsoft2ndproject.domain.Comment;
+import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentListResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentResponseDTO;
@@ -95,11 +96,13 @@ public class CommentApiController {
 			.sorted(Comparator.comparing(CommentListResponseDTO::getCreatedAt))
 			.toList();
 
-		Long userId = oAuth2User.getUser().getUserId();
+		User user = oAuth2User.getUser();
+		Long userId = user.getUserId();
 
 		model.addAttribute("comments", commentList);
 		model.addAttribute("userId", userId);
 		model.addAttribute("postId", postId);
+		model.addAttribute("isAdmin", user.getLevel().equals("관리자"));
 		model.addAttribute("commentCount", commentService.getCommentCountByPostId(postId));
 
 		return "fragment/view-comment";

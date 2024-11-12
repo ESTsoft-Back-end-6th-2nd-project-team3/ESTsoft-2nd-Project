@@ -102,8 +102,7 @@ public class PostService {
 		try {
 			PostType postTypeEnum = PostType.valueOf(postType);
 			return switch (postTypeEnum) {
-				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION ->
-					postRepository.findByPostTypeAndTargetIdAndIsActiveTrue(postType, targetId);
+				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION -> postRepository.findByPostTypeAndTargetIdAndIsActiveTrue(postType, targetId);
 				default -> postRepository.findByPostTypeAndIsActiveTrue(postType);
 			};
 		} catch (IllegalArgumentException e) {
@@ -152,7 +151,7 @@ public class PostService {
 	}
 
 	public List<Post> searchPostsByKeyword(String keyword) {
-		return postRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+		return postRepository.findByTitleContainingOrContentContainingAndIsActiveTrue(keyword, keyword);
 	}
 
 	public Post getNoticeTop1() {
@@ -376,6 +375,34 @@ public class PostService {
 					keyword, keyword, postType, pageRequest);
 			}
 		}
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
+	}
+
+	public Page<PostResponseDTO> getPaginationPostsByKeyword(String keyword, int page, int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+
+		postPage = postRepository.findPostsByTitleContainingOrContentContainingAndIsActiveTrue(keyword, keyword, pageRequest);
+
+		return postPage.map(post -> {
+			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+			postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
+			postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
+			return postResponseDTO;
+		});
+	}
+
+	public Page<PostResponseDTO> getPaginationPostsByUser(User user, int page, int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		Page<Post> postPage;
+
+		postPage = postRepository.findPostsByUserAndIsActiveTrue(user, pageRequest);
 
 		return postPage.map(post -> {
 			PostResponseDTO postResponseDTO = new PostResponseDTO(post);

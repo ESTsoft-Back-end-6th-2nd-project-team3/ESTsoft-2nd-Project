@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.estsoft.estsoft2ndproject.domain.Post;
+import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse;
 
 @Repository
@@ -24,7 +25,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	List<Post> findByUser_UserId(Long userId);
 
-	List<Post> findByTitleContainingOrContentContaining(String titleKeyword, String contentKeyword);
+	List<Post> findByTitleContainingOrContentContainingAndIsActiveTrue(String titleKeyword, String contentKeyword);
+
+	Page<Post> findPostsByTitleContainingOrContentContainingAndIsActiveTrue(String titleKeyword, String contentKeyword, Pageable pageable);
+
+	Page<Post> findPostsByUserAndIsActiveTrue(User user, Pageable pageable);
 
 	@Query(
 		"SELECT new com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse(p.postId, c.name, p.title, COUNT(cmt), u.nickname, p.viewCount, p.likeCount, p.createdAt, p.isActive) "
@@ -62,13 +67,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("SELECT p FROM Post p WHERE p.createdAt >= :today AND p.postType = :postType AND p.isActive = true " +
 		"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
-	Page<Post> findTopPostsForLast24HoursByPostType(@Param("today") Timestamp today, @Param("postType")String postType,
-		Pageable pageable);
+	Page<Post> findTopPostsForLast24HoursByPostType(@Param("today") LocalDateTime today, @Param("postType") String postType, Pageable pageable);
 
 	@Query("SELECT p FROM Post p WHERE p.createdAt >= :sevenDaysAgo AND p.postType = :postType AND p.isActive = true " +
 		"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
-	Page<Post> findTopPostsForLast7DaysByPostType(@Param("sevenDaysAgo") Timestamp sevenDaysAgo, @Param("postType")String postType,
-		Pageable pageable);
+	Page<Post> findTopPostsForLast7DaysByPostType(@Param("sevenDaysAgo") LocalDateTime sevenDaysAgo, @Param("postType") String postType, Pageable pageable);
 
 	Page<Post> findPostsByPostTypeAndIsActiveTrue(String postType, Pageable pageable);
 

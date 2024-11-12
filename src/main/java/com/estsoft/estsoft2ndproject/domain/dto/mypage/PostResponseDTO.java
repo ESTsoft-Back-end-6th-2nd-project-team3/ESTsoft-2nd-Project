@@ -13,9 +13,10 @@ public class PostResponseDTO {
 	private Long postId;
 	private String title;
 	private String content;
+	private Long userId;
 	private String postType;
-	private Integer viewCount;
-	private Integer likeCount;
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
+	private Integer viewCount;
+	private Integer likeCount;
 }
