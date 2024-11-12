@@ -1,24 +1,19 @@
-<!DOCTYPE html>
-<html lang="ko-KR">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link href="/static/css/reset.css" rel="stylesheet">
-    <link href="/static/css/base.css" rel="stylesheet">
-</head>
-<body>
 <article id="participated-challenge">
     <h3>참여 챌린지</h3>
-    <section class="container">
-        <h4 class="blind">참여한 챌린지 리스트</h4>
-        <div class="item" th:each="item : ${participatedChallenge}">
-            <div class="best-item-count" th:text="${itemStat.count}">1</div>
-            <a th:href="@{'/post/' + ${item.id}}" th:text="${item.title}">제목~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</a>
-            <span th:text="${item.commentCount}">10</span>
-            <span th:text="${item.likeCount}">100</span>
-            <span th:text="${item.createdAt}">24/10/10</span>
+    <section class="table-container">
+        <div class="table-header">
+            <span>번호</span>
+            <span>제목</span>
+            <span>댓글수</span>
+            <span>추천수</span>
+            <span>날짜</span>
+        </div>
+        <div class="table-row">
+            <span>1</span>
+            <span th:text="${awardedTitle}">챌린지 제목</span>
+            <span>0</span>
+            <span>0</span>
+            <span>--/--/--</span>
         </div>
     </section>
 </article>
-</body>
-</html>

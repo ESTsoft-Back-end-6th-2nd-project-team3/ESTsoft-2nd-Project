@@ -1,14 +1,21 @@
 package com.estsoft.estsoft2ndproject.controller.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.domain.dto.user.RegisterRequestDTO;
@@ -41,23 +48,9 @@ public class UserController {
 		return oAuth2User;
 	}
 
-	@GetMapping("/member/register")
-	public String register(Model model, HttpServletRequest request) {
-		HttpSession session = request.getSession();
-
-		String email = (String)session.getAttribute("email");
-		String nickname = (String)session.getAttribute("nickname");
-		String profileImageUrl = (String)session.getAttribute("profileImageUrl");
-
-		model.addAttribute("email", email);
-		model.addAttribute("nickname", nickname);
-		model.addAttribute("profileImageUrl", profileImageUrl);
-
-		return "testHtml/register";
-	}
-
 	@PostMapping("/member/register")
-	public ResponseEntity<String> register(@RequestBody RegisterRequestDTO registerRequestDTO, HttpServletRequest request) {
+	public ResponseEntity<String> register(@RequestBody RegisterRequestDTO registerRequestDTO,
+		HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		session.setAttribute("isComplete", "true");
 		session.setAttribute("nickname", registerRequestDTO.getNickname());
@@ -69,12 +62,21 @@ public class UserController {
 	}
 
 	@GetMapping("/member/cancellation")
-	public ResponseEntity<String> delete(@AuthenticationPrincipal CustomUserDetails oAuth2User, HttpServletRequest request) {
+	public ResponseEntity<String> delete(@AuthenticationPrincipal CustomUserDetails oAuth2User,
+		HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		session.invalidate();
 
 		userService.deleteUser(oAuth2User);
 
 		return ResponseEntity.ok("success");
+	}
+
+	@GetMapping("/nickname-check")
+	public Map<String, Boolean> checkNickname(@RequestParam String nickname) {
+		boolean isAvailable = userService.isNicknameAvailable(nickname);
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("isAvailable", isAvailable);
+		return response;
 	}
 }

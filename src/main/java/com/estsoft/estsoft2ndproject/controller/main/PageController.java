@@ -2,14 +2,30 @@ package com.estsoft.estsoft2ndproject.controller.main;
 
 import java.util.Collections;
 import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import com.estsoft.estsoft2ndproject.domain.Objective;
+import com.estsoft.estsoft2ndproject.domain.SubMenu;
+import com.estsoft.estsoft2ndproject.domain.User;
 
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.estsoft.estsoft2ndproject.domain.Category;
 import com.estsoft.estsoft2ndproject.domain.Post;
@@ -19,9 +35,11 @@ import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
-import com.estsoft.estsoft2ndproject.repository.UserRepository;
 import com.estsoft.estsoft2ndproject.service.CommentService;
+import com.estsoft.estsoft2ndproject.service.MyPageService;
+import com.estsoft.estsoft2ndproject.service.ObjectiveService;
 import com.estsoft.estsoft2ndproject.service.PostService;
+import com.estsoft.estsoft2ndproject.service.UserService;
 
 import lombok.AllArgsConstructor;
 
@@ -31,6 +49,9 @@ public class PageController {
 	private final PostService postService;
 	private final CommentService commentService;
 	private final UserRepository userRepository;
+	private final UserService userService;
+	private final ObjectiveService objectiveService;
+	private final MyPageService myPageService;
 
 	@GetMapping("/")
 	public String menuPage(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -95,14 +116,16 @@ public class PageController {
 
 	private void addMenuData(Model model, CustomUserDetails userDetails) {
 		String level = "";
+		Long userId = null;
 
 		if (userDetails != null) {
 			User user = userDetails.getUser();
 
 			level = user.getLevel();
+			userId = user.getUserId();
 		}
 
-		model.addAttribute("subMenus", postService.getSubMenus(level));
+		model.addAttribute("subMenus", postService.getSubMenus(level, userId));
 	}
 
 	private void addCategoryNamePageData(Model model) {
@@ -141,7 +164,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 	}
 
 	private void addRegionPageData(Long regionId, int page, Model model,
@@ -243,7 +266,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
@@ -267,7 +290,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
 		return "index";
@@ -308,7 +331,7 @@ public class PageController {
 		model.addAttribute("userId", userDetails.getUser().getUserId());
 		model.addAttribute("categories", categories);
 		model.addAttribute("regions", regions);
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/write-post");
 		return "index";
@@ -341,7 +364,7 @@ public class PageController {
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("userId", userDetails.getUser().getUserId());
 		model.addAttribute("postTypes", filteredPostTypes);
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/write-post");
 		return "index";
@@ -432,7 +455,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/view-post");
 		model.addAttribute("mainFragment3", "fragment/view-comment");
@@ -468,12 +491,29 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/view-post");
 		model.addAttribute("mainFragment3", "fragment/view-comment");
 		model.addAttribute("mainFragment4", "fragment/category-name");
 		model.addAttribute("mainFragment5", "fragment/bulletin-board-list");
+
+		return "index";
+	}
+
+	@GetMapping("/member/register")
+	public String register(Model model, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		addMenuData(model, null);
+
+		String email = (String)session.getAttribute("email");
+		String nickname = (String)session.getAttribute("nickname");
+		String profileImageUrl = (String)session.getAttribute("profileImageUrl");
+
+		model.addAttribute("email", email);
+		model.addAttribute("nickname", nickname);
+		model.addAttribute("profileImageUrl", profileImageUrl);
+		model.addAttribute("mainFragment1", "fragment/register");
 
 		return "index";
 	}
@@ -491,7 +531,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/search-all");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
 
@@ -510,10 +550,194 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
 
+		return "index";
+	}
+
+	@GetMapping("/mypage/{userId}")
+	public String showMyPage(@PathVariable(name = "userId") Long userId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		addMenuData(model, userDetails);
+
+		Optional<User> user = userService.getUserWithChallenges(userId);
+		if (user.isPresent()) {
+			User currentUser = user.get();
+			model.addAttribute("nickname", currentUser.getNickname());
+			model.addAttribute("profileImageUrl", currentUser.getProfileImageUrl());
+			model.addAttribute("level", currentUser.getLevel());
+			model.addAttribute("selfIntro", currentUser.getSelfIntro());
+			model.addAttribute("snsLink", currentUser.getSnsLink());
+			model.addAttribute("participatedChallenge", currentUser.getAwardedTitle());
+		} else {
+			model.addAttribute("nickname", "알 수 없음");
+			model.addAttribute("level", "등급 없음");
+			model.addAttribute("selfIntro", "소개 없음");
+			model.addAttribute("snsLink", "링크 없음");
+			model.addAttribute("participatedChallenge", "참여한 챌린지가 없습니다.");
+		}
+
+		int month = LocalDate.now().getMonthValue();
+
+		List<Objective> myObjective = objectiveService.getObjectivesForUserAndMonth(userId, LocalDate.now().withDayOfMonth(1));
+
+		int completedCount = (int)myObjective.stream().filter(Objective::getIsCompleted).count();
+		int totalCount = myObjective.size();
+		int progressValue = totalCount > 0 ? (completedCount * 100) / totalCount : 0;
+
+		model.addAttribute("month", month);
+		model.addAttribute("progressValue", progressValue);
+		model.addAttribute("myObjective", myObjective);
+		model.addAttribute("objectiveData", myPageService.getMonthlyCompletionStats(userDetails.getUser().getUserId()));
+
+		model.addAttribute("mainFragment1", "fragment/mypage-profile");
+		model.addAttribute("mainFragment2", "fragment/my-objective");
+		model.addAttribute("mainFragment3", "fragment/participated-challenge");
+
+		// 자신의 마이페이지인지 확인하기 위해 현재 로그인한 사용자 ID와 비교
+		model.addAttribute("isOwner", userId.equals(userDetails.getUser().getUserId()));
+
+		return "index";
+	}
+
+	@GetMapping("/mypage/edit-profile")
+	public String showEditProfile(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		User user = userDetails.getUser();
+
+		model.addAttribute("userId", user.getUserId());
+		model.addAttribute("profileImageUrl", user.getProfileImageUrl());
+		model.addAttribute("nickname", user.getNickname());
+		model.addAttribute("email", user.getEmail());
+		model.addAttribute("level", user.getLevel());
+		model.addAttribute("selfIntro", user.getSelfIntro());
+		model.addAttribute("snsLink", user.getSnsLink());
+
+		addMenuData(model, userDetails);
+		model.addAttribute("mainFragment1", "fragment/edit-profile");
+
+		return "index";
+	}
+
+	@GetMapping("/category/search")
+	public String searchCategoryPosts(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "searchType") String searchType,
+		@RequestParam(name = "query") String keyword, @RequestParam(name = "id") Long categoryId,
+		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		Page<PostResponseDTO> searchResults;
+		if ("title".equals(searchType)) {
+			searchResults = postService.searchPostsByTitle(keyword, PostType.PARTICIPATION_CATEGORY.toString(),
+				categoryId, page, 30);
+		} else {
+			searchResults = postService.searchPostsByTitleOrContent(keyword, PostType.PARTICIPATION_CATEGORY.toString(),
+				categoryId, page, 30);
+		}
+
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("searchResults", searchResults);
+		addCategoryPageData(categoryId, page, model, userDetails);
+
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/category-best");
+		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+
+		return "index";
+	}
+
+	@GetMapping("/region/search")
+	public String searchRegionPosts(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "searchType") String searchType,
+		@RequestParam(name = "query") String keyword, @RequestParam(name = "id") Long regionId,
+		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		Page<PostResponseDTO> searchResults;
+		if ("title".equals(searchType)) {
+			searchResults = postService.searchPostsByTitle(keyword, PostType.PARTICIPATION_REGION.toString(), regionId,
+				page, 30);
+		} else {
+			searchResults = postService.searchPostsByTitleOrContent(keyword, PostType.PARTICIPATION_REGION.toString(),
+				regionId, page, 30);
+		}
+
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("searchResults", searchResults);
+		addRegionPageData(regionId, page, model, userDetails);
+
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/category-best");
+		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+
+		return "index";
+	}
+
+	@GetMapping("/challenge/search")
+	public String searchChallengePosts(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "searchType") String searchType,
+		@RequestParam(name = "query") String keyword, Model model,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		String boardName = PostType.PARTICIPATION_CHALLENGE.getKoreanName();
+
+		Page<PostResponseDTO> searchResults;
+		if ("title".equals(searchType)) {
+			searchResults = postService.searchPostsByTitle(keyword, PostType.PARTICIPATION_CHALLENGE.toString(), null,
+				page, 30);
+		} else {
+			searchResults = postService.searchPostsByTitleOrContent(keyword, PostType.PARTICIPATION_CHALLENGE.toString(),
+				null, page, 30);
+		}
+
+		addMenuData(model, userDetails);
+		addCategoryNamePageData(model);
+
+		List<PostResponseDTO> todayBest = postService.getTodayBestChallengePost();
+		List<PostResponseDTO> weeklyBest = postService.getWeeklyBestChallengePost();
+
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("categoryName", boardName);
+		model.addAttribute("postType", PostType.PARTICIPATION_CHALLENGE.toString());
+		model.addAttribute("todayBest", todayBest);
+		model.addAttribute("weeklyBest", weeklyBest);
+		model.addAttribute("postList", searchResults.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", searchResults.getTotalPages());
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/category-best");
+		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+		return "index";
+	}
+
+	@GetMapping("/announcement/search")
+	public String SearchAnnouncementPosts(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "searchType") String searchType,
+		@RequestParam(name = "query") String keyword, Model model,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		String boardName = PostType.ANNOUNCEMENT.getKoreanName();
+
+		Page<PostResponseDTO> searchResults;
+		if ("title".equals(searchType)) {
+			searchResults = postService.searchPostsByTitle(keyword, PostType.ANNOUNCEMENT.toString(), null,
+				page, 30);
+		} else {
+			searchResults = postService.searchPostsByTitleOrContent(keyword, PostType.ANNOUNCEMENT.toString(),
+				null, page, 30);
+		}
+
+		addMenuData(model, userDetails);
+		addCategoryNamePageData(model);
+
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("categoryName", boardName);
+		model.addAttribute("postType", PostType.ANNOUNCEMENT.toString());
+		model.addAttribute("postList", searchResults.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", searchResults.getTotalPages());
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
+		model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
 		return "index";
 	}
 

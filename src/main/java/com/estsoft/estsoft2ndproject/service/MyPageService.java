@@ -4,6 +4,7 @@ import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.ObjectiveRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.Objective;
+import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.repository.ObjectiveRepository;
 import com.estsoft.estsoft2ndproject.repository.UserRepository;
@@ -35,10 +36,16 @@ public class MyPageService {
 			user.getAwardedTitle(), user.getSelfIntro(), user.getSnsLink(), user.getActivityScore());
 	}
 
-	public void updateMyInfo(Long userId, UserInfoResponseDTO userInfo) {
+	public void updateMyInfo(Long userId, UserInfoRequestDTO userInfo) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-		user.updateUser(userInfo.getNickname(), null, null, null, null, null, userInfo.getProfileImageUrl(),
-			userInfo.getActivityScore(), null, userInfo.getAwardedTitle(), userInfo.getSelfIntro(), userInfo.getSnsLink());
+
+		user.updateBuilder()
+			.nickname(userInfo.getNickname())
+			.profileImageUrl(userInfo.getProfileImageUrl())
+			.selfIntro(userInfo.getSelfIntro())
+			.snsLink(userInfo.getSnsLink())
+			.build();
+
 		userRepository.save(user);
 	}
 
@@ -148,7 +155,7 @@ public class MyPageService {
 			// 완료율 계산
 			long total = monthObjectives.size();
 			long completed = monthObjectives.stream().filter(Objective::getIsCompleted).count();
-			int completionRate = total > 0 ? (int) ((completed / (double) total) * 100) : 0;
+			int completionRate = total > 0 ? (int)((completed / (double)total) * 100) : 0;
 
 			// 결과 데이터 추가
 			Map<String, Object> monthData = new HashMap<>();

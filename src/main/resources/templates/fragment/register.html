@@ -1,0 +1,32 @@
+<article id="register">
+    <h2>내 정보</h2>
+    <div class="profile-content">
+        <div class="profile-image">
+            <div class="image-circle" id="imagePreview"></div>
+            <input id="imageInput" onchange="previewImage(event)" style="display: none;" th:attr="data-image-url=${profileImageUrl}" type="file">
+            <button class="image-btn" onclick="document.getElementById('imageInput').click()">이미지 변경</button>
+        </div>
+        <div class="profile-form">
+            <label>
+                <span>닉네임</span>
+                <input id="nickname" name="nickname" th:placeholder="${nickname}" th:value="${nickname}" type="text">
+                <button class="check-btn" onclick="checkNickname()">중복 확인</button>
+            </label>
+            <label>
+                <span>이메일</span>
+                <input id="email" readonly th:value="${email}" type="email">
+            </label>
+            <label>
+                <span>한줄 소개</span>
+                <input id="selfIntro" th:placeholder="'안녕하세요 오르미 6기입니다'" type="text">
+            </label>
+            <label>
+                <span>소셜 링크</span>
+                <input id="snsLink" type="text">
+            </label>
+        </div>
+        <div class="btn-group">
+            <button class="save-btn" onclick="submitRegisterForm()" type="button">가입 완료</button>
+        </div>
+    </div>
+</article>
