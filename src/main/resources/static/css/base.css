@@ -1398,6 +1398,14 @@ a.title-best {
     color: inherit; /* 부모 요소의 색상 상속 */
 }
 
+h2.side-login{
+    all: revert;
+}
+
+p.side-login-ment{
+    all: revert;
+}
+
 /* 로그인 컨테이너 */
 .side-login-container {
     width: 380px;
