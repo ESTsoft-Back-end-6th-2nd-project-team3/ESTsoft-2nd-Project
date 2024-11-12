@@ -438,8 +438,7 @@ public class PageController {
 	}
 
 	@GetMapping("/search")
-	public String searchAllPage(Model model, @RequestParam(defaultValue = "0", name = "page") int page,
-		@RequestParam(name = "keyword") String keyword,
+	public String searchAllPage(Model model, @RequestParam(defaultValue = "0", name = "page") int page, @RequestParam(name = "keyword") String keyword,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addMenuData(model, userDetails);
@@ -459,8 +458,7 @@ public class PageController {
 	}
 
 	@GetMapping("/mypage/written")
-	public String myPageWrittenPosts(Model model, @RequestParam(defaultValue = "0", name = "page") int page,
-		@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public String myPageWrittenPosts(Model model, @RequestParam(defaultValue = "0", name = "page") int page, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
