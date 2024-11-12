@@ -28,13 +28,9 @@ import com.estsoft.estsoft2ndproject.service.PostService;
 @RequestMapping("/api/post")
 public class PostApiController {
 	private final PostService postService;
-	private final UserRepository userRepository;
-	private final ActivityScoreRepository activityScoreRepository;
 
-	public PostApiController(PostService postService, UserRepository userRepository, ActivityScoreRepository activityScoreRepository) {
+	public PostApiController(PostService postService) {
 		this.postService = postService;
-		this.userRepository = userRepository;
-		this.activityScoreRepository = activityScoreRepository;
 	}
 
 	@PostMapping("/{userId}/create")
