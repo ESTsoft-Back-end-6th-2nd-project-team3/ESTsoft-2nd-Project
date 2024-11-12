@@ -85,7 +85,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 	}
 
 	private void addRegionPageData(Long regionId, int page, Model model,
@@ -111,11 +111,12 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 	}
 
 	@GetMapping("/category")
-	public String categoryPage(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "id") Long categoryId,
+	public String categoryPage(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "id") Long categoryId,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addCategoryPageData(categoryId, page, model, userDetails);
@@ -128,7 +129,8 @@ public class PageController {
 	}
 
 	@GetMapping("/region")
-	public String regionPage(@RequestParam(defaultValue = "0") int page, @RequestParam(name = "id") Long regionId,
+	public String regionPage(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "id") Long regionId,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addRegionPageData(regionId, page, model, userDetails);
@@ -141,7 +143,7 @@ public class PageController {
 	}
 
 	@GetMapping("/challenge")
-	public String challengePage(@RequestParam(defaultValue = "0") int page,
+	public String challengePage(@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.PARTICIPATION_CHALLENGE.getKoreanName();
@@ -161,7 +163,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
@@ -169,7 +171,7 @@ public class PageController {
 	}
 
 	@GetMapping("/announcement")
-	public String announcementPage(@RequestParam(defaultValue = "0") int page,
+	public String announcementPage(@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.ANNOUNCEMENT.getKoreanName();
@@ -185,14 +187,14 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
 		return "index";
 	}
 
 	@GetMapping("/write")
-	public String writeCategoryPost(@RequestParam(required = false) Long postId,
+	public String writeCategoryPost(@RequestParam(required = false, name = "postId") Long postId,
 		@RequestParam(name = "postType") String postType,
 		@RequestParam(name = "targetId") Long targetId, Model model,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -226,14 +228,14 @@ public class PageController {
 		model.addAttribute("userId", userDetails.getUser().getUserId());
 		model.addAttribute("categories", categories);
 		model.addAttribute("regions", regions);
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/write-post");
 		return "index";
 	}
 
 	@GetMapping("/writeChallenge")
-	public String writeChallengePost(@RequestParam(required = false) Long postId,
+	public String writeChallengePost(@RequestParam(required = false, name = "postId") Long postId,
 		@RequestParam(name = "postType") String postType, Model model,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
@@ -259,7 +261,7 @@ public class PageController {
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("userId", userDetails.getUser().getUserId());
 		model.addAttribute("postTypes", filteredPostTypes);
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/write-post");
 		return "index";
@@ -268,7 +270,7 @@ public class PageController {
 	@GetMapping("/category/post/{postId}")
 	public String categoryPostDetailPage(@PathVariable(name = "postId") Long postId,
 		@RequestParam(name = "targetId") Long categoryId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addCategoryPageData(categoryId, page, model, userDetails);
@@ -296,7 +298,7 @@ public class PageController {
 	@GetMapping("/region/post/{postId}")
 	public String regionPostDetailPage(@PathVariable(name = "postId") Long postId,
 		@RequestParam(name = "targetId") Long regionId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addRegionPageData(regionId, page, model, userDetails);
@@ -323,7 +325,7 @@ public class PageController {
 
 	@GetMapping("/challenge/post/{postId}")
 	public String challengePostDetailPage(@PathVariable(name = "postId") Long postId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.PARTICIPATION_CHALLENGE.getKoreanName();
@@ -350,7 +352,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/view-post");
 		model.addAttribute("mainFragment3", "fragment/view-comment");
@@ -363,7 +365,7 @@ public class PageController {
 
 	@GetMapping("/announcement/post/{postId}")
 	public String announcementPostDetailPage(@PathVariable(name = "postId") Long postId,
-		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "0", name = "page") int page,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.ANNOUNCEMENT.getKoreanName();
@@ -386,7 +388,7 @@ public class PageController {
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/view-post");
 		model.addAttribute("mainFragment3", "fragment/view-comment");
@@ -397,19 +399,21 @@ public class PageController {
 	}
 
 	@GetMapping("/category/search")
-	public String searchCategoryPosts(@RequestParam(defaultValue = "0") int page, @RequestParam String searchType,
-		@RequestParam String query, @RequestParam(name = "id") Long categoryId,
+	public String searchCategoryPosts(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "searchType") String searchType,
+		@RequestParam(name = "query") String keyword, @RequestParam(name = "id") Long categoryId,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		Page<PostResponseDTO> searchResults;
 		if ("title".equals(searchType)) {
-			searchResults = postService.searchPostsByTitle(query, PostType.PARTICIPATION_CATEGORY.toString(),
+			searchResults = postService.searchPostsByTitle(keyword, PostType.PARTICIPATION_CATEGORY.toString(),
 				categoryId, page, 30);
 		} else {
-			searchResults = postService.searchPostsByTitleOrContent(query, PostType.PARTICIPATION_CATEGORY.toString(),
+			searchResults = postService.searchPostsByTitleOrContent(keyword, PostType.PARTICIPATION_CATEGORY.toString(),
 				categoryId, page, 30);
 		}
 
+		model.addAttribute("keyword", keyword);
 		model.addAttribute("searchResults", searchResults);
 		addCategoryPageData(categoryId, page, model, userDetails);
 
@@ -421,19 +425,21 @@ public class PageController {
 	}
 
 	@GetMapping("/region/search")
-	public String searchRegionPosts(@RequestParam(defaultValue = "0") int page, @RequestParam String searchType,
-		@RequestParam String query, @RequestParam(name = "id") Long regionId,
+	public String searchRegionPosts(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "searchType") String searchType,
+		@RequestParam(name = "query") String keyword, @RequestParam(name = "id") Long regionId,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		Page<PostResponseDTO> searchResults;
 		if ("title".equals(searchType)) {
-			searchResults = postService.searchPostsByTitle(query, PostType.PARTICIPATION_REGION.toString(), regionId,
+			searchResults = postService.searchPostsByTitle(keyword, PostType.PARTICIPATION_REGION.toString(), regionId,
 				page, 30);
 		} else {
-			searchResults = postService.searchPostsByTitleOrContent(query, PostType.PARTICIPATION_REGION.toString(),
+			searchResults = postService.searchPostsByTitleOrContent(keyword, PostType.PARTICIPATION_REGION.toString(),
 				regionId, page, 30);
 		}
 
+		model.addAttribute("keyword", keyword);
 		model.addAttribute("searchResults", searchResults);
 		addRegionPageData(regionId, page, model, userDetails);
 
@@ -445,17 +451,19 @@ public class PageController {
 	}
 
 	@GetMapping("/challenge/search")
-	public String searchChallengePosts(@RequestParam(defaultValue = "0") int page, @RequestParam String searchType,
-		@RequestParam String query, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	public String searchChallengePosts(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "searchType") String searchType,
+		@RequestParam(name = "query") String keyword, Model model,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.PARTICIPATION_CHALLENGE.getKoreanName();
 
 		Page<PostResponseDTO> searchResults;
 		if ("title".equals(searchType)) {
-			searchResults = postService.searchPostsByTitle(query, PostType.PARTICIPATION_CHALLENGE.toString(), null,
+			searchResults = postService.searchPostsByTitle(keyword, PostType.PARTICIPATION_CHALLENGE.toString(), null,
 				page, 30);
 		} else {
-			searchResults = postService.searchPostsByTitleOrContent(query, PostType.PARTICIPATION_CHALLENGE.toString(),
+			searchResults = postService.searchPostsByTitleOrContent(keyword, PostType.PARTICIPATION_CHALLENGE.toString(),
 				null, page, 30);
 		}
 
@@ -465,6 +473,7 @@ public class PageController {
 		List<PostResponseDTO> todayBest = postService.getTodayBestChallengePost();
 		List<PostResponseDTO> weeklyBest = postService.getWeeklyBestChallengePost();
 
+		model.addAttribute("keyword", keyword);
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("postType", PostType.PARTICIPATION_CHALLENGE.toString());
 		model.addAttribute("todayBest", todayBest);
@@ -472,7 +481,7 @@ public class PageController {
 		model.addAttribute("postList", searchResults.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", searchResults.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
@@ -480,29 +489,32 @@ public class PageController {
 	}
 
 	@GetMapping("/announcement/search")
-	public String SearchAnnouncementPosts(@RequestParam(defaultValue = "0") int page, @RequestParam String searchType,
-		@RequestParam String query, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	public String SearchAnnouncementPosts(@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(name = "searchType") String searchType,
+		@RequestParam(name = "query") String keyword, Model model,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		String boardName = PostType.ANNOUNCEMENT.getKoreanName();
 
 		Page<PostResponseDTO> searchResults;
 		if ("title".equals(searchType)) {
-			searchResults = postService.searchPostsByTitle(query, PostType.ANNOUNCEMENT.toString(), null,
+			searchResults = postService.searchPostsByTitle(keyword, PostType.ANNOUNCEMENT.toString(), null,
 				page, 30);
 		} else {
-			searchResults = postService.searchPostsByTitleOrContent(query, PostType.ANNOUNCEMENT.toString(),
+			searchResults = postService.searchPostsByTitleOrContent(keyword, PostType.ANNOUNCEMENT.toString(),
 				null, page, 30);
 		}
 
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
 
+		model.addAttribute("keyword", keyword);
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("postType", PostType.ANNOUNCEMENT.toString());
 		model.addAttribute("postList", searchResults.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", searchResults.getTotalPages());
-		model.addAttribute("isAdmin", postService.isAdmin(userDetails));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
 		return "index";

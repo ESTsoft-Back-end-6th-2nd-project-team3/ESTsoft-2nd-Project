@@ -2,6 +2,7 @@
     <!-- 일반 사용자 게시글 목록 테이블 -->
     <input type="hidden" id="post-type" th:value="${postType}">
     <input type="hidden" id="target-id" th:value="${targetId}">
+    <h3 th:if="${keyword != null}"><span class="keyword">'[[${keyword}]]'</span>의 검색 결과입니다.</h3>
     <table class="board-table">
         <thead>
         <tr>

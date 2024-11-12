@@ -1,5 +1,6 @@
 package com.estsoft.estsoft2ndproject.repository;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,34 +40,34 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("SELECT p FROM Post p WHERE p.createdAt >= :sevenDaysAgo AND p.isActive = true " +
 		"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
-	Page<Post> findTop5PostsByLast7DaysSortedByViewsAndLikes(@Param("sevenDaysAgo") LocalDateTime sevenDaysAgo,
+	Page<Post> findTop5PostsByLast7DaysSortedByViewsAndLikes(@Param("sevenDaysAgo") Timestamp sevenDaysAgo,
 		Pageable pageable);
 
 	@Query(
 		"SELECT p FROM Post p WHERE p.createdAt >= :today AND p.postType = :postType AND p.targetId = :targetId AND p.isActive = true "
 			+
 			"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
-	Page<Post> findTopPostsForLast24Hours(@Param("today") LocalDateTime today,
-		String postType, Long targetId, Pageable pageable);
+	Page<Post> findTopPostsForLast24Hours(@Param("today") Timestamp today,
+		@Param("postType")String postType, @Param("targetId")Long targetId, Pageable pageable);
 
 	@Query(
 		"SELECT p FROM Post p WHERE p.createdAt >= :sevenDaysAgo AND p.postType = :postType AND p.targetId = :targetId AND p.isActive = true "
 			+
 			"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
 	Page<Post> findTopPostsForLast7Days(
-		@Param("sevenDaysAgo") LocalDateTime sevenDaysAgo, String postType, Long targetId,
+		@Param("sevenDaysAgo") Timestamp sevenDaysAgo, @Param("postType")String postType, @Param("targetId")Long targetId,
 		Pageable pageable);
 
 	Page<Post> findPostsByIsActiveTrueAndPostTypeAndTargetId(String postType, Long TargetId, Pageable pageable);
 
 	@Query("SELECT p FROM Post p WHERE p.createdAt >= :today AND p.postType = :postType AND p.isActive = true " +
 		"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
-	Page<Post> findTopPostsForLast24HoursByPostType(@Param("today") LocalDateTime today, String postType,
+	Page<Post> findTopPostsForLast24HoursByPostType(@Param("today") Timestamp today, @Param("postType")String postType,
 		Pageable pageable);
 
 	@Query("SELECT p FROM Post p WHERE p.createdAt >= :sevenDaysAgo AND p.postType = :postType AND p.isActive = true " +
 		"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
-	Page<Post> findTopPostsForLast7DaysByPostType(@Param("sevenDaysAgo") LocalDateTime sevenDaysAgo, String postType,
+	Page<Post> findTopPostsForLast7DaysByPostType(@Param("sevenDaysAgo") Timestamp sevenDaysAgo, @Param("postType")String postType,
 		Pageable pageable);
 
 	Page<Post> findPostsByPostTypeAndIsActiveTrue(String postType, Pageable pageable);
@@ -88,14 +89,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostType(String titleKeyword,
 		String contentKeyword, String postType, Pageable pageable);
 
-	@Query("SELECT p FROM Post p WHERE p.isActive = true AND p.title LIKE %:title AND p.postType LIKE %:suffix")
+	@Query("SELECT p FROM Post p WHERE p.isActive = true AND p.title LIKE :title AND p.postType LIKE :suffix")
 	Page<Post> findByTitleContainingAndIsActiveTrueAndPostTypeSuffix(
 		@Param("title") String title,
 		@Param("suffix") String suffix,
 		Pageable pageable
 	);
 
-	@Query("SELECT p FROM Post p WHERE p.isActive = true AND (p.title LIKE %:titleKeyword OR p.content LIKE %:contentKeyword) AND p.postType LIKE %:suffix")
+	@Query("SELECT p FROM Post p WHERE p.isActive = true AND (p.title LIKE :titleKeyword OR p.content LIKE :contentKeyword) AND p.postType LIKE :suffix")
 	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeSuffix(
 		@Param("titleKeyword") String titleKeyword,
 		@Param("contentKeyword") String contentKeyword,
