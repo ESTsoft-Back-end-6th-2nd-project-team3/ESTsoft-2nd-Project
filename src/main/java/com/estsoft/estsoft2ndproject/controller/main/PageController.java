@@ -1,5 +1,6 @@
 package com.estsoft.estsoft2ndproject.controller.main;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
+import com.estsoft.estsoft2ndproject.repository.UserRepository;
 import com.estsoft.estsoft2ndproject.service.CommentService;
 import com.estsoft.estsoft2ndproject.service.PostService;
 
@@ -25,15 +27,72 @@ import com.estsoft.estsoft2ndproject.service.PostService;
 public class PageController {
 	private final PostService postService;
 	private final CommentService commentService;
+	private final UserRepository userRepository;
 
-	public PageController(PostService postService, CommentService commentService) {
+	public PageController(PostService postService, CommentService commentService, UserRepository userRepository) {
 		this.postService = postService;
 		this.commentService = commentService;
+		this.userRepository = userRepository;
 	}
 
 	@GetMapping("/")
 	public String menuPage(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		addMenuData(model, userDetails);
+
+		try {
+			// 모든 활성 게시글 가져오기
+			List<PostResponseDTO> allPostsDTO = postService.getAllActivePostsAsDTO();
+			if (allPostsDTO == null || allPostsDTO.isEmpty()) {
+				throw new Exception("활성 게시글이 없습니다.");
+			}
+
+			// 게시글 필터링
+			List<PostResponseDTO> regionAndCategoryPosts = postService.filterPostsByType(
+				allPostsDTO, List.of("PARTICIPATION_CATEGORY", "PARTICIPATION_REGION")
+			);
+			List<PostResponseDTO> challengePosts = postService.filterPostsByType(
+				allPostsDTO, List.of("PARTICIPATION_CHALLENGE", "GENERATION_CHALLENGE")
+			);
+
+			// 필터링된 리스트가 null인 경우 기본값 설정
+			regionAndCategoryPosts = regionAndCategoryPosts != null ? regionAndCategoryPosts : Collections.emptyList();
+			challengePosts = challengePosts != null ? challengePosts : Collections.emptyList();
+
+			// 게시글 나누기
+			model.addAttribute("latestPosts", getSubList(regionAndCategoryPosts, 0, 20));
+			model.addAttribute("olderPosts", getSubList(regionAndCategoryPosts, 20, 40));
+
+			// 챌린지 게시글 나누기
+			model.addAttribute("latestChallenges", getSubList(challengePosts, 0, 20));
+			model.addAttribute("olderChallenges", getSubList(challengePosts, 20, 40));
+		} catch (Exception e) {
+			// 오류 처리 및 기본값 설정
+			model.addAttribute("latestPosts", Collections.emptyList());
+			model.addAttribute("olderPosts", Collections.emptyList());
+			model.addAttribute("latestChallenges", Collections.emptyList());
+			model.addAttribute("olderChallenges", Collections.emptyList());
+			model.addAttribute("error", "게시판 데이터를 로드하는 중 오류가 발생했습니다.");
+			e.printStackTrace(); // 로그 남기기
+		}
+
+		if (userDetails != null) {
+			// 로그인된 사용자의 정보를 가져옵니다.
+			User user = userRepository.findById(userDetails.getUser().getUserId())
+				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+			// 로그인된 사용자 정보를 모델에 추가
+			model.addAttribute("isLoggedIn", true);
+			model.addAttribute("userNickname", user.getNickname());
+			model.addAttribute("userLevel", user.getLevel());
+			model.addAttribute("userActivityScore", user.getActivityScore());
+			model.addAttribute("profileImageUrl", user.getProfileImageUrl());
+		} else {
+			// 비로그인 상태일 경우
+			model.addAttribute("isLoggedIn", false);
+		}
+
+		model.addAttribute("mainFragment1", "fragment/board-list");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
 		return "index";
 	}
 
@@ -120,9 +179,36 @@ public class PageController {
 
 		addCategoryPageData(categoryId, page, model, userDetails);
 
+		List<Post> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		if (userDetails != null) {
+			// 로그인된 사용자의 정보를 가져옵니다.
+			User user = userRepository.findById(userDetails.getUser().getUserId())
+				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+			// 로그인된 사용자 정보를 모델에 추가
+			model.addAttribute("isLoggedIn", true);
+			model.addAttribute("userNickname", user.getNickname());
+			model.addAttribute("userLevel", user.getLevel());
+			model.addAttribute("userActivityScore", user.getActivityScore());
+			model.addAttribute("profileImageUrl", user.getProfileImageUrl());
+		} else {
+			// 비로그인 상태일 경우
+			model.addAttribute("isLoggedIn", false);
+		}
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 
 		return "index";
 	}
@@ -394,5 +480,14 @@ public class PageController {
 		model.addAttribute("mainFragment5", "fragment/bulletin-board-list");
 
 		return "index";
+	}
+
+	private List<PostResponseDTO> getSubList(List<PostResponseDTO> list, int start, int end) {
+		if (list == null || list.isEmpty() || start >= list.size()) {
+			return Collections.emptyList();
+		}
+		// 안전한 끝 인덱스 계산
+		int toIndex = Math.min(end, list.size());
+		return list.subList(start, toIndex);
 	}
 }
