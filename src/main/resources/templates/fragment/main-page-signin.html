@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 페이지</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
 </head>
 <body>
-<div class="login-container">
+<div class="side-login-container">
 
     <!-- 로그인되지 않은 경우 -->
     <div th:if="${!isLoggedIn}">
@@ -20,11 +20,11 @@
     </div>
 
     <!-- 로그인된 경우 -->
-    <div th:if="${isLoggedIn}" class="profile-container">
-        <div class="profile-header">
-            <div class="profile-image-circle" th:style="|background-image: url('${profileImageUrl}');|"></div>
+    <div th:if="${isLoggedIn}" class="side-login-profile-container">
+        <div class="side-login-profile-header">
+            <div class="side-login-profile-image-circle" th:style="|background-image: url('${profileImageUrl}');|"></div>
 
-            <div class="profile-info">
+            <div class="side-login-profile-info">
                 <p th:text="${userNickname}">닉네임</p>
                 <p>
                     <span th:text="${userLevel}">권한</span> |
@@ -32,64 +32,58 @@
                 </p>
             </div>
             <form action="/logout" method="post">
-                <button type="submit" class="logout-btn">로그아웃</button>
+                <button type="submit" class="side-login-logout-btn">로그아웃</button>
             </form>
         </div>
 
         <!-- 구분선 -->
-        <div class="divider"></div>
+        <div class="side-login-divider"></div>
 
         <!-- 하단 메뉴 -->
-        <div class="profile-menu">
-            <div class="menu-item" onclick="toggleMenu('notifications')">알림</div>
-            <div class="menu-item" onclick="toggleMenu('userPosts')">작성글</div>
-            <div class="menu-item" onclick="toggleMenu('announcements')">공지</div>
+        <div class="side-login-profile-menu">
+            <div class="side-login-menu-item" onclick="toggleMenu('notifications')">알림</div>
+            <div class="side-login-menu-item" onclick="toggleMenu('userPosts')">작성글</div>
+            <div class="side-login-menu-item" onclick="toggleMenu('announcements')">공지</div>
         </div>
     </div>
 
     <!-- 데이터 출력 영역 -->
-    <div id="menu-data-container" class="data-container" style="display: none;"></div>
+    <div id="menu-data-container" class="side-login-data-container" style="display: none;"></div>
 
 </div>
 
 <script>
-    let activeMenu = null; // 현재 열려 있는 메뉴를 추적합니다.
+    let activeMenu = null;
 
-    // 메뉴 토글 함수
     function toggleMenu(menuType) {
         const container = document.getElementById('menu-data-container');
 
-        // 현재 메뉴가 이미 열려있으면 닫고, 새로 클릭된 메뉴를 열기
         if (activeMenu === menuType) {
-            container.style.display = 'none'; // 메뉴 닫기
+            container.style.display = 'none';
             activeMenu = null;
         } else {
-            fetchData(menuType); // 새 메뉴 데이터를 가져옴
-            container.style.display = 'block'; // 메뉴 열기
+            fetchData(menuType);
+            container.style.display = 'block';
             activeMenu = menuType;
         }
     }
 
-    // 데이터를 가져와 화면에 출력
     function fetchData(menuType) {
         fetch(`/api/${menuType}`)
             .then(response => response.json())
             .then(data => {
                 if (menuType === 'userPosts' || menuType === 'notifications' || menuType === 'announcements') {
-                    renderDataWithLinks(menuType, data.slice(0, 5)); // 최대 5개 표시
+                    renderDataWithLinks(menuType, data.slice(0, 5));
                 } else {
                     displayData(menuType, data);
                 }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
-                displayData(menuType, []); // 에러 시 빈 데이터 표시
+                displayData(menuType, []);
             });
     }
 
-
-
-    // 작성글 데이터를 테이블 형식으로 출력
     function renderDataWithLinks(menuType, data) {
         const container = document.getElementById('menu-data-container');
         container.innerHTML = '';
@@ -99,34 +93,25 @@
             return;
         }
 
-        let html = `
-        <div class="post-list">
-    `;
+        let html = `<div class="side-login-post-list">`;
 
         data.forEach(item => {
             html += `
-            <div class="post-item">
-                <span class="post-category">${item.postType || '카테고리 없음'}</span>
-                <a href="${item.postLink}" class="post-title">${item.title}</a>
-                <span class="post-comments">${item.commentCount || ''}</span>
+            <div class="side-login-post-item">
+                <span class="side-login-post-category">${item.postType || '카테고리 없음'}</span>
+                <a href="${item.postLink}" class="side-login-post-title">${item.title}</a>
+                <span class="side-login-post-comments">${item.commentCount || ''}</span>
             </div>
-        `;
+            `;
         });
 
-        html += `
-        </div>
-    `;
-
+        html += `</div>`;
         container.innerHTML = html;
     }
 
-
-
-
-    // 데이터를 출력하는 함수 (알림, 공지)
     function displayData(menuType, data) {
         const container = document.getElementById('menu-data-container');
-        container.innerHTML = ''; // 기존 내용 제거
+        container.innerHTML = '';
 
         const titleMap = {
             notifications: '알림',

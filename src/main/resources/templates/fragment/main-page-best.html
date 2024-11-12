@@ -4,41 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>사이드 목록</title>
-  <link rel="stylesheet" th:href="@{/css/side.css}">
+  <link rel="stylesheet" th:href="@{/css/base.css}">
 </head>
 <body>
-<div class="side-container">
+<div class="side-container-best">
   <!-- 오늘의 게시글 섹션 -->
-  <div class="side-list">
-    <h2>오늘의 게시글</h2>
-    <div class="side-column">
-      <div class="side-item" th:each="post, iterStat : ${todayLikedPosts}">
+  <div class="side-list-best">
+    <h2 class="side-title-best">오늘의 게시글</h2>
+    <div class="side-column-best">
+      <div class="side-item-best" th:each="post, iterStat : ${todayLikedPosts}">
         <!-- 번호, 카테고리, 제목, 댓글수 -->
-        <span class="item-number" th:text="${iterStat.index + 1}">1</span>
-        <span class="category" th:text="${post.postType}">카테고리</span>
-        <span class="title" th:text="${post.title}">제목</span>
-        <span class="like-count" th:text="${post.likeCount}">좋아요 수</span>
+        <span class="item-number-best" th:text="${iterStat.index + 1}">1</span>
+        <span class="category-best" th:text="${post.postType}">카테고리</span>
+        <span class="title-best" th:text="${post.title}">제목</span>
+        <span class="like-count-best" th:text="${post.likeCount}">좋아요 수</span>
       </div>
       <!-- 빈 칸 추가 -->
-      <div class="side-item empty" th:if="${todayLikedPosts.size() < 20}"
+      <div class="side-item-empty-best" th:if="${todayLikedPosts.size() < 20}"
            th:each="i : ${#numbers.sequence(todayLikedPosts.size() + 1, 20)}"></div>
     </div>
   </div>
 </div>
-<div class="side-container">
+<div class="side-container-best">
   <!-- 이달의 활동왕 섹션 -->
-  <div class="side-list">
-    <h2>이달의 활동왕</h2>
-    <div class="side-column">
-      <div class="side-item" th:each="user, iterStat : ${monthlyTopUsers}">
+  <div class="side-list-best">
+    <h2 class="side-title-best">이달의 활동왕</h2>
+    <div class="side-column-best">
+      <div class="side-item-best" th:each="user, iterStat : ${monthlyTopUsers}">
         <!-- 번호, 닉네임, 등급, 점수 -->
-        <span class="item-number" th:text="${iterStat.index + 1}">1</span>
-        <span class="nickname" th:text="${user.nickname}">닉네임</span>
-        <span class="level" th:text="${user.level}">등급</span>
-        <span class="score" th:text="${user.activityScore}">점수</span>
+        <span class="item-number-best" th:text="${iterStat.index + 1}">1</span>
+        <span class="nickname-best" th:text="${user.nickname}">닉네임</span>
+        <span class="level-best" th:text="${user.level}">등급</span>
+        <span class="score-best" th:text="${user.activityScore}">점수</span>
       </div>
       <!-- 빈 칸 추가 -->
-      <div class="side-item empty" th:if="${monthlyTopUsers.size() < 20}"
+      <div class="side-item-empty-best" th:if="${monthlyTopUsers.size() < 20}"
            th:each="i : ${#numbers.sequence(monthlyTopUsers.size() + 1, 20)}"></div>
     </div>
   </div>
