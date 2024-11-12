@@ -20,8 +20,6 @@ import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.dto.post.LikeRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
-import com.estsoft.estsoft2ndproject.repository.ActivityScoreRepository;
-import com.estsoft.estsoft2ndproject.repository.UserRepository;
 import com.estsoft.estsoft2ndproject.service.PostService;
 
 @RestController
