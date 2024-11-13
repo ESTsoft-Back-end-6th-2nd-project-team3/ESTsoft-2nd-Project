@@ -66,11 +66,11 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void deleteComment(Long commentId, CustomUserDetails oAuth2User) {
+	public void deleteComment(Long commentId) {
 		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 		comment.setIsActive(false);
-		User user = oAuth2User.getUser();
-		postService.updateActivityScore(user, -1, "댓글 삭제");
+		User commentAuthor = comment.getUser();
+		postService.updateActivityScore(commentAuthor, -1, "댓글 삭제");
 		commentRepository.save(comment);
 	}
 
