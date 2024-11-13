@@ -83,7 +83,7 @@ public class MyPageController {
 		String reason = scoreRequestDTO.getReason();
 		User user = userService.getUserById(userId);
 
-		// postService.updateActivityScore(user, score, reason);
+		postService.updateActivityScore(user, score, reason);
 
 		return ResponseEntity.ok().build();
 	}
