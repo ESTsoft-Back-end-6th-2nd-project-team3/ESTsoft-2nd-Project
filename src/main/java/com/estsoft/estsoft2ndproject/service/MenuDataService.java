@@ -81,7 +81,7 @@ public class MenuDataService {
 
 	// Post 객체를 기반으로 PostResponseDTO 생성 (Region/Category 이름 포함)
 	private PostResponseDTO createPostResponseDTOWithNames(Post post) {
-		String koreanName = null;
+		String koreanName;
 
 		// postType에 따라 Region/Category 이름 또는 한글 이름 설정
 		if ("PARTICIPATION_REGION".equals(post.getPostType())) {

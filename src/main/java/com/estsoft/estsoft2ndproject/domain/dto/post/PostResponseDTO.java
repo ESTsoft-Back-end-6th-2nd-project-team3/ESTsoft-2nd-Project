@@ -5,9 +5,6 @@ import java.sql.Timestamp;
 import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.PostType;
 import com.estsoft.estsoft2ndproject.domain.User;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

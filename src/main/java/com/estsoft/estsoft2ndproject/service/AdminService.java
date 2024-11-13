@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.estsoft.estsoft2ndproject.domain.Category;
 import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.PostType;
-import com.estsoft.estsoft2ndproject.domain.Region;
 import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse;
 import com.estsoft.estsoft2ndproject.domain.dto.admin.UserListResponse;
