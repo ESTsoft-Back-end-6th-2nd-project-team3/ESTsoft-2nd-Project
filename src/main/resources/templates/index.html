@@ -943,28 +943,67 @@
 
     function renderDataWithLinks(menuType, data) {
         const container = document.getElementById('menu-data-container');
-        container.innerHTML = '';
+        container.innerHTML = ''; // 기존 내용을 초기화
 
-        if (data.length === 0) {
-            container.innerHTML = '<p>(내용이 없습니다)</p>';
-            return;
+        let categoryTitle = ''; // 상위 카테고리 제목 변수
+        if (menuType === 'notifications') {
+            categoryTitle = '알림';
+        } else if (menuType === 'userPosts') {
+            categoryTitle = '작성글';
+            console.log(data);
+            menuLink='/mypage/written';
+        } else if (menuType === 'announcements') {
+            categoryTitle = '공지사항';
+            menuLink='/announcement';
+        } else {
+            categoryTitle = '카테고리 없음';
         }
 
         let html = `<div class="side-login-post-list">`;
 
-        data.forEach(item => {
-            html += `
-            <div class="side-login-post-item">
-                <span class="side-login-post-category">${item.postTypeKorean || '카테고리 없음'}</span>
-                <a href="${item.postLink}" class="side-login-post-title">${item.title}</a>
-                <span class="side-login-post-comments">${item.commentCount || ''}</span>
-            </div>
-            `;
-        });
+        // 상위 카테고리 제목 추가
+        html += `<a href="${menuLink}" class="side-login-post-category-head">${categoryTitle}</a>`;
 
-        html += `</div>`;
-        container.innerHTML = html;
+        if (data.length === 0) {
+            html += '<p class="side-login-post-empty">(내용이 없습니다)</p>'; // 데이터가 없을 때 출력
+        } else {
+            // 데이터 순회하며 게시글 항목 추가
+            data.forEach(item => {
+                // 동적 경로 설정
+                let postLink = '';
+                if (item.postType === 'PARTICIPATION_REGION') {
+                    postLink = `/region/post/${item.postId}?targetId=${item.targetId}`;
+                    postCategory = "지역";
+                } else if (item.postType === 'PARTICIPATION_CATEGORY') {
+                    postLink = `/category/post/${item.postId}?targetId=${item.targetId}`;
+                    postCategory = "카테고리";
+                } else if (item.postType === 'ANNOUNCEMENT') {
+                    postLink = `/announcement/post/${item.postId}`;
+                    postCategory = "공지";
+                } else if (
+                    item.postType === 'PARTICIPATION_CHALLENGE' ||
+                    item.postType === 'GENERATION_CHALLENGE'
+                ) {
+                    postLink = `/challenge/post/${item.postId}`;
+                    postCategory = "챌린지";
+                } else {
+                    postLink = `/post/${item.postId}`;
+                }
+
+                html += `
+                <div class="side-login-post-item">
+                    <span class="side-login-post-category">${postCategory || '카테고리 없음'}</span>
+                    <a href="${postLink}" class="side-login-post-title">${item.title}</a>
+                    <span class="side-login-post-comments">${item.commentCount || ''}</span>
+                </div>
+            `;
+            });
+        }
+
+        html += `</div>`; // 외부 컨테이너 닫기
+        container.innerHTML = html; // 최종 HTML 설정
     }
+
 
     function displayData(menuType, data) {
         const container = document.getElementById('menu-data-container');

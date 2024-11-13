@@ -1658,6 +1658,7 @@ p.side-login-ment {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    font-size: 18px;
 }
 
 .side-login-post-title {
@@ -1665,6 +1666,8 @@ p.side-login-ment {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    margin-left: 10px;
+    font-size: 18px;
 }
 
 .side-login-post-comments {
@@ -1756,3 +1759,19 @@ h2.main-board-title {
     top: 40px;
 }
 
+/* 카테고리 제목 스타일 */
+.side-login-post-category-head {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    display: block; /* 제목을 블록 형식으로 */
+    text-align: center;
+}
+
+.side-login-post-empty{
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: block; /* 제목을 블록 형식으로 */
+    text-align: center;
+}
