@@ -867,10 +867,11 @@
         $.ajax({
             url: `/mypage/${userId}/changeActivityScore`,
             type: 'POST',
-            data: {
+            contentType: 'application/json',
+            data: JSON.stringify({
                 score: score,
                 reason: reason
-            },
+            }),
             success: function (response) {
                 alert('저장되었습니다.');
             },
@@ -1007,13 +1008,13 @@
             const date = item.querySelector('.date-input').value + "-01"; // 날짜 형식 수정
             const isCompleted = item.querySelector('.checkbox').checked;
             if (content.trim() && date) {
-                objectives.push({ id: id || null, content, objectiveYearMonth: date, isCompleted });
+                objectives.push({id: id || null, content, objectiveYearMonth: date, isCompleted});
             }
         });
 
         fetch(`/mypage/${userId}/objectives`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(objectives)
         }).then(response => {
             if (response.ok) {
