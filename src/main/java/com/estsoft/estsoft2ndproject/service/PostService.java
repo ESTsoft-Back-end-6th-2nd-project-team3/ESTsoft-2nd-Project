@@ -68,7 +68,7 @@ public class PostService {
 		return postRepository.save(postRequestDTO.toEntity(user));
 	}
 
-	private void updateActivityScore(User user, int scoreFluctuations, String reason) {
+	public void updateActivityScore(User user, int scoreFluctuations, String reason) {
 		// activity_score 테이블에 기록 추가
 		ActivityScore activityScore = new ActivityScore();
 		activityScore.setUser(user);
@@ -429,7 +429,7 @@ public class PostService {
 		// PostRepository를 사용해 게시글 데이터 변환 및 DTO 생성
 		return results.stream()
 			.map(result -> {
-				Post post = postRepository.findById((Long) result[0])
+				Post post = postRepository.findById((Long)result[0])
 					.orElseThrow(() -> new RuntimeException("Post not found"));
 
 				// PostResponseDTO 생성
@@ -458,9 +458,6 @@ public class PostService {
 			.collect(Collectors.toList());
 	}
 
-
-
-
 	// 이달의 활동왕
 	public List<User> getMonthlyTopUsers() {
 		Timestamp startDate = Timestamp.valueOf(LocalDate.now().minusDays(30).atStartOfDay());
@@ -471,10 +468,10 @@ public class PostService {
 		return results.stream()
 			.map(result -> {
 				User user = new User();
-				user.setUserId((Long) result[0]);
-				user.setNickname((String) result[1]);
-				user.setLevel((String) result[2]);
-				user.setActivityScore(((Number) result[3]).intValue());
+				user.setUserId((Long)result[0]);
+				user.setNickname((String)result[1]);
+				user.setLevel((String)result[2]);
+				user.setActivityScore(((Number)result[3]).intValue());
 				return user;
 			})
 			.toList();

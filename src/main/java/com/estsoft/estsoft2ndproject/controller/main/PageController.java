@@ -43,9 +43,10 @@ import com.estsoft.estsoft2ndproject.service.ObjectiveService;
 import com.estsoft.estsoft2ndproject.service.PostService;
 import com.estsoft.estsoft2ndproject.service.UserService;
 
+import lombok.AllArgsConstructor;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.AllArgsConstructor;
 
 @Controller
 @AllArgsConstructor
@@ -680,22 +681,7 @@ public class PageController {
 		model.addAttribute("todayLikedPosts", todayLikedPosts);
 		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
-		Optional<User> user = userService.getUserWithChallenges(userId);
-		if (user.isPresent()) {
-			User currentUser = user.get();
-			model.addAttribute("nickname", currentUser.getNickname());
-			model.addAttribute("profileImageUrl", currentUser.getProfileImageUrl());
-			model.addAttribute("level", currentUser.getLevel());
-			model.addAttribute("selfIntro", currentUser.getSelfIntro());
-			model.addAttribute("snsLink", currentUser.getSnsLink());
-			model.addAttribute("participatedChallenge", currentUser.getAwardedTitle());
-		} else {
-			model.addAttribute("nickname", "알 수 없음");
-			model.addAttribute("level", "등급 없음");
-			model.addAttribute("selfIntro", "소개 없음");
-			model.addAttribute("snsLink", "링크 없음");
-			model.addAttribute("participatedChallenge", "참여한 챌린지가 없습니다.");
-		}
+		User user = userService.getUserById(userId);
 
 		int month = LocalDate.now().getMonthValue();
 
@@ -705,18 +691,21 @@ public class PageController {
 		int totalCount = myObjective.size();
 		int progressValue = totalCount > 0 ? (completedCount * 100) / totalCount : 0;
 		addUserDetailsToModel(model, userDetails);
+
+		model.addAttribute("user", user);
 		model.addAttribute("month", month);
 		model.addAttribute("progressValue", progressValue);
 		model.addAttribute("myObjective", myObjective);
-		model.addAttribute("objectiveData", myPageService.getMonthlyCompletionStats(userDetails.getUser().getUserId()));
+		model.addAttribute("objectiveData", myPageService.getMonthlyCompletionStats(userId));
+		model.addAttribute("isOwner", userId.equals(userDetails.getUser().getUserId()));
+		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 
 		model.addAttribute("mainFragment1", "fragment/mypage-profile");
 		model.addAttribute("mainFragment2", "fragment/my-objective");
-		model.addAttribute("mainFragment3", "fragment/participated-challenge");
+		model.addAttribute("mainFragment3", "fragment/profile-manage");
+		model.addAttribute("mainFragment4", "fragment/profile-delete-user");
 		model.addAttribute("sideFragment1", "fragment/main-page-signin");
 		model.addAttribute("sideFragment2", "fragment/main-page-best");
-		// 자신의 마이페이지인지 확인하기 위해 현재 로그인한 사용자 ID와 비교
-		model.addAttribute("isOwner", userId.equals(userDetails.getUser().getUserId()));
 
 		return "index";
 	}

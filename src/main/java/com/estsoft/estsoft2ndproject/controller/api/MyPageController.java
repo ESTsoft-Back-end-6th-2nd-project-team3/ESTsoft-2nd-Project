@@ -1,5 +1,7 @@
 package com.estsoft.estsoft2ndproject.controller.api;
 
+import com.estsoft.estsoft2ndproject.domain.User;
+import com.estsoft.estsoft2ndproject.domain.dto.activityScore.ScoreRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.Objective;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoResponseDTO;
@@ -8,8 +10,11 @@ import com.estsoft.estsoft2ndproject.domain.dto.mypage.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.service.MyPageService;
+import com.estsoft.estsoft2ndproject.service.PostService;
+import com.estsoft.estsoft2ndproject.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -23,6 +28,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyPageController {
 	private final MyPageService myPageService;
+	private final UserService userService;
+	private final PostService postService;
 
 	@GetMapping("/userinfo")
 	public ResponseEntity<UserInfoResponseDTO> getMyInfo(@PathVariable(name = "userId") Long userId) {
@@ -68,6 +75,17 @@ public class MyPageController {
 	@GetMapping("/posts")
 	public ResponseEntity<List<PostResponseDTO>> getMyPosts(@PathVariable(name = "userId") Long userId) {
 		return ResponseEntity.ok(myPageService.getMyPosts(userId));
+	}
+
+	@PostMapping("/changeActivityScore")
+	public ResponseEntity<Void> changeActivityScore(@PathVariable(name = "userId") Long userId, @RequestBody ScoreRequestDTO scoreRequestDTO) {
+		int score = scoreRequestDTO.getScore();
+		String reason = scoreRequestDTO.getReason();
+		User user = userService.getUserById(userId);
+
+		postService.updateActivityScore(user, score, reason);
+
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/edit-objective")

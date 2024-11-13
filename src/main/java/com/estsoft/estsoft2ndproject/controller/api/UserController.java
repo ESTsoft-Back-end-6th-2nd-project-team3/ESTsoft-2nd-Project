@@ -62,14 +62,14 @@ public class UserController {
 	}
 
 	@GetMapping("/member/cancellation")
-	public ResponseEntity<String> delete(@AuthenticationPrincipal CustomUserDetails oAuth2User,
+	public String delete(@AuthenticationPrincipal CustomUserDetails oAuth2User,
 		HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		session.invalidate();
 
 		userService.deleteUser(oAuth2User);
 
-		return ResponseEntity.ok("success");
+		return "redirect:/";
 	}
 
 	@GetMapping("/nickname-check")
