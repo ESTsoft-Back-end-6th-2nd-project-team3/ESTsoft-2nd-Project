@@ -219,4 +219,8 @@ public class UserService extends DefaultOAuth2UserService {
 		}
 	}
 
+	public String getUserIdByNickname(String nickname) {
+		User user = userRepository.findByNickname(nickname);
+		return user != null ? user.getUserId().toString() : null;
+	}
 }

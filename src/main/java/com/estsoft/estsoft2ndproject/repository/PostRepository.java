@@ -149,7 +149,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
 						predicates.add(criteriaBuilder.like(root.get("title"), "%" + query + "%"));
 						break;
 					case "user":
-						predicates.add(criteriaBuilder.like(root.get("writer").get("nickname"), "%" + query + "%"));
+						Long userId = Long.parseLong(query);
+						predicates.add(criteriaBuilder.equal(root.get("user").get("id"), userId));
 						break;
 					case "content":
 						predicates.add(
