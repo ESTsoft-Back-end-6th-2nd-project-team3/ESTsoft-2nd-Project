@@ -657,14 +657,27 @@ public class PageController {
 		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		Page<PostResponseDTO> postPage = postService.getPaginationPostsByUser(userDetails.getUser(), page, 30);
+		Page<PostResponseDTO> processedPostPage = postPage.map(post -> {
+			if ("PARTICIPATION_CATEGORY".equals(post.getPostType())) {
+				post.setPostType("category");
+			} else if ("PARTICIPATION_CHALLENGE".equals(post.getPostType())) {
+				post.setPostType("challenge");
+			} else if ("PARTICIPATION_REGION".equals(post.getPostType())) {
+				post.setPostType("region");
+			} else if ("ANNOUNCEMENT".equals(post.getPostType())) {
+				post.setPostType("announcement");
+			}
+			return post;
+		});
+
 		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("categoryName", "작성한 글");
-		model.addAttribute("postList", postPage.getContent());
+		model.addAttribute("postList", processedPostPage.getContent());
 		model.addAttribute("currentPage", page);
-		model.addAttribute("totalPages", postPage.getTotalPages());
+		model.addAttribute("totalPages", processedPostPage.getTotalPages());
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
-		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
+		model.addAttribute("mainFragment2", "fragment/written-board-list");
 		model.addAttribute("sideFragment1", "fragment/main-page-signin");
 		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
