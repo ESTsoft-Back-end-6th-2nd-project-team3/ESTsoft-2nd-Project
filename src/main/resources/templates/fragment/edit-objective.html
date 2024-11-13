@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>내 목표 수정</title>
-    <link href="/css/reset.css" rel="stylesheet">
-    <link href="/css/base.css" rel="stylesheet">
-</head>
-<body>
-<article class="container" id="edit-objective">
+<article class="container" id="edit-objective" th:data-user-id="${userId}">
     <div class="objective-title">내 목표</div>
     <div class="objective-content">
         <div class="label-header">
@@ -56,6 +47,7 @@
 
     // 목표 저장 함수
     function saveObjectives() {
+        let userId = document.getElementById('edit-objective').getAttribute('data-user-id');
         const objectives = [];
         document.querySelectorAll('.objective-item').forEach(item => {
             const id = item.querySelector('.objective-id').value;
@@ -67,7 +59,7 @@
             }
         });
 
-        fetch('/mypage/objectives', {
+        fetch(`/mypage/${userId}/objectives`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(objectives)
@@ -75,6 +67,7 @@
             if (response.ok) {
                 alert('목표가 저장되었습니다.');
                 location.reload();
+                window.location.href = `/mypage/${userId}`;
             } else {
                 alert('목표 저장에 실패했습니다.');
             }
@@ -85,7 +78,7 @@
     // 취소 함수
     function cancelEdit() {
         location.reload();
+        let userId = document.getElementById('edit-objective').getAttribute('data-user-id');
+        window.location.href = `/mypage/${userId}`;
     }
 </script>
-</body>
-</html>

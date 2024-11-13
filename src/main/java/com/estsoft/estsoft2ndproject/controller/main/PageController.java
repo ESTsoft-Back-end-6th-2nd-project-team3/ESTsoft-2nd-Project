@@ -35,12 +35,16 @@ import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.comment.CommentResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
+import com.estsoft.estsoft2ndproject.repository.UserRepository;
+import com.estsoft.estsoft2ndproject.service.AdminService;
 import com.estsoft.estsoft2ndproject.service.CommentService;
 import com.estsoft.estsoft2ndproject.service.MyPageService;
 import com.estsoft.estsoft2ndproject.service.ObjectiveService;
 import com.estsoft.estsoft2ndproject.service.PostService;
 import com.estsoft.estsoft2ndproject.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
 @Controller
@@ -52,6 +56,7 @@ public class PageController {
 	private final UserService userService;
 	private final ObjectiveService objectiveService;
 	private final MyPageService myPageService;
+	private final AdminService adminService;
 
 	@GetMapping("/")
 	public String menuPage(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -93,24 +98,20 @@ public class PageController {
 			e.printStackTrace(); // 로그 남기기
 		}
 
-		if (userDetails != null) {
-			// 로그인된 사용자의 정보를 가져옵니다.
-			User user = userRepository.findById(userDetails.getUser().getUserId())
-				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+		addUserDetailsToModel(model, userDetails);
 
-			// 로그인된 사용자 정보를 모델에 추가
-			model.addAttribute("isLoggedIn", true);
-			model.addAttribute("userNickname", user.getNickname());
-			model.addAttribute("userLevel", user.getLevel());
-			model.addAttribute("userActivityScore", user.getActivityScore());
-			model.addAttribute("profileImageUrl", user.getProfileImageUrl());
-		} else {
-			// 비로그인 상태일 경우
-			model.addAttribute("isLoggedIn", false);
-		}
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		model.addAttribute("mainFragment1", "fragment/board-list");
 		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -199,26 +200,12 @@ public class PageController {
 
 		addCategoryPageData(categoryId, page, model, userDetails);
 
-		List<Post> todayLikedPosts = postService.getTodayTopLikedPosts();
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
 
 		// 이달의 활동왕
 		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
 
-		if (userDetails != null) {
-			// 로그인된 사용자의 정보를 가져옵니다.
-			User user = userRepository.findById(userDetails.getUser().getUserId())
-				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-			// 로그인된 사용자 정보를 모델에 추가
-			model.addAttribute("isLoggedIn", true);
-			model.addAttribute("userNickname", user.getNickname());
-			model.addAttribute("userLevel", user.getLevel());
-			model.addAttribute("userActivityScore", user.getActivityScore());
-			model.addAttribute("profileImageUrl", user.getProfileImageUrl());
-		} else {
-			// 비로그인 상태일 경우
-			model.addAttribute("isLoggedIn", false);
-		}
+		addUserDetailsToModel(model, userDetails);
 
 		// 모델에 데이터 추가
 		model.addAttribute("todayLikedPosts", todayLikedPosts);
@@ -228,7 +215,7 @@ public class PageController {
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
 		model.addAttribute("sideFragment1", "fragment/main-page-signin");
-
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -237,11 +224,22 @@ public class PageController {
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		addRegionPageData(regionId, page, model, userDetails);
+		addUserDetailsToModel(model, userDetails);
+
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -253,6 +251,15 @@ public class PageController {
 
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
+
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		List<PostResponseDTO> todayBest = postService.getTodayBestChallengePost();
 		List<PostResponseDTO> weeklyBest = postService.getWeeklyBestChallengePost();
@@ -267,9 +274,13 @@ public class PageController {
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", postPage.getTotalPages());
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
+		addUserDetailsToModel(model, userDetails);
+
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -282,8 +293,19 @@ public class PageController {
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
 
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
 		Page<PostResponseDTO> postPage = postService.getPaginationPostsByPostType(PostType.ANNOUNCEMENT.toString(),
 			page, 30);
+
+		addUserDetailsToModel(model, userDetails);
 
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("postType", PostType.ANNOUNCEMENT.toString());
@@ -293,6 +315,8 @@ public class PageController {
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -309,6 +333,15 @@ public class PageController {
 
 		List<Category> categories = null;
 		List<Region> regions = null;
+
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		if (postType.equals(PostType.PARTICIPATION_CATEGORY.toString())) {
 			categories = postService.getCategoryList();
@@ -327,6 +360,8 @@ public class PageController {
 			model.addAttribute("selectedCategory", post.getTargetId());
 		}
 
+		addUserDetailsToModel(model, userDetails);
+
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("userId", userDetails.getUser().getUserId());
 		model.addAttribute("categories", categories);
@@ -334,6 +369,8 @@ public class PageController {
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/write-post");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -346,6 +383,15 @@ public class PageController {
 
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
+
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		List<String> etcList = postService.getEtcList(userDetails.getUser().getLevel(), postType);
 		List<PostType> filteredPostTypes = etcList.stream()
@@ -361,12 +407,16 @@ public class PageController {
 			model.addAttribute("selectedPostType", post.getPostType());
 		}
 
+		addUserDetailsToModel(model, userDetails);
+
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("userId", userDetails.getUser().getUserId());
 		model.addAttribute("postTypes", filteredPostTypes);
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/write-post");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -378,11 +428,20 @@ public class PageController {
 
 		addCategoryPageData(categoryId, page, model, userDetails);
 
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
 		postService.increaseViewCount(postId);
 
 		PostResponseDTO post = postService.getPostDetail(postId);
 		List<CommentResponseDTO> commentList = commentService.getCommentsDetailByPostId(postId);
-
+		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("post", post);
 		model.addAttribute("postId", postId);
 		model.addAttribute("userId", userDetails.getUser().getUserId());
@@ -394,7 +453,8 @@ public class PageController {
 		model.addAttribute("mainFragment4", "fragment/category-name");
 		model.addAttribute("mainFragment5", "fragment/category-best");
 		model.addAttribute("mainFragment6", "fragment/bulletin-board-list");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -406,11 +466,20 @@ public class PageController {
 
 		addRegionPageData(regionId, page, model, userDetails);
 
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
 		postService.increaseViewCount(postId);
 
 		PostResponseDTO post = postService.getPostDetail(postId);
 		List<CommentResponseDTO> commentList = commentService.getCommentsDetailByPostId(postId);
-
+		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("post", post);
 		model.addAttribute("postId", postId);
 		model.addAttribute("userId", userDetails.getUser().getUserId());
@@ -422,7 +491,8 @@ public class PageController {
 		model.addAttribute("mainFragment4", "fragment/category-name");
 		model.addAttribute("mainFragment5", "fragment/category-best");
 		model.addAttribute("mainFragment6", "fragment/bulletin-board-list");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -436,13 +506,22 @@ public class PageController {
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
 
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
 		PostResponseDTO post = postService.getPostDetail(postId);
 		List<CommentResponseDTO> commentList = commentService.getCommentsDetailByPostId(postId);
 		List<PostResponseDTO> todayBest = postService.getTodayBestChallengePost();
 		List<PostResponseDTO> weeklyBest = postService.getWeeklyBestChallengePost();
 		Page<PostResponseDTO> postPage = postService.getPaginationPostsByPostType(
 			PostType.PARTICIPATION_CHALLENGE.toString(), page, 30);
-
+		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("postType", PostType.PARTICIPATION_CHALLENGE.toString());
 		model.addAttribute("post", post);
@@ -462,7 +541,8 @@ public class PageController {
 		model.addAttribute("mainFragment4", "fragment/category-name");
 		model.addAttribute("mainFragment5", "fragment/category-best");
 		model.addAttribute("mainFragment6", "fragment/bulletin-board-list");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -476,11 +556,20 @@ public class PageController {
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
 
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
 		PostResponseDTO post = postService.getPostDetail(postId);
 		List<CommentResponseDTO> commentList = commentService.getCommentsDetailByPostId(postId);
 		Page<PostResponseDTO> postPage = postService.getPaginationPostsByPostType(PostType.ANNOUNCEMENT.toString(),
 			page, 30);
-
+		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("postType", PostType.ANNOUNCEMENT.toString());
 		model.addAttribute("post", post);
@@ -497,7 +586,8 @@ public class PageController {
 		model.addAttribute("mainFragment3", "fragment/view-comment");
 		model.addAttribute("mainFragment4", "fragment/category-name");
 		model.addAttribute("mainFragment5", "fragment/bulletin-board-list");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -525,8 +615,17 @@ public class PageController {
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
 
-		Page<PostResponseDTO> postPage = postService.getPaginationPostsByKeyword(keyword, page, 30);
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
 
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
+		Page<PostResponseDTO> postPage = postService.getPaginationPostsByKeyword(keyword, page, 30);
+		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
@@ -534,7 +633,8 @@ public class PageController {
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/search-all");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -544,8 +644,17 @@ public class PageController {
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
 
-		Page<PostResponseDTO> postPage = postService.getPaginationPostsByUser(userDetails.getUser(), page, 30);
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
 
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
+		Page<PostResponseDTO> postPage = postService.getPaginationPostsByUser(userDetails.getUser(), page, 30);
+		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("categoryName", "작성한 글");
 		model.addAttribute("postList", postPage.getContent());
 		model.addAttribute("currentPage", page);
@@ -553,13 +662,23 @@ public class PageController {
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
 	@GetMapping("/mypage/{userId}")
 	public String showMyPage(@PathVariable(name = "userId") Long userId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		addMenuData(model, userDetails);
+
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		Optional<User> user = userService.getUserWithChallenges(userId);
 		if (user.isPresent()) {
@@ -585,7 +704,7 @@ public class PageController {
 		int completedCount = (int)myObjective.stream().filter(Objective::getIsCompleted).count();
 		int totalCount = myObjective.size();
 		int progressValue = totalCount > 0 ? (completedCount * 100) / totalCount : 0;
-
+		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("month", month);
 		model.addAttribute("progressValue", progressValue);
 		model.addAttribute("myObjective", myObjective);
@@ -594,7 +713,8 @@ public class PageController {
 		model.addAttribute("mainFragment1", "fragment/mypage-profile");
 		model.addAttribute("mainFragment2", "fragment/my-objective");
 		model.addAttribute("mainFragment3", "fragment/participated-challenge");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		// 자신의 마이페이지인지 확인하기 위해 현재 로그인한 사용자 ID와 비교
 		model.addAttribute("isOwner", userId.equals(userDetails.getUser().getUserId()));
 
@@ -605,6 +725,15 @@ public class PageController {
 	public String showEditProfile(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		User user = userDetails.getUser();
 
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
 		model.addAttribute("userId", user.getUserId());
 		model.addAttribute("profileImageUrl", user.getProfileImageUrl());
 		model.addAttribute("nickname", user.getNickname());
@@ -612,11 +741,38 @@ public class PageController {
 		model.addAttribute("level", user.getLevel());
 		model.addAttribute("selfIntro", user.getSelfIntro());
 		model.addAttribute("snsLink", user.getSnsLink());
-
+		addUserDetailsToModel(model, userDetails);
 		addMenuData(model, userDetails);
 		model.addAttribute("mainFragment1", "fragment/edit-profile");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
+	}
+
+	@GetMapping("/mypage/edit-objectives")
+	public String objectivesPage(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		addUserDetailsToModel(model, userDetails);
+
+		// DB에서 유저의 목표 데이터를 가져오기
+		List<Objective> objectives = myPageService.getObjectives(userId);
+
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
+		model.addAttribute("userId", userId);
+		model.addAttribute("objectives", objectives);
+		model.addAttribute("mainFragment1", "fragment/edit-objective");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
+		return "index"; // HTML 파일 이름
 	}
 
 	@GetMapping("/category/search")
@@ -637,11 +793,22 @@ public class PageController {
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("searchResults", searchResults);
 		addCategoryPageData(categoryId, page, model, userDetails);
+		addUserDetailsToModel(model, userDetails);
+
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -663,11 +830,22 @@ public class PageController {
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("searchResults", searchResults);
 		addRegionPageData(regionId, page, model, userDetails);
+		addUserDetailsToModel(model, userDetails);
+
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
-
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -691,9 +869,18 @@ public class PageController {
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
 
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
 		List<PostResponseDTO> todayBest = postService.getTodayBestChallengePost();
 		List<PostResponseDTO> weeklyBest = postService.getWeeklyBestChallengePost();
-
+		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("postType", PostType.PARTICIPATION_CHALLENGE.toString());
@@ -706,6 +893,8 @@ public class PageController {
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/category-best");
 		model.addAttribute("mainFragment3", "fragment/bulletin-board-list");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -726,9 +915,18 @@ public class PageController {
 				null, page, 30);
 		}
 
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
 		addMenuData(model, userDetails);
 		addCategoryNamePageData(model);
-
+		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("categoryName", boardName);
 		model.addAttribute("postType", PostType.ANNOUNCEMENT.toString());
@@ -738,6 +936,48 @@ public class PageController {
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
 		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
+		return "index";
+	}
+
+	@GetMapping("/admin")
+	public String getPostList(
+		@RequestParam(value = "searchType", required = false) String searchType,
+		@RequestParam(value = "postType", required = false) String postType,
+		@RequestParam(value = "targetId", required = false) Long targetId,
+		@RequestParam(value = "isActive", required = false) Boolean isActive,
+		@RequestParam(value = "query", required = false) String query,
+		@RequestParam(value = "sort", defaultValue = "latest") String sort, // 기본값 최신순
+		@RequestParam(value = "page", defaultValue = "0") int page,
+		@RequestParam(value = "size", defaultValue = "30") int size,
+		Model model, @AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+		Page<Map<String, Object>> paginatedPosts = adminService.getFilteredPosts(
+			searchType, postType, targetId, isActive, query, sort, page, size
+		);
+		addUserDetailsToModel(model, userDetails);
+		model.addAttribute("postList", paginatedPosts.getContent());
+		model.addAttribute("totalPages", paginatedPosts.getTotalPages());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("sort", sort); // 현재 정렬 상태 전달
+
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
+
+		// 이달의 활동왕
+		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
+
+
+		// 모델에 데이터 추가
+		model.addAttribute("todayLikedPosts", todayLikedPosts);
+		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
+		//model.addAttribute("categoryName", "관리자 메뉴");
+
+		//model.addAttribute("mainFragment1", "fragment/category-name");
+		model.addAttribute("mainFragment2", "fragment/admin-board-list");
+		model.addAttribute("sideFragment1", "fragment/main-page-signin");
+		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
 	}
 
@@ -749,4 +989,23 @@ public class PageController {
 		int toIndex = Math.min(end, list.size());
 		return list.subList(start, toIndex);
 	}
+
+	private void addUserDetailsToModel(Model model, CustomUserDetails userDetails) {
+		if (userDetails != null) {
+			// 로그인된 사용자의 정보를 가져옵니다.
+			User user = userRepository.findById(userDetails.getUser().getUserId())
+				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+			// 로그인된 사용자 정보를 모델에 추가
+			model.addAttribute("isLoggedIn", true);
+			model.addAttribute("userNickname", user.getNickname());
+			model.addAttribute("userLevel", user.getLevel());
+			model.addAttribute("userActivityScore", user.getActivityScore());
+			model.addAttribute("profileImageUrl", user.getProfileImageUrl());
+		} else {
+			// 비로그인 상태일 경우
+			model.addAttribute("isLoggedIn", false);
+		}
+	}
+
 }

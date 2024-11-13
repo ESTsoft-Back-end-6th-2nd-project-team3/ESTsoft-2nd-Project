@@ -117,4 +117,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		Pageable pageable
 	);
 
+	@Query("SELECT p FROM Post p " +
+		"WHERE (:searchType IS NULL OR " +
+		"       (:searchType = 'title' AND p.title LIKE %:query%) OR " +
+		"       (:searchType = 'user' AND p.user.nickname LIKE %:query%) OR " +
+		"       (:searchType = 'content' AND (p.title LIKE %:query% OR p.content LIKE %:query%))) " +
+		"AND (:postType IS NULL OR p.postType = :postType) " +
+		"AND (:targetId IS NULL OR p.targetId = :targetId) " +
+		"AND (:isActive IS NULL OR p.isActive = :isActive)")
+	Page<Post> findFilteredPosts(@Param("searchType") String searchType,
+		@Param("postType") String postType,
+		@Param("targetId") Long targetId,
+		@Param("isActive") Boolean isActive,
+		@Param("query") String query,
+		Pageable pageable);
+
+	List<Post> findPostsByPostTypeAndTargetId(String postType, Long targetId);
+
 }

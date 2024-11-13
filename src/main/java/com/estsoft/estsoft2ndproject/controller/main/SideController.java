@@ -2,6 +2,7 @@ package com.estsoft.estsoft2ndproject.controller.main;
 
 import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.User;
+import com.estsoft.estsoft2ndproject.domain.dto.post.PostResponseDTO;
 import com.estsoft.estsoft2ndproject.service.PostService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class SideController {
 	@GetMapping("/side-list")
 	public String showSideList(Model model) {
 		// 오늘의 베스트 게시글
-		List<Post> todayLikedPosts = postService.getTodayTopLikedPosts();
+		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
 
 		// 이달의 활동왕
 		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();

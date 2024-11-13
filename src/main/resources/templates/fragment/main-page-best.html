@@ -15,7 +15,7 @@
       <div class="side-item-best" th:each="post, iterStat : ${todayLikedPosts}">
         <!-- 번호, 카테고리, 제목, 댓글수 -->
         <span class="item-number-best" th:text="${iterStat.index + 1}">1</span>
-        <span class="category-best" th:text="${post.postType}">카테고리</span>
+        <span class="category-best" th:text="${post.postTypeKorean}">카테고리</span>
         <span class="title-best" th:text="${post.title}">제목</span>
         <span class="like-count-best" th:text="${post.likeCount}">좋아요 수</span>
       </div>

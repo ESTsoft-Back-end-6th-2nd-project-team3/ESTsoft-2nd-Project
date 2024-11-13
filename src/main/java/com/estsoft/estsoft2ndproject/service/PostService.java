@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import com.estsoft.estsoft2ndproject.domain.ActivityScore;
@@ -416,7 +418,7 @@ public class PostService {
 	}
 
 	// 오늘의 베스트 게시글 (24시간 기준)
-	public List<Post> getTodayTopLikedPosts() {
+	public List<PostResponseDTO> getTodayTopLikedPosts() {
 		// 현재 시간 기준 24시간 전과 현재 시간 계산
 		Timestamp startOfLast24Hours = Timestamp.valueOf(LocalDateTime.now().minusDays(1));
 		Timestamp endOfCurrentTime = Timestamp.valueOf(LocalDateTime.now());
@@ -424,12 +426,39 @@ public class PostService {
 		// LikesRepository에서 데이터 조회
 		List<Object[]> results = likesRepository.findTopLikedPostsToday(startOfLast24Hours, endOfCurrentTime);
 
-		// PostRepository를 사용해 게시글 데이터 변환
+		// PostRepository를 사용해 게시글 데이터 변환 및 DTO 생성
 		return results.stream()
-			.map(result -> postRepository.findById((Long) result[0])
-				.orElseThrow(() -> new RuntimeException("Post not found")))
-			.toList();
+			.map(result -> {
+				Post post = postRepository.findById((Long) result[0])
+					.orElseThrow(() -> new RuntimeException("Post not found"));
+
+				// PostResponseDTO 생성
+				PostResponseDTO dto = new PostResponseDTO(post);
+
+				// postType별로 한글 이름 설정
+				if (post.getPostType().equals("PARTICIPATION_REGION")) {
+					// target_id를 사용해 region DB에서 name 조회
+					String regionName = regionRepository.findById(post.getTargetId())
+						.map(Region::getName)
+						.orElse("알 수 없음");
+					dto.setPostTypeKorean(regionName);
+				} else if (post.getPostType().equals("PARTICIPATION_CATEGORY")) {
+					// target_id를 사용해 category DB에서 name 조회
+					String categoryName = categoryRepository.findById(post.getTargetId())
+						.map(Category::getName)
+						.orElse("알 수 없음");
+					dto.setPostTypeKorean(categoryName);
+				} else {
+					// ENUM을 사용해 한글 이름 변환
+					dto.setPostTypeKorean(PostType.getKoreanNameByString(post.getPostType()));
+				}
+
+				return dto;
+			})
+			.collect(Collectors.toList());
 	}
+
+
 
 
 	// 이달의 활동왕
@@ -454,7 +483,39 @@ public class PostService {
 	// 모든 활성화된 게시글 가져오기 (DTO로 변환)
 	public List<PostResponseDTO> getAllActivePostsAsDTO() {
 		List<Post> activePosts = postRepository.findAllByIsActiveTrueOrderByCreatedAtDesc();
-		return convertToDTO(activePosts);
+
+		return activePosts.stream().map(post -> {
+			PostResponseDTO dto = new PostResponseDTO();
+			dto.setPostId(post.getPostId());
+			dto.setTitle(post.getTitle());
+			dto.setViewCount(post.getViewCount());
+
+			// target_id가 null인지 확인
+			if (post.getTargetId() == null) {
+				// target_id가 없으면 enum의 한글 이름 사용
+				dto.setPostType(post.getPostType());
+				dto.setPostTypeKorean(PostType.getKoreanNameByString(post.getPostType()));
+			} else {
+				// target_id가 있을 경우 region 또는 category에서 이름 조회
+				if (post.getPostType().equals(PostType.PARTICIPATION_REGION.name())) {
+					Region region = regionRepository.findById(post.getTargetId())
+						.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 지역 ID입니다."));
+					dto.setPostType(post.getPostType());
+					dto.setPostTypeKorean(region.getName());
+				} else if (post.getPostType().equals(PostType.PARTICIPATION_CATEGORY.name())) {
+					Category category = categoryRepository.findById(post.getTargetId())
+						.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 ID입니다."));
+					dto.setPostType(post.getPostType());
+					dto.setPostTypeKorean(category.getName());
+				} else {
+					// 기타 경우: enum의 한글 이름 사용
+					dto.setPostType(post.getPostType());
+					dto.setPostTypeKorean(PostType.getKoreanNameByString(post.getPostType()));
+				}
+			}
+
+			return dto;
+		}).collect(Collectors.toList());
 	}
 
 	// 특정 타입의 게시글 필터링

@@ -13,7 +13,7 @@
         <!-- 왼쪽 최신 게시글 -->
         <div class="main-board-column">
             <div class="main-board-item" th:each="post : ${latestPosts}">
-                <span class="main-board-category" th:text="${post.displayName}">카테고리</span>
+                <span class="main-board-category" th:text="${post.postTypeKorean}">카테고리</span>
                 <span class="main-board-title-text" th:text="${post.title}">제목</span>
                 <span class="main-board-comment-count" th:text="${post.viewCount}">댓글수</span>
             </div>
@@ -26,7 +26,7 @@
         <!-- 오른쪽 오래된 게시글 -->
         <div class="main-board-column">
             <div class="main-board-item" th:each="post : ${olderPosts}">
-                <span class="main-board-category" th:text="${post.displayName}">카테고리</span>
+                <span class="main-board-category" th:text="${post.postTypeKorean}">카테고리</span>
                 <span class="main-board-title-text" th:text="${post.title}">제목</span>
                 <span class="main-board-comment-count" th:text="${post.viewCount}">댓글수</span>
             </div>
@@ -45,7 +45,7 @@
         <!-- 왼쪽 최신 챌린지 -->
         <div class="main-board-column">
             <div class="main-board-item" th:each="post : ${latestChallenges}">
-                <span class="main-board-category" th:text="${post.displayName}">카테고리</span>
+                <span class="main-board-category" th:text="${post.postTypeKorean}">카테고리</span>
                 <span class="main-board-title-text" th:text="${post.title}">제목</span>
                 <span class="main-board-comment-count" th:text="${post.viewCount}">댓글수</span>
             </div>
@@ -58,7 +58,7 @@
         <!-- 오른쪽 오래된 챌린지 -->
         <div class="main-board-column">
             <div class="main-board-item" th:each="post : ${olderChallenges}">
-                <span class="main-board-category" th:text="${post.displayName}">카테고리</span>
+                <span class="main-board-category" th:text="${post.postTypeKorean}">카테고리</span>
                 <span class="main-board-title-text" th:text="${post.title}">제목</span>
                 <span class="main-board-comment-count" th:text="${post.viewCount}">댓글수</span>
             </div>

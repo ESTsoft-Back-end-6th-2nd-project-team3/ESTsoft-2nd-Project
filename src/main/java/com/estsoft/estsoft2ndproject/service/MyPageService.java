@@ -1,5 +1,6 @@
 package com.estsoft.estsoft2ndproject.service;
 
+import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.UserInfoResponseDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.ObjectiveRequestDTO;
 import com.estsoft.estsoft2ndproject.domain.dto.mypage.PostResponseDTO;

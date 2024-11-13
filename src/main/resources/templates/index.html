@@ -540,10 +540,15 @@
     }*/
 
     // bulletin-board-list
-    function sortPosts(sortType) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('sort', sortType);
-        window.location.href = url.toString();
+    function sortPosts(sortValue) {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // 정렬 값 업데이트
+        urlParams.set("sort", sortValue);
+        urlParams.set("page", 0); // 정렬 변경 시 첫 페이지로 이동
+
+        // 새 URL로 이동
+        window.location.search = urlParams.toString();
     }
 
     function changePageDirection(direction) {

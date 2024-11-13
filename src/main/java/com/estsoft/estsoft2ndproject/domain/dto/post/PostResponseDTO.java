@@ -5,10 +5,13 @@ import java.sql.Timestamp;
 import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.User;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Setter
 @Getter
 @NoArgsConstructor
 public class PostResponseDTO {
@@ -30,6 +33,7 @@ public class PostResponseDTO {
 	@Setter
 	private String nickname;
 	private String displayName;
+	private String postTypeKorean;
 
 	public PostResponseDTO(Post post) {
 		User user = post.getUser();
