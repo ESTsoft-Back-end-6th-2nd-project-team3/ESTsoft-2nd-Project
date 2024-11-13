@@ -3,13 +3,20 @@
         <h2 class="profile-title">내 정보</h2>
         <div class="profile-content">
             <div class="profile-image">
-                <img alt="profile image" class="image-circle" th:src="${profileImageUrl}">
+                <img alt="profile image" class="image-circle" th:src="${user.profileImageUrl}">
             </div>
             <div class="profile-info">
-                <p>닉네임: <span id="profile-nickname" th:text="${nickname}">nickname</span></p>
-                <p>등급 (활동점수): <span id="profile-level" th:text="${level}">level</span></p>
-                <p>한줄 소개: <span id="profile-selfIntro" th:text="${selfIntro}">selfIntro</span></p>
-                <p>링크: <span id="profile-snsLink" th:text="${snsLink}">snsLink</span></p>
+                <p th:if="${isAdmin}">userId: <span id="profile-id" th:text="${user.userId}">userId</span></p>
+                <p>이메일: <span id="profile-email" th:text="${user.email}">email</span></p>
+                <p>닉네임: <span id="profile-nickname" th:text="${user.nickname}">nickname</span></p>
+                <p>등급 (활동점수): <span id="profile-level" th:text="${user.level}">level</span></p>
+                <p>한줄 소개: <span id="profile-selfIntro" th:text="${user.selfIntro}">selfIntro</span></p>
+                <p>링크: <span id="profile-snsLink" th:text="${user.snsLink}">snsLink</span></p>
+                <p th:if="${isAdmin}">최초 가입일: <span id="profile-created-at" th:text="${user.createdAt}">createdAt</span></p>
+                <p th:if="${isAdmin}">활성화 여부: <span id="profile-is-active" th:text="${user.isActive}">isActive</span></p>
+                <p th:if="${isAdmin}">마지막 접속 시각: <span id="profile-last-login" th:text="${#dates.format(user.lastLogin, 'yyyy-MM-dd HH:mm:ss')}">lastLogin</span></p>
+                <p th:if="${isAdmin}">userAgent: <span id="profile-user-agent" th:text="${user.userAgent}">userAgent</span></p>
+                <p th:if="${isAdmin}">수식어: <span id="profile-awarded-title" th:text="${user.awardedTitle}">awardedTitle</span></p>
             </div>
         </div>
         <a class="edit-btn" href="/mypage/edit-profile">수정</a>

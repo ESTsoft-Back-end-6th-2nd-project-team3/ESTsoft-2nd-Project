@@ -176,8 +176,8 @@ public class UserService extends DefaultOAuth2UserService {
 		userRepository.save(userEntity);
 	}
 
-	public Optional<User> getUserWithChallenges(Long userId) {
-		return userRepository.findById(userId);
+	public User getUserById(Long userId) {
+		return userRepository.findByUserId(userId);
 	}
 
 	public boolean isNicknameAvailable(String nickname) {
