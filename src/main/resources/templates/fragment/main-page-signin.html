@@ -6,13 +6,13 @@
         <h2 class="side-login">로그인이 필요합니다!</h2>
         <p class="class-login-ment">Kakao 아이디로<br>손쉽게 가입 및 이용할 수 있습니다.</p>
 
-        <a href="/oauth2/authorization/kakao" class="kakao-login-btn">
-            <img th:src="@{/img/kakao-icon.svg}" alt="카카오로 시작하기 버튼">
+        <a class="kakao-login-btn" href="/oauth2/authorization/kakao">
+            <img alt="카카오로 시작하기 버튼" th:src="@{/img/kakao-icon.svg}">
         </a>
     </div>
 
     <!-- 로그인된 경우 -->
-    <div th:if="${isLoggedIn}" class="side-login-profile-container">
+    <div class="side-login-profile-container" th:if="${isLoggedIn}">
         <div class="side-login-profile-header">
             <div class="side-login-profile-image-circle" th:style="|background-image: url('${profileImageUrl}');|"></div>
 
@@ -23,8 +23,8 @@
                     <span th:text="${userActivityScore}">활동점수</span>점
                 </p>
             </div>
-            <form action="/logout" method="post">
-                <button type="submit" class="side-login-logout-btn">로그아웃</button>
+            <form action="/member/logout" method="post">
+                <button class="side-login-logout-btn" type="submit">로그아웃</button>
             </form>
         </div>
 
@@ -40,7 +40,7 @@
     </div>
 
     <!-- 데이터 출력 영역 -->
-    <div id="menu-data-container" class="side-login-data-container" style="display: none;"></div>
+    <div class="side-login-data-container" id="menu-data-container" style="display: none;"></div>
 
 </div>
 </body>
