@@ -34,7 +34,7 @@
             <div class="child-comment" th:attr="data-reply-id=${reply.commentId}" th:each="reply : ${comments}" th:if="${reply.parentCommentId == comment.commentId}">
                 <div class="comments-container">
                     <div class="content-container">
-                        <img th:alt="${reply.profileImageUrl}" th:src="${reply.profileImageUrl}">
+                        <img th:alt="${reply.profileUrl}" th:src="${reply.profileUrl}">
                         <div>
                             <div class="top-container">
                                 <div>
