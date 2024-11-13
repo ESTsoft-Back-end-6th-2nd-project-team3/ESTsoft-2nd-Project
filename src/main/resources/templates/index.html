@@ -928,7 +928,6 @@
         fetch(`/api/${menuType}`)
             .then(response => response.json())
             .then(data => {
-                console.log('Received data:', data);
                 if (menuType === 'userPosts' || menuType === 'notifications' || menuType === 'announcements') {
                     renderDataWithLinks(menuType, data.slice(0, 5));
                 } else {
@@ -950,11 +949,10 @@
             categoryTitle = '알림';
         } else if (menuType === 'userPosts') {
             categoryTitle = '작성글';
-            console.log(data);
-            menuLink='/mypage/written';
+            menuLink = '/mypage/written';
         } else if (menuType === 'announcements') {
             categoryTitle = '공지사항';
-            menuLink='/announcement';
+            menuLink = '/announcement';
         } else {
             categoryTitle = '카테고리 없음';
         }
