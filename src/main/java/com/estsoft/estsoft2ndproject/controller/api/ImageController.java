@@ -45,7 +45,7 @@ public class ImageController {
 			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
 			// 이미지에 접근할 수 있는 URL 생성
-			String imageUrl = uploadPath + fileName; // 실제 서버의 URL 구조에 맞게 수정
+			String imageUrl = "/images/uploaded/" + fileName; // 실제 서버의 URL 구조에 맞게 수정
 
 			Map<String, String> response = new HashMap<>();
 			response.put("imageUrl", imageUrl);
