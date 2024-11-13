@@ -1,0 +1,32 @@
+<article class="board-container" id="bulletin-board-list" th:fragment="bulletin-board-list">
+    <!-- 일반 사용자 게시글 목록 테이블 -->
+    <input id="post-type" th:value="${postType}" type="hidden">
+    <input id="target-id" th:value="${targetId}" type="hidden">
+    <table class="board-table">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>댓글수</th>
+            <th>작성자</th>
+            <th>조회수</th>
+            <th>날짜</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post, iterStat : ${postList}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td>
+                <a th:href="@{|/${post.postType}/post/${post.postId}${post.targetId != null ? '/' + post.targetId : ''}|}"
+                   th:text="${post.title}">제목</a>
+            </td>
+            <td th:text="${post.commentCount}">댓글수</td>
+            <td>
+                <a th:href="@{|/mypage/${post.userId}|}" th:text="${post.nickname}">닉네임</a>
+            </td>
+            <td th:text="${post.viewCount}">조회수</td>
+            <td th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd')}">날짜</td>
+        </tr>
+        </tbody>
+    </table>
+</article>

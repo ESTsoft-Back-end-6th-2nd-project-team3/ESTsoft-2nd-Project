@@ -37,15 +37,17 @@ public class AdminService {
 	private final CategoryRepository categoryRepository;
 	private final RegionRepository regionRepository;
 	private final CommentRepository commentRepository;
+	private final UserService userService;
 
 	@Autowired
 	public AdminService(PostRepository postRepository, UserRepository userRepository,
-		CategoryRepository categoryRepository, RegionRepository regionRepository, CommentRepository commentRepository) {
+		CategoryRepository categoryRepository, RegionRepository regionRepository, CommentRepository commentRepository, UserService userService) {
 		this.userRepository = userRepository;
 		this.postRepository = postRepository;
 		this.categoryRepository = categoryRepository;
 		this.regionRepository = regionRepository;
 		this.commentRepository = commentRepository;
+		this.userService = userService;
 	}
 
 	// 회원 목록 조회
@@ -134,8 +136,7 @@ public class AdminService {
 	public Page<Map<String, Object>> getFilteredPosts(
 		String searchType,
 		String postType,
-		Long targetId,
-		Boolean isActive,
+		String isActive,
 		String query,
 		String sort,
 		int page,
@@ -148,7 +149,10 @@ public class AdminService {
 
 		Pageable pageable = PageRequest.of(page, size, sortOption);
 
-		Page<Post> posts = postRepository.findFilteredPosts(searchType, postType, targetId, isActive, query, pageable);
+		if (searchType != null && searchType.equals("user")) {
+			query = userService.getUserIdByNickname(query);
+		}
+		Page<Post> posts = postRepository.searchAdminPosts(searchType, postType, isActive, query, pageable);
 
 		return posts.map(post -> {
 			Map<String, Object> postMap = new HashMap<>();
@@ -185,4 +189,13 @@ public class AdminService {
 		return post.getIsActive(); // 변경된 상태 반환
 	}
 
+	@Transactional
+	public boolean toggleActiveStatusUser(Long userId) {
+		User user = userService.getUserById(userId);
+
+		user.setIsActive(!user.getIsActive()); // 상태 변경
+		userRepository.save(user);
+
+		return user.getIsActive(); // 변경된 상태 반환
+	}
 }
