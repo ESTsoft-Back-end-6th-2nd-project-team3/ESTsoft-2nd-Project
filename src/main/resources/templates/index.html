@@ -1132,6 +1132,25 @@
             });
         });
     });
+
+    // 관리자 유저 정보 비활성화
+    function toggleActiveUser(element) {
+        const userId = element.getAttribute('data-user-id');
+        fetch(`/admin/${userId}/toggle-active-user`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(newStatus => {
+                // 서버로부터 새로운 상태를 받아와 업데이트
+                element.textContent = newStatus ? '활성화' : '비활성화';
+            })
+            .catch(error => {
+                console.error('Error updating active status:', error);
+            });
+    }
 </script>
 </body>
 </html>
