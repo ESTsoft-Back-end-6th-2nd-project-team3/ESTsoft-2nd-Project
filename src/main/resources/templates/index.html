@@ -397,8 +397,7 @@
 
     function submitReply(commentId) {
         let url = '/api/post/';
-        let postId =  /*[[${postId}*/ '';
-
+        let postId =  /*[[${postId}]]*/ '';
 
         url += postId + '/comment/' + commentId;
 
@@ -760,18 +759,25 @@
 
     function checkNickname() {
         const nickname = document.getElementById('nickname').value;
-
-        fetch(`/api/nickname-check?nickname=${encodeURIComponent(nickname)}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data); // 응답을 콘솔에 출력하여 확인
+        $.ajax({
+            url: '/nickname-check',
+            type: 'GET',
+            data: {
+                nickname: encodeURIComponent(nickname)
+            },
+            dataType: 'json',
+            success: function (data) {
                 if (data.isAvailable) {
                     alert("사용 가능한 닉네임입니다.");
                 } else {
                     alert("이미 사용 중인 닉네임입니다.");
                 }
-            })
-            .catch(error => console.error('Error:', error));
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                alert("닉네임 확인 중 오류가 발생했습니다.");
+            }
+        });
     }
 
     window.onload = function () {
@@ -860,7 +866,13 @@
         const reason = document.querySelector('.activity-score-reason').value;
 
         if (!score || !reason) {
-            alert('모든 필드를 입력해주세요.');
+            if (!score && !reason) {
+                alert('모든 필드를 입력해주세요.');
+            } else if (!score) {
+                alert('숫자를 입력해주세요.');
+            } else if (!reason) {
+                alert('필드를 입력해주세요.');
+            }
             return;
         }
 
@@ -874,6 +886,7 @@
             }),
             success: function (response) {
                 alert('저장되었습니다.');
+                location.reload();
             },
             error: function (xhr, status, error) {
                 alert('저장에 실패했습니다.');
@@ -915,7 +928,6 @@
         fetch(`/api/${menuType}`)
             .then(response => response.json())
             .then(data => {
-                console.log('Received data:', data);
                 if (menuType === 'userPosts' || menuType === 'notifications' || menuType === 'announcements') {
                     renderDataWithLinks(menuType, data.slice(0, 5));
                 } else {
@@ -937,11 +949,10 @@
             categoryTitle = '알림';
         } else if (menuType === 'userPosts') {
             categoryTitle = '작성글';
-            console.log(data);
-            menuLink='/mypage/written';
+            menuLink = '/mypage/written';
         } else if (menuType === 'announcements') {
             categoryTitle = '공지사항';
-            menuLink='/announcement';
+            menuLink = '/announcement';
         } else {
             categoryTitle = '카테고리 없음';
         }
@@ -1073,6 +1084,54 @@
         let userId = document.getElementById('edit-objective').getAttribute('data-user-id');
         window.location.href = `/mypage/${userId}`;
     }
+
+    $(document).ready(function () {
+        $('.add-admin-authority').click(function () {
+            const userId = document.getElementById('mypage-profile').getAttribute('data-user-id');
+
+            $.ajax({
+                url: `/member/${userId}/authority/addAdmin`,
+                type: 'GET',
+                success: function (response) {
+                    if (response === 'success') {
+                        alert('관리자 권한이 부여되었습니다.');
+                        location.reload();
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 403) {
+                        alert('권한이 없습니다.');
+                    } else {
+                        alert('오류가 발생했습니다.');
+                    }
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('.delete-admin-authority').click(function () {
+            const userId = document.getElementById('mypage-profile').getAttribute('data-user-id');
+
+            $.ajax({
+                url: `/member/${userId}/authority/deleteAdmin`,
+                type: 'GET',
+                success: function (response) {
+                    if (response === 'success') {
+                        alert('관리자 권한이 삭제되었습니다.');
+                        location.reload();
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 403) {
+                        alert('권한이 없습니다.');
+                    } else {
+                        alert('오류가 발생했습니다.');
+                    }
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>

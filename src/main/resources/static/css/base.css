@@ -1378,6 +1378,19 @@ main {
             border-radius: 10px;
         }
     }
+
+    .admin-authority-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+
+        button {
+            width: 160px;
+            height: 30px;
+            border-radius: 10px;
+            border: 3px solid var(--primary-color);
+        }
+    }
 }
 
 #profile-delete-user {
