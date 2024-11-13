@@ -760,18 +760,25 @@
 
     function checkNickname() {
         const nickname = document.getElementById('nickname').value;
-
-        fetch(`/api/nickname-check?nickname=${encodeURIComponent(nickname)}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data); // 응답을 콘솔에 출력하여 확인
+        $.ajax({
+            url: '/nickname-check',
+            type: 'GET',
+            data: {
+                nickname: encodeURIComponent(nickname)
+            },
+            dataType: 'json',
+            success: function (data) {
                 if (data.isAvailable) {
                     alert("사용 가능한 닉네임입니다.");
                 } else {
                     alert("이미 사용 중인 닉네임입니다.");
                 }
-            })
-            .catch(error => console.error('Error:', error));
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                alert("닉네임 확인 중 오류가 발생했습니다.");
+            }
+        });
     }
 
     window.onload = function () {
