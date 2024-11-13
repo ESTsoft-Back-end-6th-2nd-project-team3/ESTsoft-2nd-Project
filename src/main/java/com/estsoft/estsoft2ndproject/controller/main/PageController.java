@@ -495,7 +495,7 @@ public class PageController {
 		model.addAttribute("month", month);
 		model.addAttribute("progressValue", progressValue);
 		model.addAttribute("myObjective", myObjective);
-		model.addAttribute("objectiveData", myPageService.getMonthlyCompletionStats(userDetails.getUser().getUserId()));
+		model.addAttribute("objectiveData", myPageService.getMonthlyCompletionStats(userId));
 		model.addAttribute("isOwner", userId.equals(userDetails.getUser().getUserId()));
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 

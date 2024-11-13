@@ -239,7 +239,7 @@ footer {
 
 #my-objective {
     width: 800px;
-    border: 1px solid var(--primary-color);
+    border: 3px solid var(--primary-color);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -248,6 +248,12 @@ footer {
     font-size: 12px;
     justify-content: space-between;
     gap: 20px;
+
+    h3 {
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 100%;
+    }
 
     .container-top {
         display: flex;
@@ -263,7 +269,7 @@ footer {
 
         .section-this-month-objective {
             width: 100%;
-            border: 1px solid var(--primary-color);
+            border: 3px solid var(--primary-color);
             border-radius: 10px;
             padding: 10px;
             display: flex;
@@ -323,12 +329,15 @@ footer {
 
         }
 
-        button {
+        a {
             width: 55px;
             height: 30px;
             border-radius: 10px;
-            border: 1px solid var(--primary-color);
+            border: 3px solid var(--primary-color);
             font-size: 16px;
+            text-align: center;
+            line-height: 100%;
+            align-content: center;
         }
     }
 
@@ -1329,7 +1338,7 @@ main {
 #profile-manage {
     width: 800px;
     border-radius: 10px;
-    border: 1px solid var(--primary-color);
+    border: 3px solid var(--primary-color);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -1364,7 +1373,7 @@ main {
         button {
             width: 40px;
             height: 25px;
-            border: 1px solid var(--primary-color);
+            border: 3px solid var(--primary-color);
             border-radius: 10px;
         }
     }
@@ -1373,7 +1382,7 @@ main {
 #profile-delete-user {
     width: 800px;
     border-radius: 10px;
-    border: 1px solid var(--primary-color);
+    border: 3px solid var(--primary-color);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -1390,7 +1399,7 @@ main {
     button {
         width: 80px;
         height: 30px;
-        border: 1px solid var(--primary-color);
+        border: 3px solid var(--primary-color);
         border-radius: 10px;
         font-size: 16px;
         font-weight: bold;
