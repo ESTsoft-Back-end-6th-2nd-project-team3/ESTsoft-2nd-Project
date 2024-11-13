@@ -41,6 +41,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			"GROUP BY p.postId, c.name, u.nickname")
 	List<PostListResponse> findPostListWithCategoryAndComments();
 
+	// 공지사항 데이터
+	@Query("SELECT p FROM Post p WHERE p.postType = 'announcement' AND p.isActive = true")
+	List<Post> findAnnouncements();
+
+	List<Post> findByUserUserIdOrderByCreatedAtDesc(Long userId);
+
+	@Query("SELECT p FROM Post p WHERE p.isActive = true ORDER BY p.createdAt DESC")
+	List<Post> findAllByIsActiveTrueOrderByCreatedAtDesc();
+
+
 	Post findTop1ByPostTypeOrderByCreatedAtDesc(String postType);
 
 	@Query("SELECT p FROM Post p WHERE p.createdAt >= :sevenDaysAgo AND p.isActive = true " +
@@ -106,4 +116,22 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		@Param("suffix") String suffix,
 		Pageable pageable
 	);
+
+	@Query("SELECT p FROM Post p " +
+		"WHERE (:searchType IS NULL OR " +
+		"       (:searchType = 'title' AND p.title LIKE %:query%) OR " +
+		"       (:searchType = 'user' AND p.user.nickname LIKE %:query%) OR " +
+		"       (:searchType = 'content' AND (p.title LIKE %:query% OR p.content LIKE %:query%))) " +
+		"AND (:postType IS NULL OR p.postType = :postType) " +
+		"AND (:targetId IS NULL OR p.targetId = :targetId) " +
+		"AND (:isActive IS NULL OR p.isActive = :isActive)")
+	Page<Post> findFilteredPosts(@Param("searchType") String searchType,
+		@Param("postType") String postType,
+		@Param("targetId") Long targetId,
+		@Param("isActive") Boolean isActive,
+		@Param("query") String query,
+		Pageable pageable);
+
+	List<Post> findPostsByPostTypeAndTargetId(String postType, Long targetId);
+
 }
