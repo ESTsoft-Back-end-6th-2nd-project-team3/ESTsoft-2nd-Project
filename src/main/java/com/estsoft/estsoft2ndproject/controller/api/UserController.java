@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.estsoft.estsoft2ndproject.domain.User;
 import com.estsoft.estsoft2ndproject.domain.dto.user.CustomUserDetails;
 import com.estsoft.estsoft2ndproject.domain.dto.user.RegisterRequestDTO;
 import com.estsoft.estsoft2ndproject.service.UserService;
@@ -73,10 +74,37 @@ public class UserController {
 	}
 
 	@GetMapping("/nickname-check")
-	public Map<String, Boolean> checkNickname(@RequestParam String nickname) {
+	@ResponseBody
+	public Map<String, Boolean> checkNickname(@RequestParam(name = "nickname") String nickname) {
 		boolean isAvailable = userService.isNicknameAvailable(nickname);
 		Map<String, Boolean> response = new HashMap<>();
 		response.put("isAvailable", isAvailable);
 		return response;
+	}
+
+	@GetMapping("/member/{userId}/authority/addAdmin")
+	public ResponseEntity<String> addAdmin(@PathVariable(name = "userId") Long userId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		User user = userService.getUserById(userId);
+
+		if (userDetails.getUser().getLevel().equals("관리자")) {
+			userService.updateUserLevel(user, "관리자");
+
+			return ResponseEntity.ok("success");
+		}
+
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
+	}
+
+	@GetMapping("/member/{userId}/authority/deleteAdmin")
+	public ResponseEntity<String> deleteAdmin(@PathVariable(name = "userId") Long userId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		User user = userService.getUserById(userId);
+
+		if (userDetails.getUser().getLevel().equals("관리자")) {
+			userService.updateUserLevel(user, "씨앗");
+
+			return ResponseEntity.ok("success");
+		}
+
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
 	}
 }

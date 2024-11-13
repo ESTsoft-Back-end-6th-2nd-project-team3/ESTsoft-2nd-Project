@@ -700,7 +700,9 @@ public class PageController {
 
 	@GetMapping("/mypage/edit-profile")
 	public String showEditProfile(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
-		User user = userDetails.getUser();
+		Long userId = userDetails.getUser().getUserId();
+
+		User user = userService.getUserById(userId);
 
 		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
 
