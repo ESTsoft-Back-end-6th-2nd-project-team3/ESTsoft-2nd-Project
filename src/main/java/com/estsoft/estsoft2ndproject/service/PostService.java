@@ -1,5 +1,7 @@
 package com.estsoft.estsoft2ndproject.service;
 
+import static java.util.Arrays.*;
+
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -222,6 +224,10 @@ public class PostService {
 		List<String> regionUrls = regions.isEmpty() ? Collections.emptyList() :
 			regionIds.stream().map(regionId -> "/region?id=" + regionId).toList();
 
+		List<String> admins = asList("게시글 관리", "유저 관리");
+		List<Long> adminIds = asList(1L, 2L);
+		List<String> adminUrls = adminIds.stream().map(adminId -> "/admin?id=" + adminId).toList();
+
 		List<SubMenu> subMenus = new ArrayList<>();
 		subMenus.add(new SubMenu("카테고리", categories, null, categoryUrls));
 		subMenus.add(new SubMenu("챌린지", null, "/challenge", null));
@@ -229,7 +235,7 @@ public class PostService {
 		subMenus.add(new SubMenu("마이페이지", null, "/mypage/" + userId, null));
 
 		if (level.equals("관리자")) {
-			subMenus.add(3, new SubMenu("관리자 메뉴", null, "/admin", null));
+			subMenus.add(3, new SubMenu("관리자 메뉴", admins, null, adminUrls));
 		}
 
 		return subMenus;
