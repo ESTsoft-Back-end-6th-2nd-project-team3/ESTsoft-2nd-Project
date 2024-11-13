@@ -55,7 +55,7 @@ public class UserService extends DefaultOAuth2UserService {
 		String accessToken = userRequest.getAccessToken().getTokenValue();
 		session.setAttribute("accessToken", accessToken);
 
-		List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("관리자");
+		List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("씨앗");
 
 		String usernameAttributeName = userRequest.getClientRegistration()
 			.getProviderDetails()

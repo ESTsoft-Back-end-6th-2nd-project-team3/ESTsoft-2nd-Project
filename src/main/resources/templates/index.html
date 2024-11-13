@@ -62,6 +62,7 @@
         </div>
     </section>
 </main>
+<footer></footer>
 <script th:inline="javascript">
     $.ajaxSetup({
         beforeSend: function (xhr) {
@@ -837,6 +838,55 @@
 
         window.location.href = '/mypage/' + userId;
     }
+
+    function profileDeleteUser(message = "정말로 탈퇴하시겠습니까?") {
+        if (confirm(message)) {
+            window.location.href = '/member/cancellation';
+        }
+    }
+
+    function changeActivityScore(e) {
+        let userId = document.getElementById('mypage-profile').getAttribute('data-user-id');
+        e.preventDefault();
+
+        const score = document.querySelector('.activity-score-input').value;
+        const reason = document.querySelector('.activity-score-reason').value;
+
+        if (!score || !reason) {
+            alert('모든 필드를 입력해주세요.');
+            return;
+        }
+
+        $.ajax({
+            url: `/mypage/${userId}/changeActivityScore`,
+            type: 'POST',
+            data: {
+                score: score,
+                reason: reason
+            },
+            success: function (response) {
+                alert('저장되었습니다.');
+            },
+            error: function (xhr, status, error) {
+                alert('저장에 실패했습니다.');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        const form = document.getElementById('change-activity-score-form')
+
+        form.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        $('.commit-activity-score').click(function (e) {
+            changeActivityScore(e);
+        });
+    });
 </script>
 </body>
 </html>

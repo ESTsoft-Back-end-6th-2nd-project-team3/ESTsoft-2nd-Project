@@ -16,6 +16,10 @@ body * {
     font-family: NanumGothic, sans-serif;
 }
 
+footer {
+    margin-top: 400px;
+}
+
 .blind {
     position: absolute;
     width: 1px;
@@ -1320,4 +1324,75 @@ main {
 
 .main article {
     margin-top: 20px;
+}
+
+#profile-manage {
+    width: 800px;
+    border-radius: 10px;
+    border: 1px solid var(--primary-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    h3 {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 100%;
+    }
+
+    .activity-score-container {
+        display: flex;
+        justify-content: right;
+        gap: 20px;
+
+        input {
+            width: 150px;
+            height: 25px;
+            border: 1px solid var(--primary-color);
+            padding: 0 10px;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .activity-score-reason {
+            width: 300px;
+        }
+
+        button {
+            width: 40px;
+            height: 25px;
+            border: 1px solid var(--primary-color);
+            border-radius: 10px;
+        }
+    }
+}
+
+#profile-delete-user {
+    width: 800px;
+    border-radius: 10px;
+    border: 1px solid var(--primary-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+
+    span {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 100%;
+        text-align: center;
+    }
+
+    button {
+        width: 80px;
+        height: 30px;
+        border: 1px solid var(--primary-color);
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+    }
 }

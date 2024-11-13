@@ -1,4 +1,4 @@
-<article id="mypage-profile" th:attr="data-userId=${userId}">
+<article id="mypage-profile" th:attr="data-user-id=${userId}">
     <div class="profile-container">
         <h2 class="profile-title">내 정보</h2>
         <div class="profile-content">
@@ -19,6 +19,6 @@
                 <p th:if="${isAdmin}">수식어: <span id="profile-awarded-title" th:text="${user.awardedTitle}">awardedTitle</span></p>
             </div>
         </div>
-        <a class="edit-btn" href="/mypage/edit-profile">수정</a>
+        <a class="edit-btn" href="/mypage/edit-profile" th:if="${isOwner}">수정</a>
     </div>
 </article>

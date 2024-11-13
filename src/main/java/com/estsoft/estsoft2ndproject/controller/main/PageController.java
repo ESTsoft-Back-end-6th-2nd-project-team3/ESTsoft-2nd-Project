@@ -501,7 +501,8 @@ public class PageController {
 
 		model.addAttribute("mainFragment1", "fragment/mypage-profile");
 		model.addAttribute("mainFragment2", "fragment/my-objective");
-		model.addAttribute("mainFragment3", "fragment/participated-challenge");
+		model.addAttribute("mainFragment3", "fragment/profile-manage");
+		model.addAttribute("mainFragment4", "fragment/profile-delete-user");
 
 		return "index";
 	}
