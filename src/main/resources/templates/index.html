@@ -1041,6 +1041,54 @@
         let userId = document.getElementById('edit-objective').getAttribute('data-user-id');
         window.location.href = `/mypage/${userId}`;
     }
+
+    $(document).ready(function () {
+        $('.add-admin-authority').click(function () {
+            const userId = document.getElementById('mypage-profile').getAttribute('data-user-id');
+
+            $.ajax({
+                url: `/member/${userId}/authority/addAdmin`,
+                type: 'GET',
+                success: function (response) {
+                    if (response === 'success') {
+                        alert('관리자 권한이 부여되었습니다.');
+                        location.reload();
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 403) {
+                        alert('권한이 없습니다.');
+                    } else {
+                        alert('오류가 발생했습니다.');
+                    }
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('.delete-admin-authority').click(function () {
+            const userId = document.getElementById('mypage-profile').getAttribute('data-user-id');
+
+            $.ajax({
+                url: `/member/${userId}/authority/deleteAdmin`,
+                type: 'GET',
+                success: function (response) {
+                    if (response === 'success') {
+                        alert('관리자 권한이 삭제되었습니다.');
+                        location.reload();
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 403) {
+                        alert('권한이 없습니다.');
+                    } else {
+                        alert('오류가 발생했습니다.');
+                    }
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>

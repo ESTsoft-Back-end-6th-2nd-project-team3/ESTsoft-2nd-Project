@@ -169,15 +169,6 @@ public class UserService extends DefaultOAuth2UserService {
 			.level(level)
 			.build();
 		userRepository.save(user);
-
-		Authentication oldAuth = SecurityContextHolder.getContext().getAuthentication();
-		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken)oldAuth;
-
-		CustomUserDetails newPrincipal = new CustomUserDetails(user, ((OAuth2User)oldAuth.getPrincipal()).getAttributes());
-
-		OAuth2AuthenticationToken newAuth = new OAuth2AuthenticationToken(newPrincipal, newPrincipal.getAuthorities(), oauthToken.getAuthorizedClientRegistrationId());
-
-		SecurityContextHolder.getContext().setAuthentication(newAuth);
 	}
 
 	@Transactional
