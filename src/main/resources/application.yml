@@ -64,3 +64,6 @@ logging:
 jasypt:
   encryptor:
     bean: jasyptEncryptorAES
+
+file:
+  upload-dir: ENC(lU5iehq/ustOySQjW2S3SjcMYTqo95t9JmPuRVEtrdD3tLpebXS648VxXkeOVdI6cj3ZXjRaWDSy32fwD4RNWSQc1nY21Lwqd6MGM03v2F4nU07rNg77eJL4WuO+jVN+RhDvAGGL7orbuCNPUL0iOiacJqHCDQUc7CJU0iuU6OQ=)
