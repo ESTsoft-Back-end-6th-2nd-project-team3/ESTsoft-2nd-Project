@@ -116,15 +116,15 @@ public class User {
 		// 레벨 업데이트 로직 (관리자 제외)
 		if (!"관리자".equals(this.level)) {
 			if (activityScore < 10) {
-				this.level = "Beginner";
+				this.level = "씨앗";
 			} else if (activityScore < 30) {
-				this.level = "Novice";
+				this.level = "새싹";
 			} else if (activityScore < 60) {
-				this.level = "Intermediate";
+				this.level = "묘목";
 			} else if (activityScore < 100) {
-				this.level = "Advanced";
+				this.level = "성목";
 			} else {
-				this.level = "Expert";
+				this.level = "고목";
 			}
 		}
 	}
