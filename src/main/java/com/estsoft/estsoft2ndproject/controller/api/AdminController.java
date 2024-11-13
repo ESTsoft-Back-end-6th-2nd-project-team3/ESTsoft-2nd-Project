@@ -13,6 +13,7 @@ import com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse;
 import com.estsoft.estsoft2ndproject.domain.dto.admin.UserLevelRequest;
 import com.estsoft.estsoft2ndproject.domain.dto.admin.UserListResponse;
 import com.estsoft.estsoft2ndproject.service.AdminService;
+import com.estsoft.estsoft2ndproject.service.PostService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,9 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/admin")
 public class AdminController {
 	private final AdminService adminService;
+	private final PostService postService;
 
-	public AdminController(AdminService adminService) {
+	public AdminController(AdminService adminService, PostService postService) {
 		this.adminService = adminService;
+		this.postService = postService;
 	}
 
 	// 회원 목록 조회 GET /admin/users
@@ -75,6 +78,12 @@ public class AdminController {
 	public ResponseEntity<Category> updateCategory(@PathVariable Long category_id, @RequestBody Category category) {
 		Category updatedCategory = adminService.updateCategoryName(category_id, category.getName());
 		return ResponseEntity.ok(updatedCategory);
+	}
+
+	@PatchMapping("/{postId}/toggle-active")
+	public ResponseEntity<Boolean> togglePostActive(@PathVariable Long postId) {
+		boolean newStatus = adminService.toggleActiveStatus(postId);
+		return ResponseEntity.ok(newStatus);
 	}
 }
 
