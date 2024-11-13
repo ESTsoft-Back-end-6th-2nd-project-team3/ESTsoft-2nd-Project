@@ -867,7 +867,13 @@
         const reason = document.querySelector('.activity-score-reason').value;
 
         if (!score || !reason) {
-            alert('모든 필드를 입력해주세요.');
+            if (!score && !reason) {
+                alert('모든 필드를 입력해주세요.');
+            } else if (!score) {
+                alert('숫자를 입력해주세요.');
+            } else if (!reason) {
+                alert('필드를 입력해주세요.');
+            }
             return;
         }
 
@@ -881,6 +887,7 @@
             }),
             success: function (response) {
                 alert('저장되었습니다.');
+                location.reload();
             },
             error: function (xhr, status, error) {
                 alert('저장에 실패했습니다.');
