@@ -88,7 +88,7 @@ public class AdminService {
 	// 게시글 목록 조회
 	@Transactional(readOnly = true)
 	public List<PostListResponse> getAllPosts() {
-		return postRepository.findPostListWithCategoryAndComments();
+		return postRepository.findPostListWithCategoryAndCommentsOrderByCreatedAtDesc();
 	}
 
 	// 카테고리 추가
