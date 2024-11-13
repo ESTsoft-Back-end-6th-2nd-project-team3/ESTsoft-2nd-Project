@@ -21,15 +21,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	List<Post> findByPostTypeAndTargetIdAndIsActiveTrue(String postType, Long targetId);
 
-	List<Post> findByPostTypeAndIsActiveTrue(String postType);
+	List<Post> findByPostTypeAndIsActiveTrueOrderByCreatedAtDesc(String postType);
 
 	List<Post> findByUser_UserId(Long userId);
 
-	List<Post> findByTitleContainingOrContentContainingAndIsActiveTrue(String titleKeyword, String contentKeyword);
+	List<Post> findByTitleContainingOrContentContainingAndIsActiveTrueOrderByCreatedAtDesc(String titleKeyword, String contentKeyword);
 
-	Page<Post> findPostsByTitleContainingOrContentContainingAndIsActiveTrue(String titleKeyword, String contentKeyword, Pageable pageable);
+	Page<Post> findPostsByTitleContainingOrContentContainingAndIsActiveTrueOrderByCreatedAtDesc(String titleKeyword, String contentKeyword, Pageable pageable);
 
-	Page<Post> findPostsByUserAndIsActiveTrue(User user, Pageable pageable);
+	Page<Post> findPostsByUserAndIsActiveTrueOrderByCreatedAtDesc(User user, Pageable pageable);
 
 	@Query(
 		"SELECT new com.estsoft.estsoft2ndproject.domain.dto.admin.PostListResponse(p.postId, c.name, p.title, COUNT(cmt), u.nickname, p.viewCount, p.likeCount, p.createdAt, p.isActive) "
@@ -38,8 +38,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			"LEFT JOIN Category c ON p.targetId = c.id " +
 			"LEFT JOIN Comment cmt ON cmt.post = p " +
 			"LEFT JOIN User u ON u.userId = p.user.userId " +
-			"GROUP BY p.postId, c.name, u.nickname")
-	List<PostListResponse> findPostListWithCategoryAndComments();
+			"GROUP BY p.postId, c.name, u.nickname " +
+			"ORDER BY p.createdAt DESC")
+	List<PostListResponse> findPostListWithCategoryAndCommentsOrderByCreatedAtDesc();
 
 	// 공지사항 데이터
 	@Query("SELECT p FROM Post p WHERE p.postType = 'announcement' AND p.isActive = true")
@@ -73,7 +74,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		@Param("sevenDaysAgo") Timestamp sevenDaysAgo, @Param("postType")String postType, @Param("targetId")Long targetId,
 		Pageable pageable);
 
-	Page<Post> findPostsByIsActiveTrueAndPostTypeAndTargetId(String postType, Long TargetId, Pageable pageable);
+	Page<Post> findPostsByIsActiveTrueAndPostTypeAndTargetIdOrderByCreatedAtDesc(String postType, Long TargetId, Pageable pageable);
 
 	@Query("SELECT p FROM Post p WHERE p.createdAt >= :today AND p.postType = :postType AND p.isActive = true " +
 		"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
@@ -83,34 +84,34 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		"ORDER BY (p.viewCount * 2 + p.likeCount * 5) DESC")
 	Page<Post> findTopPostsForLast7DaysByPostType(@Param("sevenDaysAgo") Timestamp sevenDaysAgo, @Param("postType") String postType, Pageable pageable);
 
-	Page<Post> findPostsByPostTypeAndIsActiveTrue(String postType, Pageable pageable);
+	Page<Post> findPostsByPostTypeAndIsActiveTrueOrderByCreatedAtDesc(String postType, Pageable pageable);
 
-	@Query("SELECT p FROM Post p WHERE p.isActive = true AND p.postType LIKE %:suffix")
-	Page<Post> findPostsByPostTypeSuffixAndIsActiveTrue(
+	@Query("SELECT p FROM Post p WHERE p.isActive = true AND p.postType LIKE %:suffix ORDER BY p.createdAt DESC")
+	Page<Post> findPostsByPostTypeSuffixAndIsActiveTrueOrderByCreatedAtDesc(
 		@Param("suffix") String suffix,
 		Pageable pageable
 	);
 
-	Page<Post> findByTitleContainingAndIsActiveTrueAndPostTypeAndTargetId(String title, String postType, Long targetId,
+	Page<Post> findByTitleContainingAndIsActiveTrueAndPostTypeAndTargetIdOrderByCreatedAtDesc(String title, String postType, Long targetId,
 		Pageable pageable);
 
-	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeAndTargetId(String titleKeyword,
+	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeAndTargetIdOrderByCreatedAtDesc(String titleKeyword,
 		String contentKeyword, String postType, Long targetId, Pageable pageable);
 
-	Page<Post> findByTitleContainingAndIsActiveTrueAndPostType(String title, String postType, Pageable pageable);
+	Page<Post> findByTitleContainingAndIsActiveTrueAndPostTypeOrderByCreatedAtDesc(String title, String postType, Pageable pageable);
 
-	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostType(String titleKeyword,
+	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeOrderByCreatedAtDesc(String titleKeyword,
 		String contentKeyword, String postType, Pageable pageable);
 
-	@Query("SELECT p FROM Post p WHERE p.isActive = true AND p.title LIKE :title AND p.postType LIKE :suffix")
-	Page<Post> findByTitleContainingAndIsActiveTrueAndPostTypeSuffix(
+	@Query("SELECT p FROM Post p WHERE p.isActive = true AND p.title LIKE :title AND p.postType LIKE :suffix ORDER BY p.createdAt DESC")
+	Page<Post> findByTitleContainingAndIsActiveTrueAndPostTypeSuffixOrderByCreatedAtDesc(
 		@Param("title") String title,
 		@Param("suffix") String suffix,
 		Pageable pageable
 	);
 
-	@Query("SELECT p FROM Post p WHERE p.isActive = true AND (p.title LIKE :titleKeyword OR p.content LIKE :contentKeyword) AND p.postType LIKE :suffix")
-	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeSuffix(
+	@Query("SELECT p FROM Post p WHERE p.isActive = true AND (p.title LIKE :titleKeyword OR p.content LIKE :contentKeyword) AND p.postType LIKE :suffix ORDER BY p.createdAt DESC")
+	Page<Post> findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeSuffixOrderByCreatedAtDesc(
 		@Param("titleKeyword") String titleKeyword,
 		@Param("contentKeyword") String contentKeyword,
 		@Param("suffix") String suffix,

@@ -126,7 +126,7 @@ public class PostService {
 			PostType postTypeEnum = PostType.valueOf(postType);
 			return switch (postTypeEnum) {
 				case PARTICIPATION_CATEGORY, PARTICIPATION_REGION -> postRepository.findByPostTypeAndTargetIdAndIsActiveTrue(postType, targetId);
-				default -> postRepository.findByPostTypeAndIsActiveTrue(postType);
+				default -> postRepository.findByPostTypeAndIsActiveTrueOrderByCreatedAtDesc(postType);
 			};
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("Invalid post type provided: " + postType, e);
@@ -134,7 +134,7 @@ public class PostService {
 	}
 
 	public List<Post> getAllPosts() {
-		return postRepository.findAllByIsActiveTrue();
+		return postRepository.findAllByIsActiveTrueOrderByCreatedAtDesc();
 	}
 
 	public void deletePost(Long postId) {
@@ -180,7 +180,7 @@ public class PostService {
 	}
 
 	public List<Post> searchPostsByKeyword(String keyword) {
-		return postRepository.findByTitleContainingOrContentContainingAndIsActiveTrue(keyword, keyword);
+		return postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueOrderByCreatedAtDesc(keyword, keyword);
 	}
 
 	public Post getNoticeTop1() {
@@ -270,7 +270,7 @@ public class PostService {
 	public Page<PostResponseDTO> getPaginationPostsByPostTypeAndTargetId(String postType, Long targetId, int page,
 		int size) {
 		PageRequest pageRequest = PageRequest.of(page, size);
-		Page<Post> postPage = postRepository.findPostsByIsActiveTrueAndPostTypeAndTargetId(postType, targetId,
+		Page<Post> postPage = postRepository.findPostsByIsActiveTrueAndPostTypeAndTargetIdOrderByCreatedAtDesc(postType, targetId,
 			pageRequest);
 
 		return postPage.map(post -> {
@@ -318,9 +318,9 @@ public class PostService {
 		PageRequest pageRequest = PageRequest.of(page, size);
 		Page<Post> postPage;
 		if (postType.equals(PostType.PARTICIPATION_CHALLENGE.toString())) {
-			postPage = postRepository.findPostsByPostTypeSuffixAndIsActiveTrue("CHALLENGE", pageRequest);
+			postPage = postRepository.findPostsByPostTypeSuffixAndIsActiveTrueOrderByCreatedAtDesc("CHALLENGE", pageRequest);
 		} else {
-			postPage = postRepository.findPostsByPostTypeAndIsActiveTrue(postType, pageRequest);
+			postPage = postRepository.findPostsByPostTypeAndIsActiveTrueOrderByCreatedAtDesc(postType, pageRequest);
 		}
 
 		return postPage.map(post -> {
@@ -367,18 +367,18 @@ public class PostService {
 		PageRequest pageRequest = PageRequest.of(page, size);
 		Page<Post> postPage;
 		if (targetId != null) {
-			postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostTypeAndTargetId(keyword,
+			postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostTypeAndTargetIdOrderByCreatedAtDesc(keyword,
 				postType,
 				targetId,
 				pageRequest);
 		} else {
 			if (postType.equals(PostType.PARTICIPATION_CHALLENGE.toString()) || postType.equals(
 				PostType.GENERATION_CHALLENGE.toString())) {
-				postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostTypeSuffix("%" + keyword + "%",
+				postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostTypeSuffixOrderByCreatedAtDesc("%" + keyword + "%",
 					"%CHALLENGE",
 					pageRequest);
 			} else {
-				postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostType(keyword, postType,
+				postPage = postRepository.findByTitleContainingAndIsActiveTrueAndPostTypeOrderByCreatedAtDesc(keyword, postType,
 					pageRequest);
 			}
 		}
@@ -396,15 +396,15 @@ public class PostService {
 		PageRequest pageRequest = PageRequest.of(page, size);
 		Page<Post> postPage;
 		if (targetId != null) {
-			postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeAndTargetId(
+			postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeAndTargetIdOrderByCreatedAtDesc(
 				keyword, keyword, postType, targetId, pageRequest);
 		} else {
 			if (postType.equals(PostType.PARTICIPATION_CHALLENGE.toString()) || postType.equals(
 				PostType.GENERATION_CHALLENGE.toString())) {
-				postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeSuffix(
+				postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeSuffixOrderByCreatedAtDesc(
 					"%" + keyword + "%", "%" + keyword + "%", "%CHALLENGE", pageRequest);
 			} else {
-				postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostType(
+				postPage = postRepository.findByTitleContainingOrContentContainingAndIsActiveTrueAndPostTypeOrderByCreatedAtDesc(
 					keyword, keyword, postType, pageRequest);
 			}
 		}
@@ -567,7 +567,7 @@ public class PostService {
 		PageRequest pageRequest = PageRequest.of(page, size);
 		Page<Post> postPage;
 
-		postPage = postRepository.findPostsByTitleContainingOrContentContainingAndIsActiveTrue(keyword, keyword, pageRequest);
+		postPage = postRepository.findPostsByTitleContainingOrContentContainingAndIsActiveTrueOrderByCreatedAtDesc(keyword, keyword, pageRequest);
 
 		return postPage.map(post -> {
 			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
@@ -581,7 +581,7 @@ public class PostService {
 		PageRequest pageRequest = PageRequest.of(page, size);
 		Page<Post> postPage;
 
-		postPage = postRepository.findPostsByUserAndIsActiveTrue(user, pageRequest);
+		postPage = postRepository.findPostsByUserAndIsActiveTrueOrderByCreatedAtDesc(user, pageRequest);
 
 		return postPage.map(post -> {
 			PostResponseDTO postResponseDTO = new PostResponseDTO(post);
