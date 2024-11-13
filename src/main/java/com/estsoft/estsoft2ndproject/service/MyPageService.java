@@ -54,6 +54,39 @@ public class MyPageService {
 		return objectiveRepository.findByUser_UserId(userId);
 	}
 
+	public void saveOrUpdateObjectives(Long userId, List<ObjectiveRequestDTO> objectiveRequestDTOs) {
+		List<Objective> existingObjectives = objectiveRepository.findByUser_UserId(userId);
+
+		List<Long> requestedIds = objectiveRequestDTOs.stream()
+			.map(ObjectiveRequestDTO::getId)
+			.toList();
+
+		List<Objective> objectivesToDelete = existingObjectives.stream()
+			.filter(obj -> !requestedIds.contains(obj.getId()))
+			.collect(Collectors.toList());
+
+		objectiveRepository.deleteAll(objectivesToDelete);
+
+		for (ObjectiveRequestDTO dto : objectiveRequestDTOs) {
+			if (dto.getId() != null) {
+				Objective objective = objectiveRepository.findById(dto.getId())
+					.orElseThrow(() -> new RuntimeException("Objective not found"));
+				objective.setContent(dto.getContent());
+				objective.setIsCompleted(dto.getIsCompleted());
+				objective.setObjectiveYearMonth(dto.getObjectiveYearMonth());
+				objectiveRepository.save(objective);
+			} else {
+				Objective newObjective = new Objective();
+				newObjective.setUser(userRepository.findById(userId)
+					.orElseThrow(() -> new RuntimeException("User not found")));
+				newObjective.setContent(dto.getContent());
+				newObjective.setObjectiveYearMonth(dto.getObjectiveYearMonth());
+				newObjective.setIsCompleted(dto.getIsCompleted());
+				objectiveRepository.save(newObjective);
+			}
+		}
+	}
+
 	public Objective createObjective(Long userId, ObjectiveRequestDTO objectiveRequestDTO) {
 		Objective objective = new Objective();
 		objective.setUser(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found")));

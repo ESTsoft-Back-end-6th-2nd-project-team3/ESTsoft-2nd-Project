@@ -1,0 +1,120 @@
+<article class="board-container" id="bulletin-board-list" th:fragment="admin-board-list">
+    <input id="post-type" th:value="${postType}" type="hidden">
+    <input id="target-id" th:value="${targetId}" type="hidden">
+    <table class="board-table">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>분류</th>
+            <th>제목</th>
+            <th>댓글수</th>
+            <th>작성자</th>
+            <th>조회수</th>
+            <th>날짜</th>
+            <th>활성화</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post, iterStat : ${postList}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${post.displayName}">분류</td>
+            <td>
+                <a class="title-best"
+                   th:href="${post.dto.postType == 'PARTICIPATION_REGION' ? '/region/post/' + post.dto.postId + '?targetId=' + post.dto.targetId
+               : post.dto.postType == 'PARTICIPATION_CATEGORY' ? '/category/post/' + post.dto.postId + '?targetId=' + post.dto.targetId
+               : post.dto.postType == 'ANNOUNCEMENT' ? '/announcement/post/' + post.dto.postId
+               : post.dto.postType == 'PARTICIPATION_CHALLENGE' || post.dto.postType == 'GENERATION_CHALLENGE' ? '/challenge/post/' + post.dto.postId
+               : '/post/' + post.dto.postId}"
+                   th:text="${post.dto.title}">제목</a>
+            </td>
+            <td th:text="${post.commentCount}">댓글수</td>
+            <td> <a th:href="${'/mypage/'+post.dto.userId}" th:text="${post.nickname}">작성자</a></td> <!-- 작성자 닉네임 출력 -->
+            <td th:text="${post.dto.viewCount}">조회수</td>
+            <td th:text="${#dates.format(post.dto.createdAt, 'yyyy-MM-dd')}">날짜</td>
+            <td>
+                <a href="#"
+                   th:attr="data-post-id=${post.dto.postId}"
+                   th:text="${post.dto.isActive ? '활성화' : '비활성화'}"
+                   onclick="toggleActive(this); return false;">
+                    활성화
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="board-footer">
+        <select class="sort-select" onchange="sortPosts(this.value)">
+            <option value="latest" th:selected="${sort == 'latest'}">최신순</option>
+            <option value="views" th:selected="${sort == 'views'}">조회순</option>
+        </select>
+        <!-- 이전 버튼: currentPage가 1 이상일 때만 표시 -->
+        <div class="pagination-container">
+            <button class="prev-btn" onclick="changePageDirection('prev')" th:if="${currentPage > 0}">< 이전</button>
+            <div class="pagination">
+                <a th:classappend="${pageNum - 1 == currentPage ? 'active' : ''}"
+                   th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                   th:href="'#'"
+                   th:onclick="'changePage(' + ${pageNum} + ')'"
+                   th:text="${pageNum}">1</a>
+            </div>
+            <button class="next-btn" onclick="changePageDirection('next')" th:if="${currentPage < totalPages - 1}">다음 ></button>
+        </div>
+        <button class="write-btn" onclick="goToWritePage()"
+                th:if="${postType == 'ANNOUNCEMENT' ? isAdmin == true : true}"
+                style="visibility: hidden;" aria-hidden="true" disabled>글쓰기
+        </button>
+    </div>
+
+
+    <!-- 관리자용 필터 및 검색 옵션 -->
+    <div class="search-box">
+        <select id="search-type" name="searchType">
+            <option value="title">제목 검색</option>
+            <option value="user">작성자 검색</option>
+            <option value="content">제목+내용 검색</option>
+        </select>
+
+        <select id="target-post-type" name="post_type">
+            <option disabled selected>카테고리</option>
+            <option value="music">음악</option>
+            <option value="travel">여행</option>
+            <option value="photo">사진</option>
+            <option value="game">게임</option>
+        </select>
+
+        <select id="target-id-select" name="target_id">
+            <option value="1">지역</option>
+            <option value="2">취미</option>
+        </select>
+
+        <select id="is-active" name="isActive">
+            <option value="1">활성화</option>
+            <option value="0">비활성화</option>
+        </select>
+
+        <input id="search-input" name="searchQuery" placeholder="검색어를 입력하세요" type="text">
+        <button onclick="searchAdminPosts()">검색</button>
+    </div>
+    <script>
+        function toggleActive(element) {
+            const postId = element.getAttribute('data-post-id');
+            fetch(`/admin/${postId}/toggle-active`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(newStatus => {
+                    // 서버로부터 새로운 상태를 받아와 업데이트
+                    element.textContent = newStatus ? '활성화' : '비활성화';
+                })
+                .catch(error => {
+                    console.error('Error updating active status:', error);
+                });
+        }
+
+
+    </script>
+</article>

@@ -1,0 +1,88 @@
+<body>
+<div th:fragment="mainBoardList(title, latestPosts, olderPosts)" class="main-board-container">
+    <h2 class="main-board-title">게시글</h2>
+    <div class="main-board-list">
+        <!-- 왼쪽 최신 게시글 -->
+        <div class="main-board-column">
+            <div class="main-board-item" th:each="post : ${latestPosts}">
+                <span class="main-board-category" th:text="${post.postTypeKorean}">카테고리</span>
+                <a class="main-board-title-best"
+                   th:href="${post.postType == 'PARTICIPATION_REGION' ? '/region/post/' + post.postId + '?targetId=' + post.targetId
+               : post.postType == 'PARTICIPATION_CATEGORY' ? '/category/post/' + post.postId + '?targetId=' + post.targetId
+               : post.postType == 'ANNOUNCEMENT' ? '/announcement/post/' + post.postId
+               : post.postType == 'PARTICIPATION_CHALLENGE' || post.postType == 'GENERATION_CHALLENGE' ? '/challenge/post/' + post.postId
+               : '/post/' + post.postId}"
+                   th:text="${post.title}">제목</a>
+                <span class="main-board-comment-count" th:text="${post.viewCount}">댓글수</span>
+            </div>
+            <div class="main-board-item-empty"
+                 th:if="${latestPosts != null and #lists.size(latestPosts) < 20}"
+                 th:each="i : ${#numbers.sequence(#lists.size(latestPosts) + 1, 20)}">
+            </div>
+        </div>
+        <div class="main-board-divider"></div>
+        <!-- 오른쪽 오래된 게시글 -->
+        <div class="main-board-column">
+            <div class="main-board-item" th:each="post : ${olderPosts}">
+                <span class="main-board-category" th:text="${post.postTypeKorean}">카테고리</span>
+                <a class="main-board-title-best"
+                   th:href="${post.postType == 'PARTICIPATION_REGION' ? '/region/post/' + post.postId + '?targetId=' + post.targetId
+               : post.postType == 'PARTICIPATION_CATEGORY' ? '/category/post/' + post.postId + '?targetId=' + post.targetId
+               : post.postType == 'ANNOUNCEMENT' ? '/announcement/post/' + post.postId
+               : post.postType == 'PARTICIPATION_CHALLENGE' || post.postType == 'GENERATION_CHALLENGE' ? '/challenge/post/' + post.postId
+               : '/post/' + post.postId}"
+                   th:text="${post.title}">제목</a>
+                <span class="main-board-comment-count" th:text="${post.viewCount}">댓글수</span>
+            </div>
+            <div class="main-board-item-empty"
+                 th:if="${olderPosts != null and #lists.size(olderPosts) < 20}"
+                 th:each="i : ${#numbers.sequence(#lists.size(olderPosts) + 1, 20)}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 챌린지 게시글 -->
+<div class="main-board-container">
+    <h2 class="main-board-title">챌린지 게시글</h2>
+    <div class="main-board-list">
+        <!-- 왼쪽 최신 챌린지 -->
+        <div class="main-board-column">
+            <div class="main-board-item" th:each="post : ${latestChallenges}">
+                <span class="main-board-category" th:text="${post.postTypeKorean}">카테고리</span>
+                <a class="main-board-title-best"
+                   th:href="${post.postType == 'PARTICIPATION_REGION' ? '/region/post/' + post.postId + '?targetId=' + post.targetId
+               : post.postType == 'PARTICIPATION_CATEGORY' ? '/category/post/' + post.postId + '?targetId=' + post.targetId
+               : post.postType == 'ANNOUNCEMENT' ? '/announcement/post/' + post.postId
+               : post.postType == 'PARTICIPATION_CHALLENGE' || post.postType == 'GENERATION_CHALLENGE' ? '/challenge/post/' + post.postId
+               : '/post/' + post.postId}"
+                   th:text="${post.title}">제목</a>
+                <span class="main-board-comment-count" th:text="${post.viewCount}">댓글수</span>
+            </div>
+            <div class="main-board-item-empty"
+                 th:if="${latestChallenges != null and #lists.size(latestChallenges) < 20}"
+                 th:each="i : ${#numbers.sequence(#lists.size(latestChallenges) + 1, 20)}">
+            </div>
+        </div>
+        <div class="main-board-divider"></div>
+        <!-- 오른쪽 오래된 챌린지 -->
+        <div class="main-board-column">
+            <div class="main-board-item" th:each="post : ${olderChallenges}">
+                <span class="main-board-category" th:text="${post.postTypeKorean}">카테고리</span>
+                <a class="main-board-title-best"
+                   th:href="${post.postType == 'PARTICIPATION_REGION' ? '/region/post/' + post.postId + '?targetId=' + post.targetId
+               : post.postType == 'PARTICIPATION_CATEGORY' ? '/category/post/' + post.postId + '?targetId=' + post.targetId
+               : post.postType == 'ANNOUNCEMENT' ? '/announcement/post/' + post.postId
+               : post.postType == 'PARTICIPATION_CHALLENGE' || post.postType == 'GENERATION_CHALLENGE' ? '/challenge/post/' + post.postId
+               : '/post/' + post.postId}"
+                   th:text="${post.title}">제목</a>
+                <span class="main-board-comment-count" th:text="${post.viewCount}">댓글수</span>
+            </div>
+            <div class="main-board-item-empty"
+                 th:if="${olderChallenges != null and #lists.size(olderChallenges) < 20}"
+                 th:each="i : ${#numbers.sequence(#lists.size(olderChallenges) + 1, 20)}">
+            </div>
+        </div>
+    </div>
+</div>
+</body>

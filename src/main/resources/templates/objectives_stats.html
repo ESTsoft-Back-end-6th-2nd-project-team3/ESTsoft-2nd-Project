@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objective Stats</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            text-align: center;
+            padding: 10px;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+<h1>Objective Completion Stats</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Month</th>
+        <th>Completion Rate (%)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Data rows will be dynamically populated -->
+    <tr th:each="data : ${objectivesData}">
+        <td th:text="${data['month']}"></td>
+        <td th:text="${data['amount']}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
