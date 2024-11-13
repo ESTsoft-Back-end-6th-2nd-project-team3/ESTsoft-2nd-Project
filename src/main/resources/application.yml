@@ -33,8 +33,8 @@ spring:
             client-id: ENC(ZaEJHi3mX5PJ2kMG0lH6mXpb8gq8iRbdbG2e3uxIVlnN6ihIgPqMWIC9pX8LkYbOM0PhH1kfj/trMruxnJ5idLuik/nogRLVihlc0QxYh3k=)
             client-secret: ENC(G9uPzX+uDDRfqWwRwv7rUHhTTP1zmjEAp+R5WrOP86l3LJQk9mk/cwNgZuk6YOAIqq/CDpcO4gzfgyf+tKSo78Ptaqfsl2OrH7X6NuovciM=)
             authorization-grant-type: authorization_code
-            #redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
-            redirect-uri: ENC(bQhqdFSHnfgu1fW+QOA1QJf9+CG7PCmLPEVQQW34lP3pLbWsSa9NFcYminfiV0FZHgEKHuWCm/EmAGL062sHU+BZ6XEx7ZU6bX7fg3qOFXc=)
+            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
+            #redirect-uri: ENC(bQhqdFSHnfgu1fW+QOA1QJf9+CG7PCmLPEVQQW34lP3pLbWsSa9NFcYminfiV0FZHgEKHuWCm/EmAGL062sHU+BZ6XEx7ZU6bX7fg3qOFXc=)
             client-name: kakao
             client-authentication-method: client_secret_post
             scope:

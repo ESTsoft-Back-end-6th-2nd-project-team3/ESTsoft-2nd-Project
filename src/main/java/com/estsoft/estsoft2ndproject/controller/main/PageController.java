@@ -756,6 +756,8 @@ public class PageController {
 		model.addAttribute("todayLikedPosts", todayLikedPosts);
 		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
+		addMenuData(model, userDetails);
+
 		model.addAttribute("userId", userId);
 		model.addAttribute("objectives", objectives);
 		model.addAttribute("mainFragment1", "fragment/edit-objective");
@@ -960,6 +962,8 @@ public class PageController {
 		// 모델에 데이터 추가
 		model.addAttribute("todayLikedPosts", todayLikedPosts);
 		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
+
+		addMenuData(model, userDetails);
 
 		//model.addAttribute("categoryName", "관리자 메뉴");
 
