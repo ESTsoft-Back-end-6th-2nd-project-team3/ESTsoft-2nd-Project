@@ -643,14 +643,27 @@ public class PageController {
 		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
 		Page<PostResponseDTO> postPage = postService.getPaginationPostsByUser(userDetails.getUser(), page, 30);
+		Page<PostResponseDTO> processedPostPage = postPage.map(post -> {
+			if ("PARTICIPATION_CATEGORY".equals(post.getPostType())) {
+				post.setPostType("category");
+			} else if ("PARTICIPATION_CHALLENGE".equals(post.getPostType())) {
+				post.setPostType("challenge");
+			} else if ("PARTICIPATION_REGION".equals(post.getPostType())) {
+				post.setPostType("region");
+			} else if ("ANNOUNCEMENT".equals(post.getPostType())) {
+				post.setPostType("announcement");
+			}
+			return post;
+		});
+
 		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("categoryName", "작성한 글");
-		model.addAttribute("postList", postPage.getContent());
+		model.addAttribute("postList", processedPostPage.getContent());
 		model.addAttribute("currentPage", page);
-		model.addAttribute("totalPages", postPage.getTotalPages());
+		model.addAttribute("totalPages", processedPostPage.getTotalPages());
 		model.addAttribute("isAdmin", userDetails.getUser().getLevel().equals("관리자"));
 		model.addAttribute("mainFragment1", "fragment/category-name");
-		model.addAttribute("mainFragment2", "fragment/bulletin-board-list");
+		model.addAttribute("mainFragment2", "fragment/written-board-list");
 		model.addAttribute("sideFragment1", "fragment/main-page-signin");
 		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";
@@ -927,15 +940,16 @@ public class PageController {
 		@RequestParam(value = "id") Long id,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "postType", required = false) String postType,
-		@RequestParam(value = "targetId", required = false) Long targetId,
-		@RequestParam(value = "isActive", required = false) Boolean isActive,
-		@RequestParam(value = "query", required = false) String query,
-		@RequestParam(value = "sort", defaultValue = "latest", required = false) String sort, // 기본값 최신순
+		@RequestParam(value = "isActive", required = false) String isActive,
+		@RequestParam(value = "searchQuery", required = false) String query,
+		@RequestParam(value = "sort", defaultValue = "latest") String sort, // 기본값 최신순
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "30") int size,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails
 	) {
+
 		addUserDetailsToModel(model, userDetails);
+
 		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
 
 		// 이달의 활동왕
@@ -951,9 +965,8 @@ public class PageController {
 
 		//model.addAttribute("mainFragment1", "fragment/category-name");
 		if (id.equals(1L)) {
-			Page<Map<String, Object>> paginatedPosts = adminService.getFilteredPosts(
-				searchType, postType, targetId, isActive, query, sort, page, size
-			);
+			Page<Map<String, Object>> paginatedPosts = adminService.getFilteredPosts(searchType, postType, isActive, query, sort, page, size);
+
 			model.addAttribute("postList", paginatedPosts.getContent());
 			model.addAttribute("totalPages", paginatedPosts.getTotalPages());
 			model.addAttribute("currentPage", page);

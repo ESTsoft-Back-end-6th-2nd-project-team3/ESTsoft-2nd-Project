@@ -28,14 +28,14 @@
                    th:text="${post.dto.title}">제목</a>
             </td>
             <td th:text="${post.commentCount}">댓글수</td>
-            <td> <a th:href="${'/mypage/'+post.dto.userId}" th:text="${post.nickname}">작성자</a></td> <!-- 작성자 닉네임 출력 -->
+            <td><a th:href="${'/mypage/'+post.dto.userId}" th:text="${post.nickname}">작성자</a></td> <!-- 작성자 닉네임 출력 -->
             <td th:text="${post.dto.viewCount}">조회수</td>
             <td th:text="${#dates.format(post.dto.createdAt, 'yyyy-MM-dd')}">날짜</td>
             <td>
                 <a href="#"
+                   onclick="toggleActive(this); return false;"
                    th:attr="data-post-id=${post.dto.postId}"
-                   th:text="${post.dto.isActive ? '활성화' : '비활성화'}"
-                   onclick="toggleActive(this); return false;">
+                   th:text="${post.dto.isActive ? '활성화' : '비활성화'}">
                     활성화
                 </a>
             </td>
@@ -45,8 +45,8 @@
 
     <div class="board-footer">
         <select class="sort-select" onchange="sortPosts(this.value)">
-            <option value="latest" th:selected="${sort == 'latest'}">최신순</option>
-            <option value="views" th:selected="${sort == 'views'}">조회순</option>
+            <option th:selected="${sort == 'latest'}" value="latest">최신순</option>
+            <option th:selected="${sort == 'views'}" value="views">조회순</option>
         </select>
         <!-- 이전 버튼: currentPage가 1 이상일 때만 표시 -->
         <div class="pagination-container">
@@ -60,9 +60,9 @@
             </div>
             <button class="next-btn" onclick="changePageDirection('next')" th:if="${currentPage < totalPages - 1}">다음 ></button>
         </div>
-        <button class="write-btn" onclick="goToWritePage()"
-                th:if="${postType == 'ANNOUNCEMENT' ? isAdmin == true : true}"
-                style="visibility: hidden;" aria-hidden="true" disabled>글쓰기
+        <button aria-hidden="true" class="write-btn"
+                disabled
+                onclick="goToWritePage()" style="visibility: hidden;" th:if="${postType == 'ANNOUNCEMENT' ? isAdmin == true : true}">글쓰기
         </button>
     </div>
 
@@ -75,22 +75,19 @@
             <option value="content">제목+내용 검색</option>
         </select>
 
-        <select id="target-post-type" name="post_type">
-            <option disabled selected>카테고리</option>
-            <option value="music">음악</option>
-            <option value="travel">여행</option>
-            <option value="photo">사진</option>
-            <option value="game">게임</option>
-        </select>
-
-        <select id="target-id-select" name="target_id">
-            <option value="1">지역</option>
-            <option value="2">취미</option>
+        <select id="target-post-type" name="postType">
+            <option value="all">전체</option>
+            <option value="PARTICIPATION_CATEGORY">카테고리</option>
+            <option value="PARTICIPATION_CHALLENGE">챌린지</option>
+            <option value="GENERATION_CHALLENGE">챌린지 생성</option>
+            <option value="PARTICIPATION_REGION">지역</option>
+            <option value="ANNOUNCEMENT">공지</option>
         </select>
 
         <select id="is-active" name="isActive">
-            <option value="1">활성화</option>
-            <option value="0">비활성화</option>
+            <option value="all">전체</option>
+            <option value="true">활성화</option>
+            <option value="false">비활성화</option>
         </select>
 
         <input id="search-input" name="searchQuery" placeholder="검색어를 입력하세요" type="text">
@@ -115,6 +112,28 @@
                 });
         }
 
+        let isSearching = false;
 
+        function searchAdminPosts() {
+            if (isSearching) return;
+            isSearching = true;
+
+            const searchType = document.querySelector('select[name="searchType"]').value;
+            const postType = document.querySelector('select[name="postType"]').value;
+            const isActive = document.querySelector('select[name="isActive"]').value;
+            const searchQuery = document.querySelector('input[name="searchQuery"]').value;
+
+            const url = new URL(window.location.href);
+            url.searchParams.set("searchType", searchType);
+            url.searchParams.set("postType", postType);
+            url.searchParams.set("isActive", isActive);
+            url.searchParams.set("searchQuery", searchQuery);
+
+            window.location.href = url.toString();
+
+            setTimeout(() => {
+                isSearching = false;
+            }, 1000);
+        }
     </script>
 </article>
