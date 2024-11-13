@@ -516,6 +516,8 @@ public class PageController {
 		model.addAttribute("todayLikedPosts", todayLikedPosts);
 		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
+		postService.increaseViewCount(postId);
+
 		PostResponseDTO post = postService.getPostDetail(postId);
 		List<CommentResponseDTO> commentList = commentService.getCommentsDetailByPostId(postId);
 		List<PostResponseDTO> todayBest = postService.getTodayBestChallengePost();
