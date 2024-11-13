@@ -489,6 +489,7 @@ public class PostService {
 			dto.setPostId(post.getPostId());
 			dto.setTitle(post.getTitle());
 			dto.setViewCount(post.getViewCount());
+			dto.setTargetId(post.getTargetId());
 
 			// target_id가 null인지 확인
 			if (post.getTargetId() == null) {

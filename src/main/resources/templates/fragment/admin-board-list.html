@@ -19,13 +19,26 @@
             <td th:text="${iterStat.index + 1}">1</td>
             <td th:text="${post.displayName}">분류</td>
             <td>
-                <a class="post-link" th:attr="data-postId=${post.dto.postId}" th:text="${post.dto.title}">제목</a>
+                <a class="title-best"
+                   th:href="${post.dto.postType == 'PARTICIPATION_REGION' ? '/region/post/' + post.dto.postId + '?targetId=' + post.dto.targetId
+               : post.dto.postType == 'PARTICIPATION_CATEGORY' ? '/category/post/' + post.dto.postId + '?targetId=' + post.dto.targetId
+               : post.dto.postType == 'ANNOUNCEMENT' ? '/announcement/post/' + post.dto.postId
+               : post.dto.postType == 'PARTICIPATION_CHALLENGE' || post.dto.postType == 'GENERATION_CHALLENGE' ? '/challenge/post/' + post.dto.postId
+               : '/post/' + post.dto.postId}"
+                   th:text="${post.dto.title}">제목</a>
             </td>
             <td th:text="${post.commentCount}">댓글수</td>
-            <td th:text="${post.nickname}">작성자</td> <!-- 작성자 닉네임 출력 -->
+            <td> <a th:href="${'/mypage/'+post.dto.userId}" th:text="${post.nickname}">작성자</a></td> <!-- 작성자 닉네임 출력 -->
             <td th:text="${post.dto.viewCount}">조회수</td>
             <td th:text="${#dates.format(post.dto.createdAt, 'yyyy-MM-dd')}">날짜</td>
-            <td th:text="${post.dto.isActive ? '활성화' : '비활성화'}">활성화</td>
+            <td>
+                <a href="#"
+                   th:attr="data-post-id=${post.dto.postId}"
+                   th:text="${post.dto.isActive ? '활성화' : '비활성화'}"
+                   onclick="toggleActive(this); return false;">
+                    활성화
+                </a>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -84,6 +97,23 @@
         <button onclick="searchAdminPosts()">검색</button>
     </div>
     <script>
+        function toggleActive(element) {
+            const postId = element.getAttribute('data-post-id');
+            fetch(`/admin/${postId}/toggle-active`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(newStatus => {
+                    // 서버로부터 새로운 상태를 받아와 업데이트
+                    element.textContent = newStatus ? '활성화' : '비활성화';
+                })
+                .catch(error => {
+                    console.error('Error updating active status:', error);
+                });
+        }
 
 
     </script>

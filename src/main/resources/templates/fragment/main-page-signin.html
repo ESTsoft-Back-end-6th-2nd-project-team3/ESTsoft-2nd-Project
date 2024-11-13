@@ -72,6 +72,7 @@
         fetch(`/api/${menuType}`)
             .then(response => response.json())
             .then(data => {
+                console.log('Received data:', data);
                 if (menuType === 'userPosts' || menuType === 'notifications' || menuType === 'announcements') {
                     renderDataWithLinks(menuType, data.slice(0, 5));
                 } else {
@@ -98,7 +99,7 @@
         data.forEach(item => {
             html += `
             <div class="side-login-post-item">
-                <span class="side-login-post-category">${item.postType || '카테고리 없음'}</span>
+                <span class="side-login-post-category">${item.postTypeKorean || '카테고리 없음'}</span>
                 <a href="${item.postLink}" class="side-login-post-title">${item.title}</a>
                 <span class="side-login-post-comments">${item.commentCount || ''}</span>
             </div>

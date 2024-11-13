@@ -3,6 +3,7 @@ package com.estsoft.estsoft2ndproject.domain.dto.post;
 import java.sql.Timestamp;
 
 import com.estsoft.estsoft2ndproject.domain.Post;
+import com.estsoft.estsoft2ndproject.domain.PostType;
 import com.estsoft.estsoft2ndproject.domain.User;
 
 import lombok.AllArgsConstructor;
@@ -49,6 +50,7 @@ public class PostResponseDTO {
 		this.isActive = post.getIsActive();
 		this.viewCount = post.getViewCount();
 		this.likeCount = post.getLikeCount();
+		this.postTypeKorean = PostType.getKoreanNameByString(post.getPostType());
 	}
 
 	public PostResponseDTO(Long postId, String title, String postType, Long targetId, String displayName, Integer viewCount, Timestamp createdAt) {
@@ -71,4 +73,19 @@ public class PostResponseDTO {
 		this.createdAt = createdAt;
 		this.isActive = isActive; // 활성화 여부 설정
 	}
+
+	public PostResponseDTO(Post post, String regionName, String categoryName) {
+		this.postId = post.getPostId();
+		this.title = post.getTitle();
+		this.postType = post.getPostType();
+		this.postTypeKorean = switch (post.getPostType()) {
+			case "PARTICIPATION_REGION" -> regionName; // Region 테이블 참조
+			case "PARTICIPATION_CATEGORY" -> categoryName; // Category 테이블 참조
+			default -> PostType.getKoreanNameByString(post.getPostType()); // 기본 Enum 매핑
+		};
+		this.targetId = post.getTargetId();
+		this.viewCount = post.getViewCount();
+		this.createdAt = post.getCreatedAt();
+	}
+
 }

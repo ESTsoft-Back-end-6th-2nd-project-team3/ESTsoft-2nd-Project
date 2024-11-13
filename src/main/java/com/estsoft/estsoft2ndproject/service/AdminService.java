@@ -175,5 +175,15 @@ public class AdminService {
 		});
 	}
 
+	@Transactional
+	public boolean toggleActiveStatus(Long postId) {
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+		post.setIsActive(!post.getIsActive()); // 상태 변경
+		postRepository.save(post);
+
+		return post.getIsActive(); // 변경된 상태 반환
+	}
 
 }
