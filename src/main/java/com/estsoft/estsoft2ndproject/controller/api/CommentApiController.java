@@ -72,8 +72,8 @@ public class CommentApiController {
 	}
 
 	@DeleteMapping("/comment/{commentId}")
-	public ResponseEntity<Void> deleteComment(@PathVariable(name = "commentId") Long commentId) {
-		commentService.deleteComment(commentId);
+	public ResponseEntity<Void> deleteComment(@PathVariable(name = "commentId") Long commentId, @AuthenticationPrincipal CustomUserDetails oAuth2User) {
+		commentService.deleteComment(commentId, oAuth2User);
 		return ResponseEntity.ok().build();
 	}
 

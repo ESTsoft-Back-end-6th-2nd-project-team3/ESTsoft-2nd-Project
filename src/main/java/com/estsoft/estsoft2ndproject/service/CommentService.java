@@ -19,14 +19,17 @@ import com.estsoft.estsoft2ndproject.repository.UserRepository;
 
 @Service
 public class CommentService {
+	private final PostService postService;
 	CommentRepository commentRepository;
 	PostRepository postRepository;
 	UserRepository userRepository;
 
-	public CommentService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository) {
+	public CommentService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository,
+		PostService postService) {
 		this.commentRepository = commentRepository;
 		this.postRepository = postRepository;
 		this.userRepository = userRepository;
+		this.postService = postService;
 	}
 
 	public List<Comment> getCommentsByPostId(Long postId) {
@@ -39,6 +42,8 @@ public class CommentService {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 		User user = oAuth2User.getUser();
 
+		postService.updateActivityScore(user, 1, "댓글 작성");
+
 		return commentRepository.save(commentRequestDTO.toEntity(post, user));
 	}
 
@@ -47,6 +52,8 @@ public class CommentService {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 		User user = oAuth2User.getUser();
 		Comment parentComment = commentRepository.findById(commentId).orElse(null);
+
+		postService.updateActivityScore(user, 1, "댓글 작성");
 
 		return commentRepository.save(commentRequestDTO.toEntity(post, user, parentComment));
 	}
@@ -59,9 +66,11 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void deleteComment(Long commentId) {
+	public void deleteComment(Long commentId, CustomUserDetails oAuth2User) {
 		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 		comment.setIsActive(false);
+		User user = oAuth2User.getUser();
+		postService.updateActivityScore(user, -1, "댓글 삭제");
 		commentRepository.save(comment);
 	}
 
