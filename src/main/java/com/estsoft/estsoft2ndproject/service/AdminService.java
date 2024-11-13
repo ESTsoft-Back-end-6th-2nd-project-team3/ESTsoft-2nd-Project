@@ -134,8 +134,7 @@ public class AdminService {
 	public Page<Map<String, Object>> getFilteredPosts(
 		String searchType,
 		String postType,
-		Long targetId,
-		Boolean isActive,
+		String isActive,
 		String query,
 		String sort,
 		int page,
@@ -148,7 +147,8 @@ public class AdminService {
 
 		Pageable pageable = PageRequest.of(page, size, sortOption);
 
-		Page<Post> posts = postRepository.findFilteredPosts(searchType, postType, targetId, isActive, query, pageable);
+		// Page<Post> posts = postRepository.findFilteredPosts(searchType, postType, targetId, isActive, query, pageable);
+		Page<Post> posts = postRepository.searchAdminPosts(searchType, postType, isActive, query, pageable);
 
 		return posts.map(post -> {
 			Map<String, Object> postMap = new HashMap<>();

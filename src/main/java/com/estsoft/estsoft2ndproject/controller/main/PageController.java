@@ -953,18 +953,17 @@ public class PageController {
 	public String getPostList(
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "postType", required = false) String postType,
-		@RequestParam(value = "targetId", required = false) Long targetId,
-		@RequestParam(value = "isActive", required = false) Boolean isActive,
-		@RequestParam(value = "query", required = false) String query,
+		@RequestParam(value = "isActive", required = false) String isActive,
+		@RequestParam(value = "searchQuery", required = false) String query,
 		@RequestParam(value = "sort", defaultValue = "latest") String sort, // 기본값 최신순
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "30") int size,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails
 	) {
-		Page<Map<String, Object>> paginatedPosts = adminService.getFilteredPosts(
-			searchType, postType, targetId, isActive, query, sort, page, size
-		);
+		Page<Map<String, Object>> paginatedPosts = adminService.getFilteredPosts(searchType, postType, isActive, query, sort, page, size);
+
 		addUserDetailsToModel(model, userDetails);
+
 		model.addAttribute("postList", paginatedPosts.getContent());
 		model.addAttribute("totalPages", paginatedPosts.getTotalPages());
 		model.addAttribute("currentPage", page);

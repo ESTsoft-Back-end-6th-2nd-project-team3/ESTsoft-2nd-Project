@@ -630,23 +630,6 @@
         }
     }
 
-    function searchAdminPosts() {
-        const searchType = document.querySelector('select[name="searchType"]').value;
-        const postType = document.querySelector('select[name="post_type"]').value;
-        const targetId = document.querySelector('select[name="target_id"]').value;
-        const isActive = document.querySelector('select[name="isActive"]').value;
-        const searchQuery = document.querySelector('input[name="searchQuery"]').value;
-
-        const url = new URL(window.location.href);
-        url.searchParams.set("searchType", searchType);
-        url.searchParams.set("postType", postType);
-        url.searchParams.set("targetId", targetId);
-        url.searchParams.set("isActive", isActive);
-        url.searchParams.set("searchQuery", searchQuery);
-
-        window.location.href = url.toString();
-    }
-
     document.querySelectorAll('.post-link').forEach(function (link) {
         const postType = document.getElementById('post-type').value;
         const postId = link.getAttribute('data-postId');
