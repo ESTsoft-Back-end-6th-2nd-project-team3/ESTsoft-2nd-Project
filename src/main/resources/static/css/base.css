@@ -1775,3 +1775,128 @@ h2.main-board-title {
     display: block; /* 제목을 블록 형식으로 */
     text-align: center;
 }
+
+#bulletin-user-list {
+    width: 800px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .board-table {
+        width: 100%;
+        height: auto;
+        border: 3px solid #3d5c30;
+        border-radius: 10px;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .board-table thead {
+        font-size: 14px;
+    }
+
+    .board-table tbody {
+        font-size: 10px;
+    }
+    .board-table th:nth-child(1), .board-table td:nth-child(1) {
+        width: 66px; /* 번호 */
+    }
+
+    .board-table th:nth-child(2), .board-table td:nth-child(2) {
+        width: 66px; /* 이메일 */
+    }
+
+    .board-table th:nth-child(3), .board-table td:nth-child(3) {
+        width: 66px; /* 닉네임 */
+    }
+
+    .board-table th:nth-child(4), .board-table td:nth-child(4) {
+        width: 66px; /* 가입일 */
+    }
+
+    .board-table th:nth-child(5), .board-table td:nth-child(5) {
+        width: 66px; /* 접속횟수 */
+    }
+
+    .board-table th:nth-child(6), .board-table td:nth-child(6) {
+        width: 66px; /* User-Agent */
+    }
+
+    .board-table th:nth-child(7), .board-table td:nth-child(7) {
+        width: 66px; /* 활동점수 */
+    }
+
+    .board-table th:nth-child(8), .board-table td:nth-child(8) {
+        width: 66px; /* 등급 */
+    }
+
+    .board-table th:nth-child(9), .board-table td:nth-child(9) {
+        width: 66px; /* 프로필이미지 */
+    }
+
+    .board-table th:nth-child(10), .board-table td:nth-child(10) {
+        width: 66px; /* 한줄소개 */
+    }
+
+    .board-table th:nth-child(11), .board-table td:nth-child(11) {
+        width: 66px; /* SNS 링크 */
+    }
+
+    .board-table th:nth-child(12), .board-table td:nth-child(12) {
+        width: 66px; /* 활성화 */
+    }
+
+    .board-table th, .board-table td {
+        border: 1px solid #3d5c30;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .board-table th {
+        background-color: #efefef;
+        font-weight: bold;
+    }
+
+    .pagination-container .prev-btn {
+        border: none;
+        padding: 0;
+        width: 50px;
+    }
+
+    .pagination-container .next-btn {
+        border: none;
+        padding: 0;
+        width: 50px;
+    }
+
+    .pagination-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .pagination {
+        margin-bottom: 2px;
+    }
+
+    .pagination a {
+        margin: 0 5px;
+        font-size: 14px;
+        width: 10px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .pagination-container button {
+        margin: 0;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .pagination a:hover, .pagination a.active {
+        background-color: #efefef;
+    }
+}

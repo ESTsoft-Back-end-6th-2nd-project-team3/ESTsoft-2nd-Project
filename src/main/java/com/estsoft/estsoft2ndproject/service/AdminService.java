@@ -189,4 +189,13 @@ public class AdminService {
 		return post.getIsActive(); // 변경된 상태 반환
 	}
 
+	@Transactional
+	public boolean toggleActiveStatusUser(Long userId) {
+		User user = userService.getUserById(userId);
+
+		user.setIsActive(!user.getIsActive()); // 상태 변경
+		userRepository.save(user);
+
+		return user.getIsActive(); // 변경된 상태 반환
+	}
 }
