@@ -85,5 +85,11 @@ public class AdminController {
 		boolean newStatus = adminService.toggleActiveStatus(postId);
 		return ResponseEntity.ok(newStatus);
 	}
+
+	@PatchMapping("/{userId}/toggle-active-user")
+	public ResponseEntity<Boolean> togglePostActiveUser(@PathVariable Long userId) {
+		boolean newStatus = adminService.toggleActiveStatusUser(userId);
+		return ResponseEntity.ok(newStatus);
+	}
 }
 

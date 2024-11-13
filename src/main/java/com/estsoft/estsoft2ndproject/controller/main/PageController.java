@@ -1,33 +1,20 @@
 package com.estsoft.estsoft2ndproject.controller.main;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-
-import com.estsoft.estsoft2ndproject.domain.Objective;
-import com.estsoft.estsoft2ndproject.domain.SubMenu;
-import com.estsoft.estsoft2ndproject.domain.User;
 
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.estsoft.estsoft2ndproject.domain.Category;
+import com.estsoft.estsoft2ndproject.domain.Objective;
 import com.estsoft.estsoft2ndproject.domain.Post;
 import com.estsoft.estsoft2ndproject.domain.PostType;
 import com.estsoft.estsoft2ndproject.domain.Region;
@@ -43,10 +30,9 @@ import com.estsoft.estsoft2ndproject.service.ObjectiveService;
 import com.estsoft.estsoft2ndproject.service.PostService;
 import com.estsoft.estsoft2ndproject.service.UserService;
 
-import lombok.AllArgsConstructor;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 
 @Controller
 @AllArgsConstructor
@@ -936,30 +922,22 @@ public class PageController {
 
 	@GetMapping("/admin")
 	public String getPostList(
+		@RequestParam(value = "id") Long id,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "postType", required = false) String postType,
 		@RequestParam(value = "targetId", required = false) Long targetId,
 		@RequestParam(value = "isActive", required = false) Boolean isActive,
 		@RequestParam(value = "query", required = false) String query,
-		@RequestParam(value = "sort", defaultValue = "latest") String sort, // 기본값 최신순
+		@RequestParam(value = "sort", defaultValue = "latest", required = false) String sort, // 기본값 최신순
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "30") int size,
 		Model model, @AuthenticationPrincipal CustomUserDetails userDetails
 	) {
-		Page<Map<String, Object>> paginatedPosts = adminService.getFilteredPosts(
-			searchType, postType, targetId, isActive, query, sort, page, size
-		);
 		addUserDetailsToModel(model, userDetails);
-		model.addAttribute("postList", paginatedPosts.getContent());
-		model.addAttribute("totalPages", paginatedPosts.getTotalPages());
-		model.addAttribute("currentPage", page);
-		model.addAttribute("sort", sort); // 현재 정렬 상태 전달
-
 		List<PostResponseDTO> todayLikedPosts = postService.getTodayTopLikedPosts();
 
 		// 이달의 활동왕
 		List<User> monthlyTopUsers = postService.getMonthlyTopUsers();
-
 
 		// 모델에 데이터 추가
 		model.addAttribute("todayLikedPosts", todayLikedPosts);
@@ -970,7 +948,22 @@ public class PageController {
 		//model.addAttribute("categoryName", "관리자 메뉴");
 
 		//model.addAttribute("mainFragment1", "fragment/category-name");
-		model.addAttribute("mainFragment2", "fragment/admin-board-list");
+		if (id.equals(1L)) {
+			Page<Map<String, Object>> paginatedPosts = adminService.getFilteredPosts(
+				searchType, postType, targetId, isActive, query, sort, page, size
+			);
+			model.addAttribute("postList", paginatedPosts.getContent());
+			model.addAttribute("totalPages", paginatedPosts.getTotalPages());
+			model.addAttribute("currentPage", page);
+			model.addAttribute("sort", sort); // 현재 정렬 상태 전달
+			model.addAttribute("mainFragment2", "fragment/admin-board-list");
+		} else {
+			Page<User> Users = userService.findAllUsers(page, size);
+			model.addAttribute("userList", Users.getContent());
+			model.addAttribute("totalPages", Users.getTotalPages());
+			model.addAttribute("currentPage", page);
+			model.addAttribute("mainFragment2", "fragment/admin-user-list");
+		}
 		model.addAttribute("sideFragment1", "fragment/main-page-signin");
 		model.addAttribute("sideFragment2", "fragment/main-page-best");
 		return "index";

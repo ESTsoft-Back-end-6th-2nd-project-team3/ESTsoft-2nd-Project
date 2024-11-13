@@ -1,0 +1,61 @@
+<article class="board-container" id="bulletin-user-list" th:fragment="admin-user-list">
+    <table class="board-table">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>이메일</th>
+            <th>닉네임</th>
+            <th>가입일</th>
+            <th>접속 횟수</th>
+            <th>User-Agent</th>
+            <th>활동 점수</th>
+            <th>등급</th>
+            <th>프로필 이미지</th>
+            <th>한줄소개</th>
+            <th>SNS 링크</th>
+            <th>활성화</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user, iterStat : ${userList}">
+            <td th:text="${iterStat.index + 1}">번호</td>
+            <td th:text="${user.email}">이메일</td>
+            <td>
+                <a th:href="${'/mypage/'+ user.userId}" th:text="${user.nickname}">닉네임</a>
+            </td>
+            <td th:text="${user.createdAt}">가입일</td>
+            <td th:text="${user.loginCount}">접속 횟수</td>
+            <td th:text="${user.userAgent}">User-Agent</td>
+            <td th:text="${user.activityScore}">활동 점수</td>
+            <td th:text="${user.level}">등급</td>
+            <td>
+                <img th:src="${user.profileImageUrl}" alt="프로필 이미지"
+                     style="width: 50px; height: 50px; border-radius: 50%;">
+            </td>
+            <td th:text="${user.selfIntro}">한줄 소개</td>
+            <td th:text="${user.snsLink}">SNS 링크</td>
+            <td>
+                <a href="#"
+                   th:attr="data-user-id=${user.userId}"
+                   th:text="${user.isActive ? '활성화' : '비활성화'}"
+                   onclick="toggleActiveUser(this); return false;">
+                    활성화
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination-container">
+        <button class="prev-btn" onclick="changePageDirection('prev')" th:if="${currentPage > 0}">< 이전</button>
+        <div class="pagination">
+            <a th:classappend="${pageNum - 1 == currentPage ? 'active' : ''}"
+               th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+               th:href="'#'"
+               th:onclick="'changePage(' + ${pageNum} + ')'"
+               th:text="${pageNum}">1</a>
+        </div>
+        <button class="next-btn" onclick="changePageDirection('next')" th:if="${currentPage < totalPages - 1}">다음 >
+        </button>
+    </div>
+</article>
