@@ -9,5 +9,7 @@ import com.estsoft.estsoft2ndproject.domain.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 	User findByPii(String pii);
 
+	User findByUserId(Long userId);
+
 	boolean existsByNickname(String nickname);
 }

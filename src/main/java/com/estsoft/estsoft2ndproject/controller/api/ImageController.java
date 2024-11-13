@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/image")
 @Slf4j
 public class ImageController {
-	private final String uploadPath = new File("src/main/resources/static/images/uploaded").getAbsolutePath();
+	private final String uploadPath;
+
+	ImageController(@Value("${file.upload-dir}") String uploadPath) {
+		this.uploadPath = uploadPath;
+	}
 
 	@PostMapping("/upload")
 	public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) {
@@ -40,7 +45,7 @@ public class ImageController {
 			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
 			// 이미지에 접근할 수 있는 URL 생성
-			String imageUrl = "/images/uploaded/" + fileName; // 실제 서버의 URL 구조에 맞게 수정
+			String imageUrl = uploadPath + fileName; // 실제 서버의 URL 구조에 맞게 수정
 
 			Map<String, String> response = new HashMap<>();
 			response.put("imageUrl", imageUrl);

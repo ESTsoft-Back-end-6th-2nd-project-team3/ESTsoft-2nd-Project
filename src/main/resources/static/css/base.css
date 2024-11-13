@@ -16,6 +16,10 @@ body * {
     font-family: NanumGothic, sans-serif;
 }
 
+footer {
+    margin-top: 400px;
+}
+
 .blind {
     position: absolute;
     width: 1px;
@@ -235,7 +239,7 @@ body * {
 
 #my-objective {
     width: 800px;
-    border: 1px solid var(--primary-color);
+    border: 3px solid var(--primary-color);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -244,6 +248,12 @@ body * {
     font-size: 12px;
     justify-content: space-between;
     gap: 20px;
+
+    h3 {
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 100%;
+    }
 
     .container-top {
         display: flex;
@@ -259,7 +269,7 @@ body * {
 
         .section-this-month-objective {
             width: 100%;
-            border: 1px solid var(--primary-color);
+            border: 3px solid var(--primary-color);
             border-radius: 10px;
             padding: 10px;
             display: flex;
@@ -319,12 +329,15 @@ body * {
 
         }
 
-        button {
+        a {
             width: 55px;
             height: 30px;
             border-radius: 10px;
-            border: 1px solid var(--primary-color);
+            border: 3px solid var(--primary-color);
             font-size: 16px;
+            text-align: center;
+            line-height: 100%;
+            align-content: center;
         }
     }
 
@@ -578,6 +591,7 @@ body * {
     }
 
     .btn-group button {
+        padding: 0;
         width: 90px;
     }
 
@@ -599,7 +613,6 @@ body * {
 
 #mypage-profile {
     width: 800px;
-    height: 355px;
     border: 3px solid #3d5c30;
     border-radius: 10px;
     padding: 20px;
@@ -1323,6 +1336,77 @@ main {
     margin-top: 20px;
 }
 
+#profile-manage {
+    width: 800px;
+    border-radius: 10px;
+    border: 3px solid var(--primary-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    h3 {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 100%;
+    }
+
+    .activity-score-container {
+        display: flex;
+        justify-content: right;
+        gap: 20px;
+
+        input {
+            width: 150px;
+            height: 25px;
+            border: 1px solid var(--primary-color);
+            padding: 0 10px;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .activity-score-reason {
+            width: 300px;
+        }
+
+        button {
+            width: 40px;
+            height: 25px;
+            border: 3px solid var(--primary-color);
+            border-radius: 10px;
+        }
+    }
+}
+
+#profile-delete-user {
+    width: 800px;
+    border-radius: 10px;
+    border: 3px solid var(--primary-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+
+    span {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 100%;
+        text-align: center;
+    }
+
+    button {
+        width: 80px;
+        height: 30px;
+        border: 3px solid var(--primary-color);
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+}
+
 /* 게시글 컨테이너 */
 .side-container-best {
     width: 380px;
@@ -1420,11 +1504,11 @@ a.title-best {
     color: inherit; /* 부모 요소의 색상 상속 */
 }
 
-h2.side-login{
+h2.side-login {
     all: revert;
 }
 
-p.side-login-ment{
+p.side-login-ment {
     all: revert;
 }
 
@@ -1654,7 +1738,7 @@ h2.main-board-title {
     text-align: right;
 }
 
-.kakao-login-btn{
+.kakao-login-btn {
     position: relative;
     top: 40px;
 }
