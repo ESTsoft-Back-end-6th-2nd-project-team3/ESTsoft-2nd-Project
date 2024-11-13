@@ -9,12 +9,12 @@
         </div>
         <div class="objective-list">
             <!-- 목표 리스트를 Thymeleaf로 렌더링 -->
-            <div th:each="objective : ${objectives}" class="objective-item">
-                <input type="hidden" th:value="${objective.id}" class="objective-id">
-                <input type="text" th:value="${objective.content}" class="objective-input box" placeholder="목표를 입력하세요">
-                <input type="month" th:value="${#dates.format(objective.objectiveYearMonth, 'yyyy-MM')}" class="date-input box">
-                <input type="checkbox" th:checked="${objective.isCompleted}" class="checkbox">
+            <div class="objective-item" th:each="objective : ${objectives}">
+                <input class="objective-id" th:value="${objective.id}" type="hidden">
+                <input class="objective-input box" placeholder="목표를 입력하세요" th:value="${objective.content}" type="text">
+                <input class="date-input box" th:value="${#dates.format(objective.objectiveYearMonth, 'yyyy-MM')}" type="month">
                 <button class="delete-button button box" onclick="deleteObjective(this)">삭제</button>
+                <input class="checkbox" th:checked="${objective.isCompleted}" type="checkbox">
             </div>
         </div>
         <div class="action-buttons">
