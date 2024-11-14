@@ -352,13 +352,13 @@ public class PostService {
 		return post.getUser().getNickname();
 	}
 
-	public PostResponseDTO getPostDetail(Long postId) {
+	public PostResponseDTO getPostDetail(Long postId, Long userId) {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 		PostResponseDTO postResponseDTO = new PostResponseDTO(post);
 		postResponseDTO.setCommentCount(getCommentCount(post.getPostId()));
 		postResponseDTO.setNickname(getNicknameByPostId(post.getPostId()));
 
-		Boolean isLiked = getIsLiked(postId, 1L);
+		Boolean isLiked = getIsLiked(postId, userId);
 		postResponseDTO.setIsLiked(isLiked);
 
 		return postResponseDTO;
