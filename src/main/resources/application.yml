@@ -55,6 +55,10 @@ spring:
       static-locations:
         - "classpath:/static/"
         - "file:uploads/"
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 logging:
   level:
@@ -66,4 +70,4 @@ jasypt:
     bean: jasyptEncryptorAES
 
 file:
-  upload-dir: ENC(lU5iehq/ustOySQjW2S3SjcMYTqo95t9JmPuRVEtrdD3tLpebXS648VxXkeOVdI6cj3ZXjRaWDSy32fwD4RNWSQc1nY21Lwqd6MGM03v2F4nU07rNg77eJL4WuO+jVN+RhDvAGGL7orbuCNPUL0iOiacJqHCDQUc7CJU0iuU6OQ=)
+  upload-dir: ENC(58ZPkG7ccjKoTiPTU6VISbgtFUrsXYw7tMsXroZfaZhBwlYifjJZ6W7uXDENMocc+8YMDl2B1eN/ZSPd+uTVpOQCJZNJ+aPWIucn+CXwaI4ow0J+BJpRR8od1TGQU265fXn8CnmruYONI7mEnhpkjg==)
