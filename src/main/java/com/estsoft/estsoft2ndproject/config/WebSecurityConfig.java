@@ -33,8 +33,7 @@ public class WebSecurityConfig {
 				.requestMatchers("/admin/**").hasAuthority("관리자")
 				.requestMatchers("/member/login").permitAll()    // TODO: 메인 페이지에서 로그인 예정
 				.requestMatchers("/region").hasAnyAuthority("묘목", "성목", "고목", "관리자")
-				// .requestMatchers("/**").authenticated()
-				.anyRequest().permitAll()
+				.requestMatchers("/**").authenticated()
 			)
 			.oauth2Login(oauth2 -> oauth2
 				.loginPage("/")
