@@ -426,7 +426,7 @@ public class PageController {
 
 		postService.increaseViewCount(postId);
 
-		PostResponseDTO post = postService.getPostDetail(postId);
+		PostResponseDTO post = postService.getPostDetail(postId, userDetails.getUser().getUserId());
 		List<CommentResponseDTO> commentList = commentService.getCommentsDetailByPostId(postId);
 		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("post", post);
@@ -464,7 +464,7 @@ public class PageController {
 
 		postService.increaseViewCount(postId);
 
-		PostResponseDTO post = postService.getPostDetail(postId);
+		PostResponseDTO post = postService.getPostDetail(postId, userDetails.getUser().getUserId());
 		List<CommentResponseDTO> commentList = commentService.getCommentsDetailByPostId(postId);
 		addUserDetailsToModel(model, userDetails);
 		model.addAttribute("post", post);
@@ -504,7 +504,7 @@ public class PageController {
 
 		postService.increaseViewCount(postId);
 
-		PostResponseDTO post = postService.getPostDetail(postId);
+		PostResponseDTO post = postService.getPostDetail(postId, userDetails.getUser().getUserId());
 		List<CommentResponseDTO> commentList = commentService.getCommentsDetailByPostId(postId);
 		List<PostResponseDTO> todayBest = postService.getTodayBestChallengePost();
 		List<PostResponseDTO> weeklyBest = postService.getWeeklyBestChallengePost();
@@ -554,7 +554,9 @@ public class PageController {
 		model.addAttribute("todayLikedPosts", todayLikedPosts);
 		model.addAttribute("monthlyTopUsers", monthlyTopUsers);
 
-		PostResponseDTO post = postService.getPostDetail(postId);
+		postService.increaseViewCount(postId);
+
+		PostResponseDTO post = postService.getPostDetail(postId, userDetails.getUser().getUserId());
 		List<CommentResponseDTO> commentList = commentService.getCommentsDetailByPostId(postId);
 		Page<PostResponseDTO> postPage = postService.getPaginationPostsByPostType(PostType.ANNOUNCEMENT.toString(),
 			page, 30);

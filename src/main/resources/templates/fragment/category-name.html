@@ -14,7 +14,7 @@
     <section id="challenge">
         <h4>챌린지</h4>
         <div class="bar"></div>
-        <a class="category-name-title" th:href="@{'/announcement/post/' + ${challenge.postId}}" th:text="${challenge.title}">챌린지 제목~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</a>
+        <a class="category-name-title" th:href="@{'/challenge/post/' + ${challenge.postId}}" th:text="${challenge.title}">챌린지 제목~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</a>
         <div class="bar"></div>
         <a class="category-name-user" th:href="@{'/mypage/' + ${challengeUser.userId}}" th:text="${challengeUser.nickname}">작성자</a>
         <div class="bar"></div>
